@@ -59,10 +59,14 @@
     <input type="hidden" id="edit-id" value="">
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
-      @foreach(['masuk'=>['💰 Masuk','var(--forest)','#F0F7F3'],'keluar'=>['💸 Keluar','var(--rust)','#FFF0EE']] as $v=>[$l,$c,$bg])
-      <div onclick="setJenis('{{ $v }}')" data-jenis="{{ $v }}"
-        style="padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--ink-soft);text-align:center;cursor:pointer;font-size:14px;font-weight:500">{{ $l }}</div>
-      @endforeach
+      <div onclick="setJenis('masuk')" data-jenis="masuk"
+        style="padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--ink-soft);text-align:center;cursor:pointer;font-size:14px;font-weight:500">
+        <i class="fa-solid fa-arrow-trend-up" style="margin-right:5px"></i>Masuk
+      </div>
+      <div onclick="setJenis('keluar')" data-jenis="keluar"
+        style="padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--ink-soft);text-align:center;cursor:pointer;font-size:14px;font-weight:500">
+        <i class="fa-solid fa-arrow-trend-down" style="margin-right:5px"></i>Keluar
+      </div>
     </div>
     <input type="hidden" id="f-jenis-val" value="masuk">
 
@@ -335,7 +339,7 @@ async function refreshLampiranList(kasId) {
         <i class="fa ${isImg?'fa-image':'fa-file-pdf'}" style="color:var(--forest);margin-right:6px"></i>${l.nama_asli}
       </a>
       <span style="font-size:11px;color:var(--ink-mute)">${l.ukuran_kb}KB</span>
-      <button onclick="delLampiran(${l.id},${kasId})" style="font-size:11px;padding:3px 8px;border:1px solid #FDECEA;border-radius:5px;background:#FDECEA;color:var(--rust);cursor:pointer">✕</button>
+      <button onclick="delLampiran(${l.id},${kasId})" style="font-size:11px;padding:3px 8px;border:1px solid #FDECEA;border-radius:5px;background:#FDECEA;color:var(--rust);cursor:pointer"><i class="fa-solid fa-xmark"></i></button>
     </div>`;
   }).join('');
 }

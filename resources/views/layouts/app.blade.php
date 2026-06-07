@@ -153,6 +153,7 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
     <a href="/kampanye" class="{{ request()->is('kampanye*') ? 'active' : '' }}">Kampanye</a>
     <a href="/donasi"   class="{{ request()->is('donasi') ? 'active' : '' }}">Donasi</a>
     <a href="/donatur"  class="{{ request()->is('donatur') ? 'active' : '' }}">Donatur</a>
+    <a href="/agenda"   class="{{ request()->is('agenda') ? 'active' : '' }}">Agenda</a>
     @auth<a href="/laporan"  class="{{ request()->is('laporan') ? 'active' : '' }}">Laporan</a>@endauth
   </div>
 
@@ -221,6 +222,7 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
   <a href="/kampanye">Kampanye</a>
   <a href="/donasi">Donasi</a>
   <a href="/donatur">Donatur</a>
+  <a href="/agenda">Agenda</a>
   @auth<a href="/laporan">Laporan</a>@endauth
   <hr style="border:none;border-top:1px solid var(--border);margin:4px 0">
   @auth
@@ -272,7 +274,7 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
     </div>
     <div class="footer-bottom">
       <div>© {{ date('Y') }} RT 10 · Perumahan Golden Park 2</div>
-      <div>Dibuat dengan ❤️ untuk warga</div>
+      <div>Dibuat dengan <svg viewBox="0 0 20 18" fill="#d97070" style="width:13px;height:13px;display:inline;vertical-align:middle"><path d="M10 16.5l-1.4-1.3C3.4 10.2 0 7.2 0 3.5 0 1.6 1.6 0 3.5 0 4.6 0 5.7.5 6.5 1.3 7.3.5 8.4 0 9.5 0 10.5 0 11.6.5 12.4 1.3 13.2.5 14.4 0 15.5 0 17.4 0 19 1.6 19 3.5c0 3.7-3.4 6.7-8.6 11.7L10 16.5z"/></svg> untuk warga</div>
     </div>
   </div>
 </footer>

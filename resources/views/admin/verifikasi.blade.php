@@ -32,8 +32,8 @@
     <textarea id="modal-catatan" placeholder="Catatan (opsional)" rows="2"
       style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;resize:none;margin-bottom:1rem"></textarea>
     <div style="display:flex;gap:8px">
-      <button onclick="submitVerifikasi('verify')" class="btn-primary" style="flex:1;justify-content:center">✅ Approve</button>
-      <button onclick="submitVerifikasi('reject')" style="flex:1;padding:12px;border-radius:100px;border:1.5px solid var(--rust);background:#fff;color:var(--rust);font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif">❌ Tolak</button>
+      <button onclick="submitVerifikasi('verify')" class="btn-primary" style="flex:1;justify-content:center"><i class="fa-solid fa-check" style="margin-right:6px"></i>Approve</button>
+      <button onclick="submitVerifikasi('reject')" style="flex:1;padding:12px;border-radius:100px;border:1.5px solid var(--rust);background:#fff;color:var(--rust);font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif"><i class="fa-solid fa-xmark" style="margin-right:6px"></i>Tolak</button>
       <button onclick="closeModal()" style="padding:12px 16px;border-radius:100px;border:1.5px solid var(--border);background:#fff;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif">Batal</button>
     </div>
   </div>

@@ -35,17 +35,17 @@
 
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem">
     <div style="background:var(--cream);border-radius:var(--radius-sm);padding:1.25rem;text-align:center">
-      <div style="font-size:22px;margin-bottom:5px">👥</div>
+      <div style="margin-bottom:5px;color:var(--forest);font-size:18px"><i class="fa-solid fa-users"></i></div>
       <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--forest)" id="total-donatur">—</div>
       <div style="font-size:12px;color:var(--ink-soft);margin-top:3px">Donatur Unik</div>
     </div>
     <div style="background:var(--cream);border-radius:var(--radius-sm);padding:1.25rem;text-align:center">
-      <div style="font-size:22px;margin-bottom:5px">💰</div>
+      <div style="margin-bottom:5px;color:var(--forest);font-size:18px"><i class="fa-solid fa-coins"></i></div>
       <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--forest)" id="total-terkumpul">—</div>
       <div style="font-size:12px;color:var(--ink-soft);margin-top:3px">Total Terkumpul</div>
     </div>
     <div style="background:var(--cream);border-radius:var(--radius-sm);padding:1.25rem;text-align:center">
-      <div style="font-size:22px;margin-bottom:5px">🎯</div>
+      <div style="margin-bottom:5px;color:var(--forest);font-size:18px"><i class="fa-solid fa-bullseye"></i></div>
       <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--forest)" id="total-kampanye">—</div>
       <div style="font-size:12px;color:var(--ink-soft);margin-top:3px">Kampanye Aktif</div>
     </div>
@@ -63,7 +63,7 @@
     {{-- Leaderboard --}}
     <div class="card fade-in" style="padding:0;overflow:hidden">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.25rem 0.875rem;border-bottom:1px solid var(--border)">
-        <div style="font-size:15px;font-weight:600;color:var(--ink)">🏆 Papan Peringkat</div>
+        <div style="font-size:15px;font-weight:600;color:var(--ink)"><i class="fa-solid fa-trophy" style="color:var(--gold-dark);margin-right:6px"></i>Papan Peringkat</div>
         <div style="font-size:11px;color:var(--ink-mute);font-weight:500">diurutkan dari terbanyak</div>
       </div>
       <div id="leaderboard-list" style="padding:0.5rem 0">
@@ -74,7 +74,7 @@
     {{-- Recent donations --}}
     <div class="card fade-in" style="padding:0;overflow:hidden">
       <div style="padding:1.25rem 1.25rem 0.875rem;border-bottom:1px solid var(--border)">
-        <div style="font-size:15px;font-weight:600;color:var(--ink)">⏱ Donasi Terbaru</div>
+        <div style="font-size:15px;font-weight:600;color:var(--ink)"><i class="fa-regular fa-clock" style="color:var(--ink-soft);margin-right:6px"></i>Donasi Terbaru</div>
       </div>
       <div id="recent-list" style="padding:0.5rem 0.75rem">
         <div style="text-align:center;padding:2.5rem;color:var(--ink-soft)">Memuat...</div>
@@ -115,7 +115,8 @@ function renderLeaderboard(ranked) {
     return;
   }
 
-  const medals  = ['🥇', '🥈', '🥉'];
+  const medalColors = [['#C8A030','#FBF3DC'],['#8A8A8A','#EFEFEF'],['#A0673A','#F5E8DC']];
+  const medals = medalColors.map(([c,bg]) => `<div style="width:24px;height:24px;border-radius:50%;background:${bg};border:2px solid ${c};display:flex;align-items:center;justify-content:center;margin:0 auto"><svg viewBox="0 0 24 24" fill="${c}" style="width:12px;height:12px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>`);
   const maxTotal = ranked[0].total;
 
   el.innerHTML = ranked.map((r, i) => {

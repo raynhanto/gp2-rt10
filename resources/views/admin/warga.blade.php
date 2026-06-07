@@ -9,7 +9,7 @@
       <div class="section-title" style="font-size:1.8rem">Data Warga</div>
       <div style="font-size:13px;color:var(--ink-soft);margin-top:4px">Daftar seluruh akun yang terdaftar di sistem RT 10</div>
     </div>
-    <a href="/admin/aktivitas" class="btn-secondary" style="font-size:13px;padding:8px 14px">🔍 Log Aktivitas</a>
+    <a href="/admin/aktivitas" class="btn-secondary" style="font-size:13px;padding:8px 14px"><i class="fa-solid fa-magnifying-glass" style="margin-right:6px"></i>Log Aktivitas</a>
   </div>
 
   {{-- Stats --}}
@@ -72,7 +72,7 @@
       </div>
       <div id="edit-units" style="display:flex;flex-direction:column;gap:6px"></div>
       <div style="font-size:11px;color:var(--ink-soft);margin-top:6px;padding:8px 10px;background:#F4F4F4;border-radius:6px">
-        💡 Anggota keluarga berbeda akun boleh menggunakan unit rumah yang sama.
+        <i class="fa-solid fa-lightbulb" style="color:var(--gold-dark);margin-right:5px"></i>Anggota keluarga berbeda akun boleh menggunakan unit rumah yang sama.
       </div>
     </div>
 
@@ -97,7 +97,7 @@
     </div>
 
     <div style="background:#FFF8E0;border:1px solid #F0D060;border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:#7A5C00;margin-bottom:1.25rem">
-      ⚠️ Hanya Super Admin yang dapat mengubah role. Hati-hati saat memberi role Super Admin.
+      <i class="fa-solid fa-triangle-exclamation" style="margin-right:5px"></i>Hanya Super Admin yang dapat mengubah role. Hati-hati saat memberi role Super Admin.
     </div>
 
     <div style="display:flex;gap:8px;justify-content:flex-end">
@@ -301,22 +301,22 @@ function renderTable() {
           const shared = unitUserMap[key] && unitUserMap[key].length > 1;
           const shareCount = shared ? unitUserMap[key].length - 1 : 0;
           const sharedTip = shared ? `title="${shareCount} akun lain di unit ini"` : '';
-          return `<span style="white-space:nowrap">Blok ${uu.blok}/${uu.nomor}${uu.is_primary ? '' : ' <span style="font-size:10px;color:var(--ink-soft)">(tambahan)</span>'}${shared ? `<span class="shared-badge" ${sharedTip}>👨‍👩‍👦 +${shareCount}</span>` : ''}</span>`;
+          return `<span style="white-space:nowrap">Blok ${uu.blok}/${uu.nomor}${uu.is_primary ? '' : ' <span style="font-size:10px;color:var(--ink-soft)">(tambahan)</span>'}${shared ? `<span class="shared-badge" ${sharedTip}><i class="fa-solid fa-users" style="font-size:9px"></i> +${shareCount}</span>` : ''}</span>`;
         }).join('<br>')
       : '<span style="color:var(--ink-soft);font-size:12px">—</span>';
 
     const profilBadge = u.profil_lengkap
-      ? `<span style="font-size:10px;padding:2px 7px;border-radius:99px;background:#E8F4ED;color:var(--forest);font-weight:600">✓ Lengkap</span>`
+      ? `<span style="font-size:10px;padding:2px 7px;border-radius:99px;background:#E8F4ED;color:var(--forest);font-weight:600"><i class="fa-solid fa-check" style="font-size:9px;margin-right:3px"></i>Lengkap</span>`
       : `<span style="font-size:10px;padding:2px 7px;border-radius:99px;background:#FDECEA;color:#B5451B;font-weight:600">Belum</span>`;
 
     const editBtn = (canEditData() && canManage(u.role))
       ? `<button onclick='openEditModal(${JSON.stringify({id:u.id, nama:u.nama||'', email:u.email, no_wa:u.no_wa||'', units:u.units||[]})})' title="Edit data warga"
-           style="padding:4px 10px;font-size:11px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;margin-right:4px">✏️ Edit</button>`
+           style="padding:4px 10px;font-size:11px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;margin-right:4px"><i class="fa-solid fa-pen" style="font-size:10px;margin-right:3px"></i>Edit</button>`
       : '';
 
     const roleBtn = (canChangeRole() && canManage(u.role))
       ? `<button onclick='openRoleModal(${JSON.stringify({id:u.id, nama:u.nama||u.email, email:u.email, role:u.role})})' title="Ubah role"
-           style="padding:4px 10px;font-size:11px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer">👑 Role</button>`
+           style="padding:4px 10px;font-size:11px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer"><i class="fa-solid fa-user-shield" style="font-size:10px;margin-right:3px"></i>Role</button>`
       : '';
 
     return `<tr style="border-top:1px solid var(--border)">

@@ -39,9 +39,9 @@ const REKENING = [
 ];
 
 const METODE = [
-  { id: 'qris',     icon: '📱', label: 'QRIS' },
-  { id: 'transfer', icon: '🏦', label: 'Transfer' },
-  { id: 'gopay',    icon: '💚', label: 'GoPay/OVO' },
+  { id: 'qris',     icon: 'fa-solid fa-qrcode',   label: 'QRIS' },
+  { id: 'transfer', icon: 'fa-solid fa-building-columns', label: 'Transfer' },
+  { id: 'gopay',    icon: 'fa-solid fa-wallet',   label: 'GoPay/OVO' },
 ];
 
 async function loadBayar() {
@@ -58,7 +58,7 @@ async function loadBayar() {
 function showError(msg) {
   document.getElementById('bayar-container').innerHTML = `
     <div class="card" style="text-align:center;padding:2.5rem">
-      <div style="font-size:36px;margin-bottom:10px">😕</div>
+      <div style="font-size:36px;margin-bottom:10px;color:var(--ink-soft)"><i class="fa-solid fa-circle-exclamation"></i></div>
       <div style="font-size:15px;font-weight:500;color:var(--ink-mid);margin-bottom:1rem">${msg}</div>
       <a href="/dashboard/riwayat" class="btn-secondary" style="display:inline-flex">← Riwayat Donasi</a>
     </div>`;
@@ -125,7 +125,7 @@ function renderPendingFlow(d) {
 
       ${hasBukti ? `
         <div style="display:flex;align-items:center;gap:10px;background:#E8F4ED;border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:1rem">
-          <div style="font-size:18px">✅</div>
+          <div style="font-size:18px;color:var(--forest)"><i class="fa-solid fa-circle-check"></i></div>
           <div style="flex:1">
             <div style="font-size:13px;font-weight:600;color:var(--forest)">Bukti sudah diupload</div>
             <div style="font-size:12px;color:var(--ink-soft)">Menunggu verifikasi pengurus RT</div>
@@ -148,7 +148,7 @@ function renderPendingFlow(d) {
         ondragleave="this.style.borderColor='var(--sand)';this.style.background='var(--cream)'"
         ondrop="handleDrop(event)">
         <div id="drop-content">
-          <div style="font-size:28px;margin-bottom:6px">📸</div>
+          <div style="font-size:28px;margin-bottom:6px;color:var(--ink-soft)"><i class="fa-solid fa-camera"></i></div>
           <div style="font-size:13px;font-weight:500;color:var(--ink-mid)">Klik atau drag foto bukti ke sini</div>
           <div style="font-size:12px;color:var(--ink-soft);margin-top:3px">JPG, PNG, PDF · Maks 5MB</div>
         </div>
@@ -157,7 +157,7 @@ function renderPendingFlow(d) {
       <input type="file" id="file-input" accept="image/*,.pdf" style="display:none">
 
       <div style="background:var(--gold-pale);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;color:#7A5C00;margin-bottom:1rem;line-height:1.6">
-        💡 Pastikan nominal, tanggal, dan nama tujuan terlihat jelas di screenshot.
+        <i class="fa-solid fa-lightbulb" style="color:var(--gold-dark);margin-right:5px"></i>Pastikan nominal, tanggal, dan nama tujuan terlihat jelas di screenshot.
       </div>
 
       <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
@@ -183,7 +183,7 @@ function renderMetodeChips(active) {
     const isActive = m.id === active;
     return `<div onclick="selectMetode('${m.id}')" data-metode="${m.id}"
       style="padding:10px 8px;border:1.5px solid ${isActive ? 'var(--forest)' : 'var(--border)'};border-radius:var(--radius-sm);text-align:center;cursor:pointer;transition:all 0.15s;background:${isActive ? '#F0F7F3' : '#fff'};color:${isActive ? 'var(--forest)' : 'var(--ink-soft)'}">
-      <div style="font-size:20px;margin-bottom:4px">${m.icon}</div>
+      <div style="font-size:18px;margin-bottom:4px"><i class="${m.icon}"></i></div>
       <div style="font-size:12px;font-weight:600">${m.label}</div>
     </div>`;
   }).join('');
@@ -225,8 +225,8 @@ function renderPaymentInfo(metode, nominal) {
   if (metode === 'qris') {
     box.innerHTML = `
       <div style="display:flex;gap:1.25rem;align-items:center;padding-top:1rem;border-top:1px solid var(--border)">
-        <div style="width:120px;height:120px;flex-shrink:0;background:var(--cream);border-radius:var(--radius-sm);border:2px dashed var(--sand);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:34px">
-          📱<div style="font-size:9px;color:var(--ink-soft);margin-top:4px;text-align:center;line-height:1.4">QR Code<br>segera hadir</div>
+        <div style="width:120px;height:120px;flex-shrink:0;background:var(--cream);border-radius:var(--radius-sm);border:2px dashed var(--sand);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:28px;color:var(--ink-soft)">
+          <i class="fa-solid fa-qrcode"></i><div style="font-size:9px;color:var(--ink-soft);margin-top:4px;text-align:center;line-height:1.4">QR Code<br>segera hadir</div>
         </div>
         <div>
           <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px">QRIS Universal</div>
@@ -280,7 +280,7 @@ function updateWaLink() {
 function renderVerified() {
   return `
     <div class="card" style="background:linear-gradient(135deg,#E8F4ED,#F2FAF5);border-color:rgba(26,61,43,0.18);text-align:center;padding:2.5rem">
-      <div style="font-size:44px;margin-bottom:12px">✅</div>
+      <div style="font-size:44px;margin-bottom:12px;color:var(--forest)"><i class="fa-solid fa-circle-check"></i></div>
       <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--forest);margin-bottom:6px">Donasi Terverifikasi</div>
       <div style="font-size:13px;color:var(--ink-soft);line-height:1.7;margin-bottom:1.5rem;max-width:300px;margin-left:auto;margin-right:auto">Donasi kamu sudah diterima dan tercatat di kas RT 10. Terima kasih!</div>
       <a href="/dashboard/riwayat" class="btn-primary" style="display:inline-flex">Lihat Riwayat →</a>
@@ -290,7 +290,7 @@ function renderVerified() {
 function renderRejected(catatan) {
   return `
     <div class="card" style="border-color:rgba(181,64,26,0.2);text-align:center;padding:2.5rem">
-      <div style="font-size:44px;margin-bottom:12px">❌</div>
+      <div style="font-size:44px;margin-bottom:12px;color:var(--rust)"><i class="fa-solid fa-circle-xmark"></i></div>
       <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--rust);margin-bottom:8px">Donasi Ditolak</div>
       ${catatan ? `<div style="font-size:13px;background:#FDECEA;color:var(--rust);padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:1rem;line-height:1.6">Catatan pengurus: ${catatan}</div>` : ''}
       <div style="font-size:13px;color:var(--ink-soft);margin-bottom:1.5rem">Silakan buat donasi baru atau hubungi pengurus RT.</div>
@@ -333,7 +333,7 @@ function handleFile(file) {
     reader.readAsDataURL(file);
   } else {
     document.getElementById('drop-content').innerHTML = `
-      <div style="font-size:28px;margin-bottom:6px">📄</div>
+      <div style="font-size:28px;margin-bottom:6px;color:var(--ink-soft)"><i class="fa-solid fa-file"></i></div>
       <div style="font-size:13px;font-weight:500;color:var(--forest)">${file.name}</div>
       <div style="font-size:12px;color:var(--ink-soft);margin-top:4px">${(file.size / 1024).toFixed(0)} KB</div>`;
   }
@@ -353,7 +353,7 @@ async function uploadBukti() {
     const res  = await fetch(`/api/donasi/${_donasiId}/bukti`, { method: 'POST', body: formData });
     const data = await res.json();
     if (data.success) {
-      showToast('✅ Bukti berhasil diupload! Menunggu verifikasi pengurus.');
+      showToast('Bukti berhasil diupload! Menunggu verifikasi pengurus.');
       setTimeout(() => location.href = '/dashboard/riwayat', 2000);
     } else {
       alert(data.message || 'Gagal mengupload.');
@@ -370,7 +370,7 @@ async function uploadBukti() {
 function copyNorek(norek, btn) {
   navigator.clipboard.writeText(norek).then(() => {
     const orig = btn.textContent;
-    btn.textContent      = '✓ Tersalin';
+    btn.textContent      = 'Tersalin';
     btn.style.background = 'var(--forest)';
     btn.style.color      = '#fff';
     btn.style.borderColor = 'var(--forest)';

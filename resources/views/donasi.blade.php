@@ -45,12 +45,12 @@
       </div>
 
       @foreach([
-        ['🔒', 'Dana aman & terverifikasi', 'Dikelola langsung oleh Bendahara RT 10'],
-        ['📊', 'Laporan bulanan terbuka', 'Rekap penggunaan dana bisa diakses semua warga'],
-        ['💬', 'Update progres real-time', 'Status donasi bisa dipantau di dashboard kamu'],
+        ['fa-solid fa-shield-halved', 'Dana aman & terverifikasi', 'Dikelola langsung oleh Bendahara RT 10'],
+        ['fa-solid fa-chart-bar', 'Laporan bulanan terbuka', 'Rekap penggunaan dana bisa diakses semua warga'],
+        ['fa-solid fa-comment-dots', 'Update progres real-time', 'Status donasi bisa dipantau di dashboard kamu'],
       ] as [$icon, $title, $sub])
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:{{ $loop->last ? '0' : '12px' }}">
-        <div style="width:34px;height:34px;background:var(--forest);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">{{ $icon }}</div>
+        <div style="width:34px;height:34px;background:var(--forest);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:var(--gold)"><i class="{{ $icon }}"></i></div>
         <div>
           <div style="font-size:13px;color:var(--ink-mid);font-weight:500">{{ $title }}</div>
           <div style="font-size:12px;color:var(--ink-soft)">{{ $sub }}</div>
@@ -96,7 +96,7 @@
         <div onclick="toggleAnonym()" id="anonym-toggle"
           style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;cursor:pointer;margin-bottom:1.25rem;transition:all 0.15s;user-select:none">
           <div id="anonym-check" style="width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s">
-            <span id="anonym-icon" style="font-size:11px;display:none">✓</span>
+            <i id="anonym-icon" class="fa-solid fa-check" style="font-size:10px;display:none"></i>
           </div>
           <div>
             <div style="font-size:13px;font-weight:500;color:var(--ink)">Sembunyikan nama saya (anonim)</div>
@@ -236,7 +236,7 @@ async function loadKampanye() {
   kampanyeMap = Object.fromEntries(list.map(k => [k.id, k]));
   sel.innerHTML =
     '<option value="">-- Pilih Kampanye --</option>' +
-    '<option value="0">🏠 Donasi Umum (Kas RT)</option>' +
+    '<option value="0">Donasi Umum (Kas RT)</option>' +
     list.map(k => `<option value="${k.id}">${k.judul}</option>`).join('');
   const preselect = new URLSearchParams(window.location.search).get('kampanye');
   if (preselect && kampanyeMap[preselect]) {

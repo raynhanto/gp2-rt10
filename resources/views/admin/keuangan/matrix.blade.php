@@ -12,7 +12,7 @@
       <select id="f-tahun" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:#fff;outline:none" onchange="loadMatrix()">
         @for($y = date('Y'); $y >= 2024; $y--)<option value="{{ $y }}" @if($y == date('Y')) selected @endif>{{ $y }}</option>@endfor
       </select>
-      <button onclick="window.print()" class="btn-secondary" style="padding:9px 16px;font-size:13px">🖨️ Print</button>
+      <button onclick="window.print()" class="btn-secondary" style="padding:9px 16px;font-size:13px"><i class="fa-solid fa-print" style="margin-right:6px"></i>Print</button>
       <a href="/api/laporan/export/iuran?tahun={{ date('Y') }}" id="export-link" class="btn-secondary" style="padding:9px 16px;font-size:13px">↓ Excel</a>
     </div>
   </div>

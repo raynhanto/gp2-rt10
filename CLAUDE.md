@@ -203,14 +203,40 @@ All return JSON via `Response::success/error()`. Prefix: `/api/`
 ## Database Schema
 | Table | Key columns |
 |---|---|
-| `users` | `google_id`, `role` (warga/admin), `profil_lengkap` bool, `avatar_url` |
+| `users` | `google_id`, `role` (warga/sekretaris/bendahara/admin/super_admin), `profil_lengkap` bool, `avatar_url` |
 | `unit_rumah` | `blok` CHAR(1), `nomor` TINYINT, `is_primary`, `user_id` FK |
 | `kampanye` | `target`/`terkumpul` unsignedBigInt, `status` (aktif/urgent/selesai/arsip) |
 | `donasi` | `nominal`, `metode`, `status` (pending/verified/rejected), `is_anonym` |
-| `kas` | `jenis` (masuk/keluar), no `updated_at` |
-| `anggaran` | `pos`, `estimasi`, `realisasi`, `kampanye_id` FK |
-| `pengeluaran` | `nominal`, `bukti_url`, `tanggal`, `anggaran_id` FK |
+| `kas` | `jenis` (masuk/keluar), `kategori_id` FK, `created_by` FK, no `updated_at` |
+| `anggaran` | `pos`, `estimasi`, `realisasi`, `kampanye_id` FK, `kategori_id` FK |
+| `pengeluaran` | `nominal`, `bukti_url`, `tanggal`, `anggaran_id` FK, `kategori_id` FK, `created_by` FK |
 | `pengumuman` | `target` (semua/donatur), no `updated_at` |
+| `kategori_keuangan` | `nama`, `jenis` (masuk/keluar/keduanya), `warna` |
+| `lampiran` | polymorphic: `lampiran_type`, `lampiran_id`, `url`, `nama`, `created_by` FK |
+| `admin_activity_log` | `user_id`, `action`, `description`, `model_type`, `model_id`, `meta` JSON |
+| `iuran_periode` | `bulan`, `tahun`, `nominal`, `jatuh_tempo`, `keterangan`, `created_by` |
+| `iuran_tagihan` | `unit_rumah_id` FK, `iuran_periode_id` FK, `status` (belum/pending/lunas/dispensasi) |
+| `iuran_bayar` | `iuran_tagihan_id` FK, `nominal`, `metode`, `bukti_url`, `status` (pending/verified/rejected), `created_by`, `verified_by`, `verified_at` |
+| `gsheet_config` | `spreadsheet_id`, `credentials_path`, `enabled` bool |
+| `gsheet_sync_log` | `tab`, `status` (success/error), `rows_synced`, `error_message`, `synced_at` |
+| `kepala_keluarga` | `unit_rumah_id` FK, `nik`, `nama`, `no_kk`, `no_wa`, `status_tinggal` |
+| `anggota_keluarga` | `kepala_keluarga_id` FK, `nik`, `nama`, `hubungan`, `jenis_kelamin`, `tanggal_lahir` |
+| `kendaraan` | `kepala_keluarga_id` FK, `jenis`, `merek`, `plat_nomor`, `warna` |
+
+---
+
+## Role System
+| Role | Label | Access |
+|---|---|---|
+| `warga` | Warga | Warga dashboard only |
+| `sekretaris` | Sekretaris | Admin panel: warga/kependudukan, pengumuman |
+| `bendahara` | Bendahara | Admin panel: full keuangan module |
+| `admin` | Admin | Same as super_admin (legacy) |
+| `super_admin` | Super Admin | Everything + role management |
+
+**User model helpers:** `isAdmin()`, `isSuperAdmin()`, `isBendahara()`, `isSekretaris()`, `hasRole(string|array)`, `roleLabel()`  
+**Middleware:** `middleware('admin')` = any admin role; `middleware('admin:bendahara,admin,super_admin')` = specific roles  
+**Set role:** `UPDATE users SET role='super_admin' WHERE email='...'`
 
 ---
 
@@ -220,11 +246,13 @@ All return JSON via `Response::success/error()`. Prefix: `/api/`
 3. `kampanye.terkumpul` = SUM of verified donasi (never set manually)
 4. On `pengeluaran` save: auto-create `kas` keluar + update `anggaran.realisasi`
 5. One unit (blok+nomor) → only ONE user account (unique constraint)
-6. Admin role: `UPDATE users SET role='admin' WHERE email='...'`
-7. Uploads: UUID filename, MIME validated (jpg/png/pdf), max 5MB, stored in `storage/uploads/{subfolder}/`
-8. Money: integer Rupiah, never float
-9. Timezone: `Asia/Jakarta`
-10. Google OAuth: Testing mode — only whitelisted emails can login
+6. Uploads: UUID filename, MIME validated (jpg/png/pdf), max 5MB, stored in `storage/uploads/{subfolder}/`
+7. Money: integer Rupiah, never float
+8. Timezone: `Asia/Jakarta`
+9. Google OAuth: Testing mode — only whitelisted emails can login
+10. `iuran_tagihan.status` flow: `belum` → `pending` (on bayar submit) → `lunas` or back to `belum` (on verify/reject)
+11. On iuran verify: auto-create `kas` masuk entry
+12. Warga iuran self-pay is whitelist-gated: `IURAN_WHITELIST` env var (comma-separated emails)
 
 ---
 
@@ -236,13 +264,14 @@ All return JSON via `Response::success/error()`. Prefix: `/api/`
 - Money: integer Rupiah
 - Dates: `TIMESTAMP` in DB, display `Asia/Jakarta`
 - Error messages: Bahasa Indonesia (user-facing), English (logs)
-- `@extends('layouts.app')` for all pages with nav/footer
+- `@extends('layouts.app')` for public/warga pages with nav/footer
+- `@extends('layouts.admin')` for ALL admin pages (dark sidebar layout)
 - Standalone pages (login, onboarding): plain `<!DOCTYPE html>` with inline CSS
 
 ---
 
 ## Deployment Notes
-- Run `php artisan migrate` (runs all 8 migrations in order)
+- Run `php artisan migrate` (runs all migrations — currently 20+)
 - Seed: run `database/seeders/` after first Google login + setting admin
 - `php artisan storage:link` — symlinks `public/storage` → `storage/app/public` (or configure `public/uploads` directly)
 - **Shared hosting note:** `storage/uploads/` needs to be web-accessible. Options:
@@ -274,42 +303,72 @@ UPLOAD_MAX_MB=5
 UPLOAD_PATH=../storage/uploads
 SESSION_DRIVER=file
 SESSION_ENCRYPT=false
+
+# Iuran warga self-pay whitelist (comma-separated emails, empty = disabled for all warga)
+IURAN_WHITELIST=
 ```
 
 ---
 
 ## Phase Status
 
-### ✅ Phase 1–7 — Ported to Laravel (DONE)
+### [DONE] Phase 1–7 — Ported to Laravel (DONE)
 All features from the vanilla PHP app have been migrated:
 - Infrastructure, auth, public pages, warga dashboard, admin panel, API layer, warga sub-pages
 
-### 🔄 Phase 8 — Polish & Production (TODO)
+### [TODO] Phase 8 — Polish & Production (TODO)
 - [ ] QRIS image upload by admin
 - [ ] WhatsApp confirmation link after donasi
 - [ ] Notification when donasi verified
-- [ ] Export laporan to Excel
+- [x] Export laporan to Excel — `ExcelExportService` (PhpSpreadsheet), endpoints at `/api/laporan/export/{kas,iuran,pengeluaran}`
 - [ ] Pagination for donatur list and kas ledger
 - [ ] Error pages (403, 404, 500) with proper Blade design
 - [ ] `storage/uploads/` web-accessible path setup for shared hosting
 
-### 🔄 Phase 10 — Kependudukan (TODO)
-New tables: `kepala_keluarga`, `anggota_keluarga`, `rumah`, `kendaraan`, `tamu_warga`
+### [DONE] Phase 10 — Keuangan & Kependudukan (DONE)
+**Role system** (5 roles): `warga`, `sekretaris`, `bendahara`, `admin`, `super_admin`
+- `admin_activity_log` table + `AdminActivityLog` model + `LogsAdminActivity` trait
+- `/admin/aktivitas` page + `AdminActivityController`
+- Role management: `PUT /api/admin/users/{id}/role` (super_admin only)
 
-### 🔄 Phase 11 — Laporan Kependudukan (TODO)
-### 🔄 Phase 12 — Iuran Bulanan (TODO)
-New tables: `iuran_tagihan`, `iuran_bayar`
+**Keuangan module** (`/admin/keuangan/*`):
+- `KategoriKeuangan` model + `/api/kategori` CRUD
+- `Lampiran` model (polymorphic attachments) + `/api/lampiran` CRUD
+- Extended `Kas`, `Pengeluaran`, `Anggaran` with `kategori_id`, `created_by`
+- `StatistikController`: dashboard, bulanan, kategori, iuran-compliance, saldo-trend
+- `LaporanKeuanganController`: arus-kas, pengeluaran, iuran, neraca reports + Excel export
+- `GsheetConfig` + `GsheetSyncLog` models, `GsheetService` (JWT-based, no google/apiclient)
+- `GsheetController`: config, credentials upload, sync per tab / sync-all, logs
+- `TransaksiInstanController`: quick kas entries
+- Admin views: `dashboard`, `kas`, `transaksi-instan`, `pengeluaran`, `anggaran`, `kategori`, `laporan`, `gsheet`
+- All admin views use `layouts.admin` (dark sidebar, 228px)
 
-### 🔄 Phase 13 — Kelembagaan & Informasi RT (TODO)
+**Kependudukan module** (`/admin/kependudukan/*`):
+- `KependudukanController`: stats, units, kepala KK CRUD, anggota keluarga CRUD, kendaraan CRUD
+- Admin views: `index` (stats), `warga` (list), `detail` (per-KK detail with anggota + kendaraan)
+
+### [DONE] Phase 12 — Iuran Bulanan (DONE — admin complete, warga whitelist-gated)
+- Models: `IuranPeriode`, `IuranTagihan`, `IuranBayar`
+- `IuranController` (admin): periode CRUD, tagihan generate/index/dispensasi, bayar store/verify/index, matrix
+- `IuranWargaController` (warga): tagihan list, submit bayar with bukti, upload bukti
+- Admin view: `/admin/keuangan/iuran` (3 tabs: Periode, Tagihan, Pembayaran Masuk)
+- Admin view: `/admin/keuangan/iuran/matrix` (compliance matrix with Excel export + print)
+- Warga view: `/dashboard/iuran` (tagihan list, payment modal, bukti upload)
+- **Warga flow is whitelist-gated**: set `IURAN_WHITELIST=email1@gmail.com,email2@gmail.com` in `.env` to enable per user
+- On verify: auto-creates `kas` masuk entry
+
+### [TODO] Phase 11 — Laporan Kependudukan (TODO)
+
+### [TODO] Phase 13 — Kelembagaan & Informasi RT (TODO)
 New tables: `tata_tertib`, `inventaris`, `program_kerja`, `agenda`, `galeri`, `berita`, `saran_keluhan`, `bantuan_sosial`, `usulan_pembangunan`
 
-### 🔄 Phase 14 — Surat & Dokumen (TODO)
+### [TODO] Phase 14 — Surat & Dokumen (TODO)
 New tables: `surat_permohonan`, `surat_keterangan`, `ttd_digital`
 
-### 🔄 Phase 15 — Keamanan Lingkungan (TODO)
+### [TODO] Phase 15 — Keamanan Lingkungan (TODO)
 New tables: `jadwal_ronda`, `pos_keamanan`, `log_tamu_keamanan`
 
-### 🔄 Phase 16 — Notifikasi & Integrasi (TODO)
+### [TODO] Phase 16 — Notifikasi & Integrasi (TODO)
 - Email notifications (Laravel Mail)
 - WhatsApp blast integration
 - QRIS dinamis via Midtrans/Xendit

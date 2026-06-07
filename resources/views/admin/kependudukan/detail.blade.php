@@ -56,7 +56,7 @@
   <div style="background:#fff;border-radius:var(--radius);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;margin:1rem;box-shadow:var(--shadow-lg)">
     <div style="padding:1.5rem 1.5rem 0;display:flex;justify-content:space-between;align-items:center">
       <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--forest)" id="anggota-modal-title">Tambah Anggota</div>
-      <button onclick="closeAnggotaModal()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--ink-soft)">✕</button>
+      <button onclick="closeAnggotaModal()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--ink-soft)"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div style="padding:1.5rem">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
@@ -123,7 +123,7 @@
   <div style="background:#fff;border-radius:var(--radius);width:100%;max-width:480px;margin:1rem;box-shadow:var(--shadow-lg)">
     <div style="padding:1.5rem 1.5rem 0;display:flex;justify-content:space-between;align-items:center">
       <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--forest)" id="kend-modal-title">Tambah Kendaraan</div>
-      <button onclick="closeKendaraanModal()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--ink-soft)">✕</button>
+      <button onclick="closeKendaraanModal()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--ink-soft)"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div style="padding:1.5rem">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
@@ -182,7 +182,7 @@ const HUBUNGAN_LABEL = {
   istri:'Istri', suami:'Suami', anak:'Anak', menantu:'Menantu',
   cucu:'Cucu', orang_tua:'Orang Tua', mertua:'Mertua', saudara:'Saudara', lainnya:'Lainnya'
 };
-const JENIS_ICON = { motor:'🏍️', mobil:'🚗', sepeda:'🚲', lainnya:'🚐' };
+const JENIS_ICON = { motor:'<i class="fa-solid fa-motorcycle"></i>', mobil:'<i class="fa-solid fa-car"></i>', sepeda:'<i class="fa-solid fa-bicycle"></i>', lainnya:'<i class="fa-solid fa-van-shuttle"></i>' };
 
 async function loadKK() {
   try {
@@ -281,7 +281,7 @@ function renderKendaraan(list) {
   document.getElementById('kendaraan-list').innerHTML = list.map(k => `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:center;gap:12px">
-        <div style="font-size:24px">${JENIS_ICON[k.jenis] || '🚗'}</div>
+        <div style="font-size:18px;color:var(--ink-soft)">${JENIS_ICON[k.jenis] || '<i class="fa-solid fa-car"></i>'}</div>
         <div>
           <div style="font-weight:600;font-size:13px">${k.merek}${k.model ? ' ' + k.model : ''}${k.tahun ? ' ('+k.tahun+')' : ''}</div>
           <div style="font-size:11px;color:var(--ink-soft);margin-top:1px">

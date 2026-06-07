@@ -305,7 +305,7 @@ async function refreshLampiran(pId) {
       <a href="${l.url}" target="_blank" style="flex:1;font-size:13px;color:var(--ink-mid);text-decoration:underline;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
         <i class="fa ${isImg?'fa-image':'fa-file-pdf'}" style="color:var(--forest);margin-right:6px"></i>${l.nama_asli}</a>
       <span style="font-size:11px;color:var(--ink-mute)">${l.ukuran_kb}KB</span>
-      <button onclick="delLampiran(${l.id},${pId})" style="font-size:11px;padding:3px 8px;border:1px solid #FDECEA;border-radius:5px;background:#FDECEA;color:var(--rust);cursor:pointer">✕</button>
+      <button onclick="delLampiran(${l.id},${pId})" style="font-size:11px;padding:3px 8px;border:1px solid #FDECEA;border-radius:5px;background:#FDECEA;color:var(--rust);cursor:pointer"><i class="fa-solid fa-xmark"></i></button>
     </div>`}).join('');
 }
 async function uploadLampiran() {

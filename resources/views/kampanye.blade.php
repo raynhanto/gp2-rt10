@@ -66,7 +66,7 @@ function renderKampanye() {
     const dl = k.deadline ? new Date(k.deadline).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) : null;
     const imgHtml = k.foto_url
       ? '<img src="' + k.foto_url + '" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.45s ease">'
-      : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:' + KPH_GR[i%4] + ';font-size:2.5rem">🏘️</div>';
+      : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:' + KPH_GR[i%4] + '"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.35)" style="width:56px;height:56px"><path d="M12 2L2 8v14h7v-7h6v7h7V8L12 2z"/></svg></div>';
     return `<div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);cursor:pointer;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s"
       onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,0.1)';const img=this.querySelector('img');if(img)img.style.transform='scale(1.05)'"
       onmouseleave="this.style.transform='';this.style.boxShadow='';const img=this.querySelector('img');if(img)img.style.transform=''"

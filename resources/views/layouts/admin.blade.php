@@ -250,6 +250,12 @@ a{text-decoration:none;color:inherit}
         <a href="/admin/kependudukan/warga" class="{{ request()->is('admin/kependudukan/warga*') ? 'active' : '' }}">
           <i class="fa fa-id-card"></i> Data Warga & KK
         </a>
+
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-group-label">Kelembagaan</div>
+        <a href="/admin/kelembagaan/agenda" class="{{ request()->is('admin/kelembagaan/agenda*') ? 'active' : '' }}">
+          <i class="fa fa-calendar-days"></i> Agenda Kegiatan
+        </a>
       @endif
 
       {{-- System section: admin, super_admin only --}}

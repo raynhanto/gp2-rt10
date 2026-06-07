@@ -19,7 +19,7 @@
         <div id="status-badge" style="padding:10px 16px;border-radius:var(--radius-sm);font-size:13px;background:#F0F7F3;color:var(--forest);margin-bottom:1rem">Memuat...</div>
         <div style="font-size:12px;color:var(--ink-soft)" id="last-sync-info">—</div>
         <div style="display:flex;gap:8px;margin-top:1rem">
-          <button onclick="syncAll()" class="btn-primary" style="padding:9px 18px;font-size:13px">🔄 Sync Semua Tab</button>
+          <button onclick="syncAll()" class="btn-primary" style="padding:9px 18px;font-size:13px"><i class="fa-solid fa-arrows-rotate" style="margin-right:6px"></i>Sync Semua Tab</button>
           <button onclick="loadStatus()" class="btn-secondary" style="padding:9px 14px;font-size:13px">Refresh</button>
         </div>
       </div>

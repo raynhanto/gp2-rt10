@@ -10,7 +10,7 @@
       <a href="/admin/keuangan" style="font-size:13px;color:var(--ink-soft)">← Keuangan</a>
       <div class="section-title" style="font-size:1.8rem;margin-top:6px">Laporan Keuangan</div>
     </div>
-    <button onclick="window.print()" class="btn-secondary" style="padding:9px 18px;font-size:13px">🖨️ Print</button>
+    <button onclick="window.print()" class="btn-secondary" style="padding:9px 18px;font-size:13px"><i class="fa-solid fa-print" style="margin-right:6px"></i>Print</button>
   </div>
 
   {{-- Tabs --}}

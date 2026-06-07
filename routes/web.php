@@ -23,6 +23,7 @@ Route::get('/kampanye/{id}', fn(int $id) => view('kampanye-detail', ['kampanyeId
 Route::get('/onboarding', fn() => view('onboarding'))->middleware('login')->name('onboarding');
 
 // ── Warga dashboard ───────────────────────────────────────────
+Route::view('/agenda',  'agenda')->name('agenda');
 Route::view('/laporan', 'laporan')->middleware('login')->name('laporan');
 
 Route::middleware('login')->prefix('dashboard')->name('dashboard.')->group(function () {
@@ -69,6 +70,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
         Route::view('/warga',      'admin.warga')->name('warga');
         Route::view('/pengumuman', 'admin.pengumuman')->name('pengumuman');
+
+        Route::prefix('kelembagaan')->name('kelembagaan.')->group(function () {
+            Route::view('/agenda', 'admin.kelembagaan.agenda')->name('agenda');
+        });
 
         Route::prefix('kependudukan')->name('kependudukan.')->group(function () {
             Route::view('/',          'admin.kependudukan.index')->name('index');

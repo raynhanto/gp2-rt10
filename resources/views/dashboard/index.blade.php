@@ -9,13 +9,13 @@
 <div class="container" style="max-width:800px">
   <div style="margin-bottom:2.5rem">
     <div style="font-size:13px;color:var(--ink-soft);margin-bottom:6px">Selamat datang kembali,</div>
-    <div style="font-family:'DM Serif Display',serif;font-size:2rem;color:var(--forest)">{{ auth()->user()->nama ?? 'Warga' }} 👋</div>
+    <div style="font-family:'DM Serif Display',serif;font-size:2rem;color:var(--forest)">{{ auth()->user()->nama ?? 'Warga' }}</div>
   </div>
 
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem">
-    @foreach(['total-donasi'=>['💰','Total Donasiku'],'donasi-count'=>['🎯','Jumlah Donasi'],'kampanye-count'=>['📋','Kampanye Didukung']] as $id=>[$icon,$lbl])
+    @foreach(['total-donasi'=>['fa-solid fa-coins','Total Donasiku'],'donasi-count'=>['fa-solid fa-bullseye','Jumlah Donasi'],'kampanye-count'=>['fa-solid fa-clipboard-list','Kampanye Didukung']] as $id=>[$icon,$lbl])
     <div style="background:var(--cream);border-radius:var(--radius-sm);padding:1.25rem;text-align:center">
-      <div style="font-size:22px;margin-bottom:6px">{{ $icon }}</div>
+      <div style="margin-bottom:6px;color:var(--forest);font-size:18px"><i class="{{ $icon }}"></i></div>
       <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--forest)" id="{{ $id }}">—</div>
       <div style="font-size:12px;color:var(--ink-soft);margin-top:4px">{{ $lbl }}</div>
     </div>
@@ -25,7 +25,7 @@
   <div id="pending-banner" style="display:none;background:var(--gold-pale);border:1px solid var(--border-gold);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:1.25rem;display:none">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem">
       <div>
-        <div style="font-size:14px;font-weight:500;color:var(--ink-mid)">💳 Ada donasi yang menunggu pembayaran</div>
+        <div style="font-size:14px;font-weight:500;color:var(--ink-mid)"><i class="fa-solid fa-credit-card" style="margin-right:6px"></i>Ada donasi yang menunggu pembayaran</div>
         <div style="font-size:12px;color:var(--ink-soft);margin-top:2px" id="pending-banner-sub">Selesaikan pembayaran untuk melanjutkan.</div>
       </div>
       <a id="pending-banner-link" href="/dashboard/riwayat" style="flex-shrink:0;padding:8px 18px;background:var(--forest);color:#fff;border-radius:99px;font-size:13px;font-weight:500">Selesaikan →</a>
@@ -35,7 +35,7 @@
   @if($iuranAllowed)
   <div id="iuran-card" class="card" style="margin-bottom:1.25rem;display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <div style="font-size:15px;font-weight:500">💵 Iuran Bulanan</div>
+      <div style="font-size:15px;font-weight:500"><i class="fa-solid fa-money-bill-wave" style="margin-right:6px;color:var(--forest)"></i>Iuran Bulanan</div>
       <a href="/dashboard/iuran" style="font-size:13px;color:var(--forest-light)">Lihat semua →</a>
     </div>
     <div id="iuran-summary"><div style="font-size:13px;color:var(--ink-soft)">Memuat...</div></div>

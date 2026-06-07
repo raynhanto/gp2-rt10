@@ -6,7 +6,7 @@
     <div>
       <div class="section-title" style="font-size:1.8rem">Laporan Keuangan</div>
     </div>
-    <button onclick="window.print()" class="btn-secondary">🖨️ Print / PDF</button>
+    <button onclick="window.print()" class="btn-secondary"><i class="fa-solid fa-print" style="margin-right:6px"></i>Print / PDF</button>
   </div>
 
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem">

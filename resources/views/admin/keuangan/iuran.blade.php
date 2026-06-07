@@ -8,7 +8,7 @@
       <div class="section-title" style="font-size:1.8rem;margin-top:6px">Iuran Bulanan</div>
     </div>
     <div style="display:flex;gap:8px">
-      <a href="/admin/keuangan/iuran/matrix" class="btn-secondary" style="padding:9px 18px;font-size:13px">📊 Matrix Compliance</a>
+      <a href="/admin/keuangan/iuran/matrix" class="btn-secondary" style="padding:9px 18px;font-size:13px"><i class="fa-solid fa-table-cells" style="margin-right:6px"></i>Matrix Compliance</a>
       <button onclick="openPeriodeForm()" class="btn-primary">+ Tambah Periode</button>
     </div>
   </div>
@@ -265,7 +265,7 @@ async function loadBayar() {
           <td style="padding:10px 16px;font-size:12px">${b.metode}</td>
           <td style="padding:10px 16px"><span style="font-size:11px;padding:3px 10px;border-radius:99px;background:${b.status==='verified'?'#E8F4ED':b.status==='pending'?'#FFF3CD':'#FDECEA'};color:${b.status==='verified'?'var(--forest)':b.status==='pending'?'#C8A030':'var(--rust)'}">${b.status}</span></td>
           <td style="padding:10px 16px;white-space:nowrap">
-            ${b.bukti_url?`<a href="${b.bukti_url}" target="_blank" style="font-size:11px;color:var(--forest-light);margin-right:6px">📎 Bukti</a>`:''}
+            ${b.bukti_url?`<a href="${b.bukti_url}" target="_blank" style="font-size:11px;color:var(--forest-light);margin-right:6px"><i class="fa-solid fa-paperclip" style="margin-right:3px"></i>Bukti</a>`:''}
             ${isPending?`<button onclick="verifyBayar(${b.id},'verify')" style="font-size:11px;padding:4px 10px;border:1px solid var(--forest);border-radius:6px;background:var(--forest-pale);color:var(--forest);cursor:pointer">Verifikasi</button>
             <button onclick="verifyBayar(${b.id},'reject')" style="margin-left:4px;font-size:11px;padding:4px 8px;border:1px solid #FDECEA;border-radius:6px;background:#FDECEA;color:var(--rust);cursor:pointer">Tolak</button>`:''}
           </td>

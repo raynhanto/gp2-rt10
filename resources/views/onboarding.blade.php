@@ -35,7 +35,7 @@ input::placeholder{color:#C4B99A}
 </head>
 <body>
 <div class="card">
-  <div class="step-badge">🏘️ Satu langkah lagi</div>
+  <div class="step-badge"><svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;display:inline;vertical-align:middle;margin-right:4px"><path d="M12 2L2 8v14h7v-7h6v7h7V8L12 2z"/></svg>Satu langkah lagi</div>
   <h1>Lengkapi profil kamu</h1>
   <p class="sub">Data ini digunakan untuk menampilkan nama di papan donatur dan mengirim notifikasi.</p>
 

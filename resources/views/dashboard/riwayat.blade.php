@@ -96,7 +96,7 @@ function renderList() {
       <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border)">
         <div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:12px;color:var(--ink-soft)"><i class="fa fa-credit-card" style="margin-right:5px"></i>${ml}</span>
-          ${d.is_anonym == 1 ? '<span style="font-size:11px;padding:2px 8px;border-radius:99px;background:#F0F0EE;color:var(--ink-soft)">🙈 anonim</span>' : '<span style="font-size:11px;padding:2px 8px;border-radius:99px;background:#E8F4ED;color:var(--forest)">👤 nama ditampilkan</span>'}
+          ${d.is_anonym == 1 ? '<span style="font-size:11px;padding:2px 8px;border-radius:99px;background:#F0F0EE;color:var(--ink-soft)"><i class="fa-solid fa-eye-slash" style="margin-right:3px;font-size:10px"></i>anonim</span>' : '<span style="font-size:11px;padding:2px 8px;border-radius:99px;background:#E8F4ED;color:var(--forest)"><i class="fa-solid fa-user" style="margin-right:3px;font-size:10px"></i>nama ditampilkan</span>'}
         </div>
         ${d.status === 'pending'
           ? `<div style="display:flex;align-items:center;gap:8px">

@@ -34,7 +34,7 @@ async function loadDetail() {
     <div style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:2rem">
       ${k.foto_url
         ? `<img src="${k.foto_url}" alt="${k.judul}" style="width:100%;max-height:360px;object-fit:cover;display:block">`
-        : `<div style="width:100%;height:240px;background:linear-gradient(135deg,#1A3D2B,#3D7A56);display:flex;align-items:center;justify-content:center;font-size:4rem">🏘️</div>`}
+        : `<div style="width:100%;height:240px;background:linear-gradient(135deg,#1A3D2B,#3D7A56);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.35)" style="width:72px;height:72px"><path d="M12 2L2 8v14h7v-7h6v7h7V8L12 2z"/></svg></div>`}
     </div>
 
     <div style="display:grid;grid-template-columns:2fr 1fr;gap:2rem;align-items:start">

@@ -138,6 +138,15 @@ Route::middleware('admin:bendahara,admin,super_admin')->group(function () {
     Route::delete('/transaksi-instan/{id}', [Api\TransaksiInstanController::class, 'destroy'])->where('id', '[0-9]+');
 });
 
+// ── Agenda ────────────────────────────────────────────────────
+Route::get('/agenda', [Api\AgendaController::class, 'index']);
+Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
+    Route::post('/agenda',                    [Api\AgendaController::class, 'store']);
+    Route::put('/agenda/{id}',                [Api\AgendaController::class, 'update'])->where('id', '[0-9]+');
+    Route::delete('/agenda/{id}',             [Api\AgendaController::class, 'destroy'])->where('id', '[0-9]+');
+    Route::post('/agenda/{id}/reminder',      [Api\AgendaController::class, 'sendReminder'])->where('id', '[0-9]+');
+});
+
 // ── Pengumuman ────────────────────────────────────────────────
 Route::get('/pengumuman', [Api\PengumumanController::class, 'index']);
 // Post pengumuman: sekretaris, admin, super_admin

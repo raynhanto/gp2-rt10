@@ -11,8 +11,8 @@
       <div style="font-size:13px;color:var(--ink-soft);margin-top:4px">Dashboard keuangan RT 10 Golden Park 2</div>
     </div>
     <div style="display:flex;gap:8px">
-      <button onclick="location.href='/admin/keuangan/laporan'" class="btn-secondary" style="padding:9px 18px">📊 Laporan</button>
-      <button onclick="location.href='/admin/keuangan/gsheet'" class="btn-secondary" style="padding:9px 18px">🔗 G-Sheet</button>
+      <button onclick="location.href='/admin/keuangan/laporan'" class="btn-secondary" style="padding:9px 18px"><i class="fa-solid fa-chart-bar" style="margin-right:6px"></i>Laporan</button>
+      <button onclick="location.href='/admin/keuangan/gsheet'" class="btn-secondary" style="padding:9px 18px"><i class="fa-solid fa-link" style="margin-right:6px"></i>G-Sheet</button>
     </div>
   </div>
 

@@ -42,7 +42,7 @@
         <button type="button" class="rtb-btn" onclick="fmt('insertUnorderedList')" title="Bullet list">• List</button>
         <button type="button" class="rtb-btn" onclick="fmt('insertOrderedList')" title="Numbered list">1. List</button>
         <div class="rtb-sep"></div>
-        <button type="button" class="rtb-btn" onclick="fmt('removeFormat')" title="Hapus format" style="color:var(--ink-soft)">✕ Format</button>
+        <button type="button" class="rtb-btn" onclick="fmt('removeFormat')" title="Hapus format" style="color:var(--ink-soft)"><i class="fa-solid fa-xmark"></i> Format</button>
       </div>
       <div id="deskripsi-editor" contenteditable="true"
         data-placeholder="Jelaskan kebutuhan dan rencana penggunaan dana..."
@@ -82,7 +82,7 @@
         style="border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:1rem;text-align:center;cursor:pointer;background:#fff;transition:all 0.15s;min-height:88px;display:flex;align-items:center;justify-content:center;overflow:hidden;gap:1rem;flex-wrap:wrap">
         <img id="foto-preview" src="" alt="" style="display:none;max-height:140px;max-width:100%;border-radius:8px;object-fit:cover">
         <div id="foto-placeholder" style="color:var(--ink-soft)">
-          <div style="font-size:22px;margin-bottom:6px">🖼️</div>
+          <div style="font-size:22px;margin-bottom:6px;color:var(--ink-mute)"><i class="fa-solid fa-image"></i></div>
           <div style="font-size:13px;font-weight:500">Klik untuk pilih foto kampanye</div>
           <div style="font-size:11px;color:var(--ink-mute);margin-top:3px">JPG, PNG, WebP · Maks 5MB</div>
         </div>
@@ -151,7 +151,7 @@ async function loadKampanye() {
           const dl  = k.deadline ? new Date(k.deadline).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) : '—';
           const thumb = k.foto_url
             ? `<img src="${k.foto_url}" style="width:40px;height:40px;object-fit:cover;border-radius:7px;display:block">`
-            : `<div style="width:40px;height:40px;background:var(--cream);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:17px">📢</div>`;
+            : `<div style="width:40px;height:40px;background:var(--cream);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--forest-mid)"><i class="fa-solid fa-bullhorn"></i></div>`;
           return `<tr style="border-top:1px solid var(--border)">
             <td style="padding:10px 12px 10px 16px">${thumb}</td>
             <td style="padding:10px 16px">
@@ -249,7 +249,7 @@ async function saveKampanye() {
       fd.append('_token', _csrfToken);
       const fr   = await fetch('/api/kampanye/' + kampanyeId + '/foto', { method: 'POST', body: fd });
       const fdat = await fr.json();
-      if (!fdat.success) showToast('⚠️ Kampanye disimpan, foto gagal: ' + fdat.message);
+      if (!fdat.success) showToast('Kampanye disimpan, foto gagal: ' + fdat.message);
     }
 
     closeForm();

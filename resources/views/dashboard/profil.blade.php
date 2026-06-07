@@ -172,7 +172,7 @@ async function saveProfile() {
     const data = await res.json();
 
     if (data.success) {
-      showToast('✅ Profil berhasil disimpan!');
+      showToast('Profil berhasil disimpan!');
       document.getElementById('profile-nama').textContent = nama;
       document.getElementById('profile-units').textContent = units.map(u=>`Blok ${u.blok}/${u.nomor}`).join(' · ');
     } else {

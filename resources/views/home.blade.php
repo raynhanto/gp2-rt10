@@ -109,12 +109,12 @@
     </div>
     <div class="feature-grid">
       @foreach([
-        ['🔒','var(--forest-pale)','var(--forest)','Dana Terverifikasi','Setiap donasi dicatat dan diverifikasi langsung oleh pengurus RT 10 sebelum masuk ke kas.'],
-        ['📊','var(--gold-pale)','var(--gold-dark)','Laporan Terbuka','Rekap penggunaan dana bisa diakses kapan saja oleh seluruh warga tanpa perlu login.'],
-        ['🧾','#FDECEA','var(--rust)','Bukti Tiap Transaksi','Setiap pengeluaran dilengkapi foto nota sehingga dapat diaudit oleh siapapun.'],
+        ['fa-solid fa-shield-halved','var(--forest-pale)','var(--forest)','Dana Terverifikasi','Setiap donasi dicatat dan diverifikasi langsung oleh pengurus RT 10 sebelum masuk ke kas.'],
+        ['fa-solid fa-chart-bar','var(--gold-pale)','var(--gold-dark)','Laporan Terbuka','Rekap penggunaan dana bisa diakses kapan saja oleh seluruh warga tanpa perlu login.'],
+        ['fa-solid fa-receipt','#FDECEA','var(--rust)','Bukti Tiap Transaksi','Setiap pengeluaran dilengkapi foto nota sehingga dapat diaudit oleh siapapun.'],
       ] as [$icon,$bg,$col,$title,$desc])
       <div class="feature-card fade-in">
-        <div class="feature-icon" style="background:{{$bg}};color:{{$col}}">{{$icon}}</div>
+        <div class="feature-icon" style="background:{{$bg}};color:{{$col}}"><i class="{{$icon}}"></i></div>
         <div style="font-weight:600;font-size:15px;color:var(--forest);margin-bottom:0.5rem">{{$title}}</div>
         <div style="font-size:13px;color:var(--ink-soft);line-height:1.7">{{$desc}}</div>
       </div>
@@ -200,7 +200,7 @@ async function loadHome() {
     const tgt = parseInt(k.target);
     const tgtStr = tgt >= 1000000 ? (tgt/1000000).toFixed(1).replace('.0','')+'jt' : Math.round(tgt/1000)+'rb';
     const dl = k.deadline ? new Date(k.deadline).toLocaleDateString('id-ID',{day:'numeric',month:'short'}) : null;
-    const imgHtml = k.foto_url ? '<img src="' + k.foto_url + '" alt="" loading="lazy">' : '<div class="kcard-img-ph" style="background:' + PH_GRADS[i%4] + '">🏘️</div>';
+    const imgHtml = k.foto_url ? '<img src="' + k.foto_url + '" alt="" loading="lazy">' : '<div class="kcard-img-ph" style="background:' + PH_GRADS[i%4] + '"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.35)" style="width:52px;height:52px"><path d="M12 2L2 8v14h7v-7h6v7h7V8L12 2z"/></svg></div>';
     return `<div class="kcard fade-in" onclick="location.href='/kampanye/${k.id}'">
       <div class="kcard-img">${imgHtml}<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(15,35,24,0.38) 0%,transparent 55%);pointer-events:none"></div><span class="badge ${BADGE_MAP[k.status]||'badge-open'} kcard-badge">${LABEL_MAP[k.status]||k.status}</span></div>
       <div class="kcard-body">

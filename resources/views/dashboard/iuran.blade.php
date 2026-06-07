@@ -39,7 +39,7 @@
 
   @if(!$isAllowed)
   <div class="card" style="text-align:center;padding:3rem">
-    <div style="font-size:40px;margin-bottom:12px">🔒</div>
+    <div style="font-size:40px;margin-bottom:12px;color:var(--ink-soft)"><i class="fa-solid fa-lock"></i></div>
     <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--forest);margin-bottom:8px">Fitur Belum Tersedia</div>
     <p style="font-size:14px;color:var(--ink-soft)">Fitur iuran mandiri sedang dalam tahap uji coba. Hubungi pengurus RT jika ingin membayar iuran.</p>
   </div>
@@ -82,7 +82,7 @@
   <div id="modal-box">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
       <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--forest)" id="modal-title">Bayar Iuran</div>
-      <button onclick="closeModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink-soft)">✕</button>
+      <button onclick="closeModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink-soft)"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <div id="modal-info" style="background:var(--cream);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1.25rem;font-size:13px">
@@ -93,9 +93,9 @@
     <div style="margin-bottom:1rem">
       <div style="font-size:12px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Metode Pembayaran</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px" id="metode-grid">
-        @foreach([['transfer','🏦','Transfer'],['qris','📱','QRIS'],['tunai','💵','Tunai'],['gopay','💚','GoPay'],['ovo','💜','OVO'],['dana','🔵','DANA']] as [$id,$icon,$lbl])
+        @foreach([['transfer','fa-solid fa-building-columns','Transfer'],['qris','fa-solid fa-qrcode','QRIS'],['tunai','fa-solid fa-money-bill','Tunai'],['gopay','fa-solid fa-wallet','GoPay'],['ovo','fa-solid fa-wallet','OVO'],['dana','fa-solid fa-wallet','DANA']] as [$id,$icon,$lbl])
         <button class="metode-btn" data-metode="{{ $id }}" onclick="selectMetode('{{ $id }}')">
-          <span style="font-size:20px">{{ $icon }}</span>
+          <span style="font-size:16px"><i class="{{ $icon }}"></i></span>
           <span>{{ $lbl }}</span>
         </button>
         @endforeach
@@ -112,7 +112,7 @@
       <div id="file-drop" onclick="document.getElementById('bukti-input').click()">
         <input type="file" id="bukti-input" accept="image/*,.pdf" style="display:none" onchange="handleFileSelect(this)">
         <div id="file-placeholder">
-          <div style="font-size:28px;margin-bottom:6px">📎</div>
+          <div style="font-size:28px;margin-bottom:6px;color:var(--ink-soft)"><i class="fa-solid fa-paperclip"></i></div>
           <div style="font-size:13px;color:var(--ink-soft)">Klik untuk upload bukti</div>
           <div style="font-size:11px;color:var(--ink-mute);margin-top:4px">JPG, PNG, PDF · Maks 5MB</div>
         </div>
@@ -194,7 +194,7 @@ function renderTagihan(rows) {
       actions = `<div class="tagihan-actions" style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">${buktiHtml}</div>`;
     } else if (r.status === 'lunas') {
       const metodeLabel = r.metode ? ` · ${r.metode}` : '';
-      actions = `<div class="tagihan-actions" style="font-size:11px;color:var(--ink-mute)">✓ Lunas${metodeLabel}</div>`;
+      actions = `<div class="tagihan-actions" style="font-size:11px;color:var(--ink-mute)"><i class="fa-solid fa-check" style="color:var(--forest);margin-right:3px;font-size:10px"></i>Lunas${metodeLabel}</div>`;
     }
 
     return `<div class="tagihan-row">
@@ -265,7 +265,7 @@ function handleFileSelect(input) {
     reader.onload = e => { preview.innerHTML = `<img src="${e.target.result}" style="max-height:160px;max-width:100%;border-radius:6px"><div style="font-size:11px;color:var(--ink-soft);margin-top:6px">${file.name}</div>`; };
     reader.readAsDataURL(file);
   } else {
-    preview.innerHTML = `<div style="font-size:28px">📄</div><div style="font-size:12px;color:var(--ink-mid);margin-top:4px">${file.name}</div>`;
+    preview.innerHTML = `<div style="font-size:28px;color:var(--ink-soft)"><i class="fa-solid fa-file"></i></div><div style="font-size:12px;color:var(--ink-mid);margin-top:4px">${file.name}</div>`;
   }
 }
 

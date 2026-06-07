@@ -24,16 +24,16 @@
       <div style="margin-bottom:1.5rem">
         <label style="display:block;font-size:12px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">Target penerima</label>
         <div style="display:flex;gap:8px">
-          @foreach(['semua'=>'👥 Semua warga','donatur'=>'❤️ Donatur saja'] as $v=>$l)
+          @foreach(['semua'=>'<i class="fa-solid fa-users" style="margin-right:5px"></i>Semua warga','donatur'=>'<i class="fa-solid fa-heart" style="margin-right:5px"></i>Donatur saja'] as $v=>$l)
           <div onclick="selectTarget('{{ $v }}')" data-target="{{ $v }}"
             style="flex:1;padding:10px;border-radius:var(--radius-sm);border:1.5px solid {{ $v==='semua' ? 'var(--forest)' : 'var(--border)' }};background:{{ $v==='semua' ? '#F0F7F3' : '#fff' }};color:{{ $v==='semua' ? 'var(--forest)' : 'var(--ink-soft)' }};text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.15s">
-            {{ $l }}
+            {!! $l !!}
           </div>
           @endforeach
         </div>
         <input type="hidden" id="target" value="semua">
       </div>
-      <button onclick="kirimPengumuman()" class="btn-primary" style="width:100%;justify-content:center">📢 Kirim Pengumuman</button>
+      <button onclick="kirimPengumuman()" class="btn-primary" style="width:100%;justify-content:center"><i class="fa-solid fa-bullhorn" style="margin-right:6px"></i>Kirim Pengumuman</button>
     </div>
 
     <div>
@@ -87,7 +87,7 @@ async function kirimPengumuman() {
   if (data.success) {
     document.getElementById('judul').value = '';
     document.getElementById('isi').value = '';
-    showToast('✅ Pengumuman berhasil dikirim!');
+    showToast('Pengumuman berhasil dikirim!');
     loadPengumuman();
   } else alert(data.message);
 }

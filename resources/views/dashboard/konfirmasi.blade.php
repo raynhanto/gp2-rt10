@@ -25,7 +25,7 @@
       ondragleave="this.style.borderColor='var(--sand)';this.style.background='var(--cream)'"
       ondrop="handleDrop(event)">
       <div id="drop-content">
-        <div style="font-size:32px;margin-bottom:8px">📸</div>
+        <div style="font-size:32px;margin-bottom:8px;color:var(--ink-soft)"><i class="fa-solid fa-camera"></i></div>
         <div style="font-size:14px;font-weight:500;color:var(--ink-mid)">Klik atau drag foto bukti ke sini</div>
         <div style="font-size:12px;color:var(--ink-soft);margin-top:4px">JPG, PNG, PDF · Maks 5MB</div>
       </div>
@@ -34,7 +34,7 @@
     <input type="file" id="file-input" accept="image/*,.pdf" style="display:none" onchange="handleFile(this.files[0])">
 
     <div style="background:var(--gold-pale);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;color:#7A5C00;margin-bottom:1.25rem;line-height:1.6">
-      💡 Pastikan nominal, tanggal, dan nama tujuan terlihat jelas di screenshot.
+      <i class="fa-solid fa-lightbulb" style="color:var(--gold-dark);margin-right:5px"></i>Pastikan nominal, tanggal, dan nama tujuan terlihat jelas di screenshot.
     </div>
 
     <div style="display:flex;gap:8px">
@@ -46,7 +46,7 @@
   </div>
 
   <div class="card" style="margin-top:1.5rem;background:var(--cream);border:none">
-    <div style="font-size:14px;font-weight:500;color:var(--forest);margin-bottom:8px">📱 Belum transfer?</div>
+    <div style="font-size:14px;font-weight:500;color:var(--forest);margin-bottom:8px"><i class="fa-solid fa-mobile-screen-button" style="margin-right:6px"></i>Belum transfer?</div>
     <p style="font-size:13px;color:var(--ink-soft);line-height:1.7;margin-bottom:1rem">Scan QRIS di halaman <a href="/donasi" style="color:var(--forest-light);font-weight:500">Donasi</a> atau transfer ke rekening pengurus RT. Setelah transfer, upload screenshot di sini.</p>
     <div style="font-size:12px;color:var(--ink-soft)">Pertanyaan? Hubungi pengurus RT via WA.</div>
   </div>
@@ -70,7 +70,7 @@ async function loadPending() {
   if (!pending.length) {
     document.getElementById('pending-list').innerHTML = `
       <div class="card" style="text-align:center;padding:2rem">
-        <div style="font-size:32px;margin-bottom:8px">✅</div>
+        <div style="font-size:32px;margin-bottom:8px;color:var(--forest)"><i class="fa-solid fa-circle-check"></i></div>
         <div style="font-size:15px;font-weight:500;color:var(--forest);margin-bottom:6px">Tidak ada donasi pending</div>
         <div style="font-size:13px;color:var(--ink-soft);margin-bottom:1rem">Semua donasi kamu sudah diverifikasi.</div>
         <a href="/donasi" class="btn-primary" style="display:inline-flex">Donasi Lagi →</a>
@@ -146,7 +146,7 @@ function handleFile(file) {
     reader.readAsDataURL(file);
   } else {
     document.getElementById('drop-content').innerHTML = `
-      <div style="font-size:32px;margin-bottom:8px">📄</div>
+      <div style="font-size:32px;margin-bottom:8px;color:var(--ink-soft)"><i class="fa-solid fa-file"></i></div>
       <div style="font-size:14px;font-weight:500;color:var(--forest)">${file.name}</div>
       <div style="font-size:12px;color:var(--ink-soft);margin-top:4px">${(file.size/1024).toFixed(0)} KB</div>`;
   }
@@ -168,7 +168,7 @@ async function uploadBukti() {
     const res = await fetch(`/api/donasi/${selectedDonasi.id}/bukti`, { method: 'POST', body: formData });
     const data = await res.json();
     if (data.success) {
-      showToast('✅ Bukti berhasil diupload! Menunggu verifikasi pengurus.');
+      showToast('Bukti berhasil diupload! Menunggu verifikasi pengurus.');
       setTimeout(() => location.href = '/dashboard/riwayat', 2000);
     } else {
       alert(data.message || 'Gagal mengupload.');

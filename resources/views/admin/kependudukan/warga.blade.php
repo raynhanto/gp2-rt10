@@ -47,7 +47,7 @@
   <div style="background:#fff;border-radius:var(--radius);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;margin:1rem;box-shadow:var(--shadow-lg)">
     <div style="padding:1.5rem 1.5rem 0;display:flex;justify-content:space-between;align-items:center">
       <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--forest)" id="modal-title">Tambah Kepala Keluarga</div>
-      <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--ink-soft)">✕</button>
+      <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--ink-soft)"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div style="padding:1.5rem">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">

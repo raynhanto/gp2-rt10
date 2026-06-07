@@ -34,7 +34,7 @@
       @foreach(['masuk'=>'Pemasukan','keluar'=>'Pengeluaran'] as $v=>$l)
       <div onclick="document.querySelectorAll('[data-jenis]').forEach(b=>b.style.cssText='border:1.5px solid var(--border);background:#fff;color:var(--ink-soft);');this.style.cssText='border:1.5px solid var(--forest);background:#F0F7F3;color:var(--forest);';document.getElementById('jenis').value='{{ $v }}'"
         data-jenis="{{ $v }}" style="padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--ink-soft);text-align:center;cursor:pointer;font-size:14px;font-weight:500">
-        {{ $v === 'masuk' ? '💰' : '💸' }} {{ $l }}
+        <i class="{{ $v === 'masuk' ? 'fa-solid fa-arrow-trend-up' : 'fa-solid fa-arrow-trend-down' }}" style="margin-right:5px"></i>{{ $l }}
       </div>
       @endforeach
     </div>

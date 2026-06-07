@@ -25,7 +25,7 @@
     <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--forest);margin-bottom:1.5rem">Transaksi Instan</div>
 
     <div style="background:var(--gold-pale);border:1px solid var(--border-gold);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:1.5rem;font-size:13px;color:var(--ink-mid)">
-      💡 Uang diterima dari pembayar, langsung dikeluarkan untuk tujuan yang sama. <strong>Saldo kas tidak berubah.</strong>
+      <i class="fa-solid fa-lightbulb" style="color:var(--gold-dark);margin-right:5px"></i>Uang diterima dari pembayar, langsung dikeluarkan untuk tujuan yang sama. <strong>Saldo kas tidak berubah.</strong>
     </div>
 
     <div style="display:grid;gap:1rem">
