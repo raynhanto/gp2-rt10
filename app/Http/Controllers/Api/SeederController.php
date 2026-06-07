@@ -109,7 +109,13 @@ class SeederController extends Controller
             return response()->json(['message' => "Seeder \"{$def['label']}\" berhasil dijalankan."]);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return response()->json(['error' => 'Gagal menjalankan seeder: ' . $e->getMessage()], 500);
+            \Log::error("SeederController::run({$key}) failed", [
+                'error' => $e->getMessage(),
+                'file'  => $e->getFile() . ':' . $e->getLine(),
+            ]);
+            return response()->json([
+                'error' => 'Gagal menjalankan seeder: ' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -161,6 +167,10 @@ class SeederController extends Controller
             return response()->json(['message' => "Seeder \"{$label}\" berhasil di-rollback."]);
         } catch (\Throwable $e) {
             DB::rollBack();
+            \Log::error("SeederController::rollback({$runId}) failed", [
+                'error' => $e->getMessage(),
+                'file'  => $e->getFile() . ':' . $e->getLine(),
+            ]);
             return response()->json(['error' => 'Gagal rollback: ' . $e->getMessage()], 500);
         }
     }

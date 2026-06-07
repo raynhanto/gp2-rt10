@@ -319,31 +319,46 @@ document.getElementById('confirm-modal').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
 
+async function apiPost(url) {
+  showToast('Memproses...', false, 0);
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'X-CSRF-TOKEN': _csrf, 'Content-Type': 'application/json' },
+    });
+    let json;
+    try {
+      json = await res.json();
+    } catch (_) {
+      showToast(`Server error (HTTP ${res.status}) — cek log Laravel.`, true);
+      return null;
+    }
+    return { ok: res.ok, json };
+  } catch (networkErr) {
+    showToast('Tidak dapat menghubungi server: ' + networkErr.message, true);
+    return null;
+  }
+}
+
 async function doRun(key) {
-  const res = await fetch(`/api/admin/seeder/${key}/run`, {
-    method: 'POST',
-    headers: { 'X-CSRF-TOKEN': _csrf, 'Content-Type': 'application/json' },
-  });
-  const json = await res.json();
-  showToast(json.message || json.error, !res.ok);
-  if (res.ok) loadSeeders();
+  const result = await apiPost(`/api/admin/seeder/${key}/run`);
+  if (!result) return;
+  showToast(result.json.message || result.json.error, !result.ok);
+  if (result.ok) loadSeeders();
 }
 
 async function doRollback(runId) {
-  const res = await fetch(`/api/admin/seeder/${runId}/rollback`, {
-    method: 'POST',
-    headers: { 'X-CSRF-TOKEN': _csrf, 'Content-Type': 'application/json' },
-  });
-  const json = await res.json();
-  showToast(json.message || json.error, !res.ok);
-  if (res.ok) loadSeeders();
+  const result = await apiPost(`/api/admin/seeder/${runId}/rollback`);
+  if (!result) return;
+  showToast(result.json.message || result.json.error, !result.ok);
+  if (result.ok) loadSeeders();
 }
 
-function showToast(msg, isErr = false) {
+function showToast(msg, isErr = false, duration = 5000) {
   const el = document.getElementById('sd-toast');
   el.textContent = msg;
   el.className = 'sd-toast show' + (isErr ? ' err' : '');
-  setTimeout(() => el.className = 'sd-toast', 3500);
+  if (duration > 0) setTimeout(() => el.className = 'sd-toast', duration);
 }
 
 loadSeeders();
