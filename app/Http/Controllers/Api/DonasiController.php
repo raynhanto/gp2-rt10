@@ -63,6 +63,9 @@ class DonasiController extends Controller
     public function publicList(Request $request): JsonResponse
     {
         $kampanyeId = $request->query('kampanye_id');
+        $perPage    = min(100, max(10, (int) ($request->query('per_page', 20))));
+        $page       = max(1, (int) ($request->query('page', 1)));
+
         $q = DB::table('donasi as d')
             ->leftJoin('users as u', 'u.id', '=', 'd.user_id')
             ->leftJoin('kampanye as k', 'k.id', '=', 'd.kampanye_id')
@@ -72,10 +75,23 @@ class DonasiController extends Controller
                 DB::raw('COALESCE(k.judul,"Donasi Umum") as judul')
             )
             ->where('d.status', 'verified')
-            ->orderByDesc('d.created_at')
-            ->limit(100);
+            ->orderByDesc('d.created_at');
+
         if ($kampanyeId) $q->where('d.kampanye_id', $kampanyeId);
-        return response()->json(['success' => true, 'data' => $q->get()]);
+
+        $total = (clone $q)->count();
+        $data  = $q->offset(($page - 1) * $perPage)->limit($perPage)->get();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $data,
+            'meta'    => [
+                'total'    => $total,
+                'page'     => $page,
+                'per_page' => $perPage,
+                'pages'    => (int) ceil($total / $perPage),
+            ],
+        ]);
     }
 
     public function store(Request $request): JsonResponse

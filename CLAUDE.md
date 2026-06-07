@@ -222,6 +222,35 @@ All return JSON via `Response::success/error()`. Prefix: `/api/`
 | `kepala_keluarga` | `unit_rumah_id` FK, `nik`, `nama`, `no_kk`, `no_wa`, `status_tinggal` |
 | `anggota_keluarga` | `kepala_keluarga_id` FK, `nik`, `nama`, `hubungan`, `jenis_kelamin`, `tanggal_lahir` |
 | `kendaraan` | `kepala_keluarga_id` FK, `jenis`, `merek`, `plat_nomor`, `warna` |
+| `seeder_runs` | `seeder_key`, `seeded_ids` JSON, `run_by` FK, `run_at`, `rolled_back_by` FK, `rolled_back_at`, `status` (applied/rolled_back) |
+
+---
+
+## Centralized Seeder Management
+
+Admin panel page: `/admin/seeder` — **super_admin only**  
+API: `GET /api/admin/seeder`, `POST /api/admin/seeder/{key}/run`, `POST /api/admin/seeder/{runId}/rollback`
+
+**How it works:**
+- `app/Services/SeederManager.php` is the single registry of all managed seeders.
+- Each seeder defines: `key`, `label`, `description`, `group`, `class`, `tables` (which DB tables it inserts into), `depends_on` (other seeder keys that must run first), `warning` (optional UI caution).
+- When a seeder runs via the panel, `SeederManager` snapshots the max ID of each `tables` entry before running, then captures newly inserted IDs after. These IDs are stored in `seeder_runs.seeded_ids` JSON.
+- Rollback deletes all rows in `seeded_ids` and marks the run as `rolled_back`. Dependency order is enforced: dependents must be rolled back before their parent.
+- Every new feature that needs seed data must add an entry to `SeederManager::definitions()`. The seeder class itself goes in `database/seeders/` as usual.
+
+**Currently registered seeders (sample/demo content only):**
+| Key | Label | Tables | Depends On |
+|---|---|---|---|
+| `informasi` | Konten Informasi | `berita`, `tata_tertib`, `program_kerja`, `pengumuman` | — |
+| `galeri` | Album Galeri | `galeri`, `galeri_foto` | — |
+| `agenda` | Agenda & Jadwal | `agenda` | — |
+
+> Operational seeders (kategori_keuangan, kampanye) are run via `php artisan db:seed` only — not exposed in the panel.
+
+**Adding a new seeder:**
+1. Create the seeder class in `database/seeders/` (standard Laravel seeder, no changes needed).
+2. Add an entry to the `definitions()` array in `app/Services/SeederManager.php`.
+3. The panel will automatically pick it up.
 
 ---
 

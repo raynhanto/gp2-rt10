@@ -3,6 +3,9 @@
         Options -MultiViews -Indexes
     </IfModule>
 
+    # Allow symlinks (needed for public/uploads -> ../storage/uploads)
+    Options +FollowSymLinks
+
     RewriteEngine On
 
     # Handle Authorization Header

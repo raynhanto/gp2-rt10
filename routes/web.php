@@ -79,6 +79,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::view('/berita',        'admin.kelembagaan.berita')->name('berita');
             Route::view('/tata-tertib',   'admin.kelembagaan.tata-tertib')->name('tata-tertib');
             Route::view('/program-kerja', 'admin.kelembagaan.program-kerja')->name('program-kerja');
+            Route::view('/saran',         'admin.kelembagaan.saran')->name('saran');
         });
 
         Route::prefix('kependudukan')->name('kependudukan.')->group(function () {
@@ -89,8 +90,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
     });
 
-    // Admin + super_admin only: activity log
+    // Admin + super_admin only: activity log + settings
     Route::middleware('admin:admin,super_admin')->group(function () {
-        Route::view('/aktivitas', 'admin.aktivitas')->name('aktivitas');
+        Route::view('/aktivitas',   'admin.aktivitas')->name('aktivitas');
+        Route::view('/pengaturan',  'admin.pengaturan')->name('pengaturan');
+    });
+
+    // Super admin only: seeder management
+    Route::middleware('admin:super_admin')->group(function () {
+        Route::view('/seeder', 'admin.seeder')->name('seeder');
     });
 });

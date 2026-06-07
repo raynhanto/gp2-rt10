@@ -174,42 +174,62 @@ function parseDate(str) {
   return new Date((str || '').replace(' ', 'T'));
 }
 
+function recentItemHtml(d) {
+  const dt  = parseDate(d.created_at);
+  const tgl = isNaN(dt) ? '—' : dt.toLocaleDateString('id-ID', {day:'numeric', month:'short'});
+  const nama = d.nama || 'Donatur Anonim';
+  const ini  = initials(nama);
+  return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--forest-pale);color:var(--forest);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${ini}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nama}</div>
+      <div style="font-size:11px;color:var(--ink-mute)">${tgl} · ${d.judul || 'Donasi Umum'}</div>
+    </div>
+    <div style="font-size:12.5px;font-weight:600;color:var(--forest);white-space:nowrap">Rp ${parseInt(d.nominal).toLocaleString('id-ID')}</div>
+  </div>`;
+}
+
 function renderRecent(list) {
   const el = document.getElementById('recent-list');
-  const recent = list.slice(0, 20);
-  if (!recent.length) {
+  if (!list.length) {
     el.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--ink-soft)">Belum ada donasi.</div>';
     return;
   }
-  el.innerHTML = recent.map(d => {
-    const dt = parseDate(d.created_at);
-    const tgl = isNaN(dt) ? '—' : dt.toLocaleDateString('id-ID', {day:'numeric', month:'short'});
-    const nama = d.nama || 'Donatur Anonim';
-    const ini  = initials(nama);
-    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
-      <div style="width:30px;height:30px;border-radius:50%;background:var(--forest-pale);color:var(--forest);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${ini}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nama}</div>
-        <div style="font-size:11px;color:var(--ink-mute)">${tgl} · ${d.judul || 'Donasi Umum'}</div>
-      </div>
-      <div style="font-size:12.5px;font-weight:600;color:var(--forest);white-space:nowrap">Rp ${parseInt(d.nominal).toLocaleString('id-ID')}</div>
+  el.innerHTML = list.map(recentItemHtml).join('') +
+    `<div id="loadMoreWrap" style="text-align:center;padding:0.875rem 0;border-top:1px solid var(--border);display:none">
+      <button id="loadMoreBtn" class="btn-secondary" style="font-size:12px;padding:6px 16px" onclick="loadMore()">Muat lebih banyak</button>
     </div>`;
-  }).join('');
+}
+
+function appendRecent(items) {
+  const wrap = document.getElementById('loadMoreWrap');
+  if (wrap) wrap.insertAdjacentHTML('beforebegin', items.map(recentItemHtml).join(''));
 }
 
 let activeKampanyeId = '';
+let _currentPage = 1;
+let _totalPages  = 1;
+let _allLoaded   = [];
 
 function selectPill(el) {
   document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
   activeKampanyeId = el.dataset.id;
-  loadDonatur();
+  _currentPage = 1;
+  _totalPages  = 1;
+  _allLoaded   = [];
+  loadDonatur(true);
 }
 
-async function loadDonatur() {
+async function loadDonatur(reset = false) {
   const errMsg = '<div style="text-align:center;padding:2.5rem;color:var(--ink-soft)">Gagal memuat data.</div>';
+  if (reset) {
+    document.getElementById('leaderboard-list').innerHTML = '<div style="text-align:center;padding:2.5rem;color:var(--ink-soft)">Memuat...</div>';
+    document.getElementById('recent-list').innerHTML      = '<div style="text-align:center;padding:2.5rem;color:var(--ink-soft)">Memuat...</div>';
+  }
   try {
-    const url = '/api/donasi/public' + (activeKampanyeId ? '?kampanye_id=' + activeKampanyeId : '');
+    let url = `/api/donasi/public?per_page=50&page=${_currentPage}`;
+    if (activeKampanyeId) url += '&kampanye_id=' + activeKampanyeId;
     const res  = await fetch(url, {credentials:'same-origin'});
     const data = await res.json();
     if (!data.success) {
@@ -218,18 +238,47 @@ async function loadDonatur() {
       return;
     }
 
-    const list   = data.data;
-    const ranked = buildRanking(list);
+    _allLoaded = _allLoaded.concat(data.data);
+    _totalPages = data.meta ? data.meta.pages : 1;
 
-    document.getElementById('total-donatur').textContent  = ranked.length;
-    document.getElementById('total-terkumpul').textContent = 'Rp ' + list.reduce((s, d) => s + parseInt(d.nominal), 0).toLocaleString('id-ID');
+    const ranked = buildRanking(_allLoaded);
+    const totalNominal = _allLoaded.reduce((s, d) => s + parseInt(d.nominal), 0);
 
-    renderLeaderboard(ranked);
-    renderRecent(list);
+    if (reset) {
+      document.getElementById('total-donatur').textContent    = data.meta ? data.meta.total + (data.meta.total > 50 ? '+' : '') : ranked.length;
+      document.getElementById('total-terkumpul').textContent  = 'Rp ' + totalNominal.toLocaleString('id-ID');
+      renderLeaderboard(ranked);
+      renderRecent(_allLoaded);
+    } else {
+      // Load more: just append to recent
+      appendRecent(data.data);
+    }
+
+    updateLoadMoreBtn();
   } catch(e) {
     document.getElementById('leaderboard-list').innerHTML = errMsg;
     document.getElementById('recent-list').innerHTML = errMsg;
   }
+}
+
+function updateLoadMoreBtn() {
+  const wrap = document.getElementById('loadMoreWrap');
+  const btn  = document.getElementById('loadMoreBtn');
+  if (!wrap || !btn) return;
+  if (_currentPage >= _totalPages) {
+    wrap.style.display = 'none';
+  } else {
+    wrap.style.display = '';
+    btn.disabled = false;
+    btn.textContent = 'Muat lebih banyak';
+  }
+}
+
+function loadMore() {
+  const btn = document.getElementById('loadMoreBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Memuat...'; }
+  _currentPage++;
+  loadDonatur(false);
 }
 
 async function loadKampanye() {
@@ -251,6 +300,6 @@ async function loadKampanye() {
 }
 
 loadKampanye();
-loadDonatur();
+loadDonatur(true);
 </script>
 @endsection

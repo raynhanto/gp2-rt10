@@ -28,15 +28,10 @@
 @section('scripts')
 <script>
 const _donasiId  = {{ (int) request('donasi', 0) }};
-const _waNumber  = '{{ config('app.admin_wa_number') }}';
 let _donasi      = null;
+let _settings    = {};
 let selectedFile = null;
 let selectedMetode = null;
-
-const REKENING = [
-  { bank: 'BRI', norek: '123456789012345', display: '1234-5678-9012-345', nama: 'Bendahara GP2 RT10' },
-  { bank: 'BCA', norek: '1234567890',      display: '123-456-7890',       nama: 'Bendahara GP2 RT10' },
-];
 
 const METODE = [
   { id: 'qris',     icon: 'fa-solid fa-qrcode',   label: 'QRIS' },
@@ -46,10 +41,15 @@ const METODE = [
 
 async function loadBayar() {
   if (!_donasiId) { showError('ID donasi tidak valid.'); return; }
-  const res  = await fetch('/api/user/donasi');
-  const data = await res.json();
-  if (!data.success) { showError('Gagal memuat data donasi.'); return; }
-  _donasi = data.data.find(d => d.id === _donasiId);
+  const [donasiRes, settingsRes] = await Promise.all([
+    fetch('/api/user/donasi'),
+    fetch('/api/settings'),
+  ]);
+  const donasiData   = await donasiRes.json();
+  const settingsData = await settingsRes.json();
+  if (!donasiData.success) { showError('Gagal memuat data donasi.'); return; }
+  _donasi   = donasiData.data.find(d => d.id === _donasiId);
+  _settings = settingsData.success ? settingsData.data : {};
   if (!_donasi) { showError('Donasi tidak ditemukan.'); return; }
   selectedMetode = _donasi.metode || 'qris';
   renderBayar();
@@ -221,13 +221,15 @@ async function selectMetode(metode) {
 function renderPaymentInfo(metode, nominal) {
   const box = document.getElementById('payment-info');
   if (!box) return;
+  const s = _settings;
 
   if (metode === 'qris') {
+    const qrisImg = s.qris_url
+      ? `<img src="/${s.qris_url}" alt="QRIS" style="width:120px;height:120px;object-fit:contain;border-radius:var(--radius-sm)">`
+      : `<div style="width:120px;height:120px;flex-shrink:0;background:var(--cream);border-radius:var(--radius-sm);border:2px dashed var(--sand);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:28px;color:var(--ink-soft)"><i class="fa-solid fa-qrcode"></i><div style="font-size:9px;color:var(--ink-soft);margin-top:4px;text-align:center;line-height:1.4">QR Code<br>segera hadir</div></div>`;
     box.innerHTML = `
       <div style="display:flex;gap:1.25rem;align-items:center;padding-top:1rem;border-top:1px solid var(--border)">
-        <div style="width:120px;height:120px;flex-shrink:0;background:var(--cream);border-radius:var(--radius-sm);border:2px dashed var(--sand);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:28px;color:var(--ink-soft)">
-          <i class="fa-solid fa-qrcode"></i><div style="font-size:9px;color:var(--ink-soft);margin-top:4px;text-align:center;line-height:1.4">QR Code<br>segera hadir</div>
-        </div>
+        <div style="flex-shrink:0">${qrisImg}</div>
         <div>
           <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px">QRIS Universal</div>
           <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">
@@ -237,18 +239,20 @@ function renderPaymentInfo(metode, nominal) {
         </div>
       </div>`;
   } else if (metode === 'transfer') {
+    const bankName   = s.bank_name    || 'BCA';
+    const bankAcct   = s.bank_account || '—';
+    const bankHolder = s.bank_holder  || '—';
     box.innerHTML = `
       <div style="padding-top:1rem;border-top:1px solid var(--border)">
-        ${REKENING.map(r => `
-          <div style="background:var(--cream);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-              <span style="font-size:11px;font-weight:700;color:var(--forest-mid);letter-spacing:0.05em">${r.bank}</span>
-              <button onclick="copyNorek('${r.norek}',this)"
-                style="font-size:11px;padding:3px 10px;border-radius:99px;border:1px solid var(--border);background:#fff;color:var(--forest);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500">Salin</button>
-            </div>
-            <div style="font-size:15px;font-weight:700;color:var(--ink);letter-spacing:0.04em;margin-bottom:2px">${r.display}</div>
-            <div style="font-size:12px;color:var(--ink-soft)">a.n. ${r.nama}</div>
-          </div>`).join('')}
+        <div style="background:var(--cream);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:11px;font-weight:700;color:var(--forest-mid);letter-spacing:0.05em">${bankName}</span>
+            <button onclick="copyNorek('${bankAcct}',this)"
+              style="font-size:11px;padding:3px 10px;border-radius:99px;border:1px solid var(--border);background:#fff;color:var(--forest);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500">Salin</button>
+          </div>
+          <div style="font-size:15px;font-weight:700;color:var(--ink);letter-spacing:0.04em;margin-bottom:2px">${bankAcct}</div>
+          <div style="font-size:12px;color:var(--ink-soft)">a.n. ${bankHolder}</div>
+        </div>
         <div style="background:var(--gold-pale);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;color:#7A5C00;line-height:1.6">
           <i class="fa fa-triangle-exclamation" style="margin-right:4px"></i>Transfer tepat <strong>Rp ${parseInt(nominal).toLocaleString('id-ID')}</strong> agar verifikasi lebih cepat.
         </div>
@@ -265,6 +269,7 @@ function renderPaymentInfo(metode, nominal) {
 function updateWaLink() {
   const btn = document.getElementById('wa-btn');
   if (!btn || !_donasi) return;
+  const waNum = _settings.whatsapp || '';
   const metodeLabel = { qris: 'QRIS', transfer: 'Transfer Bank', gopay: 'GoPay/OVO' };
   const msg = encodeURIComponent(
     `Halo Pengurus GP2 RT10,\n\nSaya ingin konfirmasi donasi:\n` +
@@ -274,7 +279,7 @@ function updateWaLink() {
     `• ID Donasi: #${_donasi.id}\n\n` +
     `Mohon bantuannya. Terima kasih!`
   );
-  btn.href = `https://wa.me/${_waNumber}?text=${msg}`;
+  btn.href = waNum ? `https://wa.me/${waNum}?text=${msg}` : '#';
 }
 
 function renderVerified() {
@@ -296,7 +301,7 @@ function renderRejected(catatan) {
       <div style="font-size:13px;color:var(--ink-soft);margin-bottom:1.5rem">Silakan buat donasi baru atau hubungi pengurus RT.</div>
       <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
         <a href="/donasi" class="btn-primary" style="display:inline-flex">Donasi Lagi →</a>
-        <a href="https://wa.me/${_waNumber}" target="_blank"
+        <a href="${_settings.whatsapp ? 'https://wa.me/' + _settings.whatsapp : '#'}" target="_blank"
           style="display:inline-flex;align-items:center;gap:7px;padding:12px 20px;border-radius:100px;border:1.5px solid #25D366;background:#fff;color:#128C3E;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           Chat Admin

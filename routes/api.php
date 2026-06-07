@@ -220,3 +220,24 @@ Route::middleware('admin:admin,super_admin')->group(function () {
     Route::get('/admin/aktivitas',         [Api\AdminActivityController::class, 'index']);
     Route::put('/admin/users/{id}/role',   [Api\AdminActivityController::class, 'updateRole'])->where('id', '[0-9]+');
 });
+
+// ── App Settings ──────────────────────────────────────────────
+Route::get('/settings', [Api\SettingsController::class, 'index']);
+Route::post('/settings', [Api\SettingsController::class, 'update'])
+    ->middleware('admin:admin,super_admin');
+
+// ── Saran & Keluhan ───────────────────────────────────────────
+Route::post('/saran-keluhan', [Api\SaranKeluhanController::class, 'store']);
+Route::get('/saran-keluhan/mine', [Api\SaranKeluhanController::class, 'mine'])->middleware('login');
+Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
+    Route::get('/saran-keluhan',         [Api\SaranKeluhanController::class, 'index']);
+    Route::put('/saran-keluhan/{id}',    [Api\SaranKeluhanController::class, 'update'])->where('id', '[0-9]+');
+    Route::delete('/saran-keluhan/{id}', [Api\SaranKeluhanController::class, 'destroy'])->where('id', '[0-9]+');
+});
+
+// ── Seeder Management (super_admin only) ──────────────────────
+Route::middleware('admin:super_admin')->group(function () {
+    Route::get('/admin/seeder',                   [Api\SeederController::class, 'index']);
+    Route::post('/admin/seeder/{key}/run',         [Api\SeederController::class, 'run']);
+    Route::post('/admin/seeder/{runId}/rollback',  [Api\SeederController::class, 'rollback'])->where('runId', '[0-9]+');
+});

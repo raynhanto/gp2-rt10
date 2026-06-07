@@ -60,12 +60,41 @@ nav.bottom-nav{display:none;position:fixed;bottom:0;top:auto;left:0;right:0;tran
 .bn-logout{color:var(--rust)!important}
 .bn-logout:hover{opacity:0.75}
 button.bn-item{background:none;border:none;font-family:inherit;-webkit-appearance:none;appearance:none}
-nav.pub-strip{display:none;position:fixed;top:60px;left:0;right:0;transform:none;border-radius:0;border:none;border-bottom:1px solid var(--border);box-shadow:none;padding:4px 0.75rem;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;z-index:99;white-space:nowrap;align-items:center}
-nav.pub-strip::-webkit-scrollbar{display:none}
-.ps-link{flex-shrink:0;font-size:13px;font-weight:500;color:var(--ink-soft);padding:6px 14px;border-radius:100px;transition:color 0.18s,background 0.18s}
-.ps-link:hover{color:var(--forest);background:var(--forest-pale)}
-.ps-link.active{background:var(--forest);color:#fff}
-.ps-cta{flex-shrink:0;background:linear-gradient(135deg,var(--forest),var(--forest-mid));color:#fff!important;font-size:13px;font-weight:500;padding:6px 18px;border-radius:100px;margin-left:auto}
+.nav-menu-btn{display:none;align-items:center;justify-content:center;width:36px;height:36px;border:none;background:none;cursor:pointer;color:var(--ink-mid);border-radius:8px;transition:background 0.15s;font-size:18px;flex-shrink:0}
+.nav-menu-btn:hover{background:var(--forest-pale);color:var(--forest)}
+.nav-drawer{position:fixed;top:0;right:0;bottom:0;width:280px;background:var(--warm);z-index:300;transform:translateX(100%);transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);overflow-y:auto;display:flex;flex-direction:column;box-shadow:-8px 0 32px rgba(26,61,43,0.13)}
+.nav-drawer.open{transform:translateX(0)}
+.nav-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:299;backdrop-filter:blur(2px)}
+.nav-drawer-overlay.open{display:block}
+.nav-drawer-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1rem 0.875rem;border-bottom:1px solid var(--border)}
+.nav-drawer-close{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border:none;background:none;cursor:pointer;color:var(--ink-soft);font-size:17px;border-radius:8px;transition:background 0.15s;flex-shrink:0}
+.nav-drawer-close:hover{background:var(--forest-pale);color:var(--forest)}
+.nav-drawer-links{display:flex;flex-direction:column;padding:0.75rem;flex:1;gap:2px}
+.nav-drawer-links a{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:500;color:var(--ink-mid);padding:11px 12px;border-radius:10px;transition:background 0.15s,color 0.15s}
+.nav-drawer-links a:hover{background:var(--forest-pale);color:var(--forest)}
+.nav-drawer-links a.active{background:var(--forest);color:#fff}
+.nav-drawer-links a i{width:16px;text-align:center;font-size:14px}
+.nav-drawer-footer{padding:0.75rem 1rem 1.5rem}
+.nav-drawer-user{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--forest-pale);transition:background 0.15s}
+.nav-drawer-user:hover{background:var(--parchment)}
+.nav-drawer-user-name{font-size:13px;font-weight:600;color:var(--forest)}
+.nav-drawer-user-sub{font-size:11px;color:var(--ink-mute);margin-top:1px}
+.more-sheet{position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--warm);border-radius:20px 20px 0 0;padding:0 0 calc(env(safe-area-inset-bottom) + 0.5rem);transform:translateY(100%);transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);box-shadow:0 -8px 32px rgba(26,61,43,0.13)}
+.more-sheet.open{transform:translateY(0)}
+.more-sheet-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:299;backdrop-filter:blur(2px)}
+.more-sheet-overlay.open{display:block}
+.more-sheet-handle{width:40px;height:4px;background:var(--sand);border-radius:2px;margin:12px auto 8px}
+.more-sheet-title{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-mute);padding:4px 1.25rem 0.625rem}
+.more-sheet-links{display:flex;flex-direction:column;padding:0 0.75rem;gap:2px}
+.more-sheet-links a,.more-sheet-links button{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:500;color:var(--ink-mid);padding:13px 12px;border-radius:10px;transition:background 0.15s,color 0.15s;background:none;border:none;cursor:pointer;font-family:inherit;width:100%;text-align:left}
+.more-sheet-links a:hover,.more-sheet-links button:hover{background:var(--forest-pale);color:var(--forest)}
+.more-sheet-links a.active{color:var(--forest);font-weight:600;background:var(--forest-pale)}
+.more-sheet-links a i,.more-sheet-links button i{width:20px;text-align:center;font-size:15px;color:var(--ink-mute);flex-shrink:0}
+.more-sheet-links a.active i{color:var(--forest)}
+.more-sheet-links .ms-logout{color:var(--rust)}
+.more-sheet-links .ms-logout i{color:var(--rust)}
+.more-sheet-links .ms-logout:hover{background:#FDECEA;color:var(--rust)}
+.more-sheet-divider{height:1px;background:var(--border);margin:0.25rem 0.75rem}
 .nav-user{display:flex;align-items:center;gap:8px}
 .nav-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid var(--gold-light)}
 .nav-avatar-placeholder{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--forest),var(--forest-mid));color:var(--gold);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
@@ -131,9 +160,9 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
   .nav-links{display:none}
   .nav-right .nav-user,.nav-right .nav-cta{display:none!important}
   .nav-right{padding:0}
-  nav.pub-strip{display:flex}
-  main{padding-top:100px;padding-bottom:0}
-  body.has-member main{padding-top:100px!important;padding-bottom:calc(56px + env(safe-area-inset-bottom))!important}
+  .nav-menu-btn{display:flex}
+  main{padding-top:72px;padding-bottom:0}
+  body.has-member main{padding-top:72px!important;padding-bottom:calc(56px + env(safe-area-inset-bottom))!important}
   .member-nav{display:none}
   nav.bottom-nav{display:flex}
   .toast{bottom:calc(56px + env(safe-area-inset-bottom) + 12px)}
@@ -184,18 +213,69 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
     @else
     <a href="/login" class="nav-cta" id="nav-cta-desktop">Masuk →</a>
     @endauth
+    <button class="nav-menu-btn" id="nav-menu-btn" onclick="toggleNavDrawer()" aria-label="Menu">
+      <i class="fa fa-bars"></i>
+    </button>
   </div>
 </nav>
 
-<nav class="pub-strip">
-  <a href="/"          class="ps-link {{ !request()->path() ? 'active' : '' }}">Beranda</a>
-  <a href="/kampanye"  class="ps-link {{ request()->is('kampanye*') ? 'active' : '' }}">Kampanye</a>
-  <a href="/donasi"    class="ps-link {{ request()->is('donasi') ? 'active' : '' }}">Donasi</a>
-  <a href="/agenda"    class="ps-link {{ request()->is('agenda') ? 'active' : '' }}">Agenda</a>
-  <a href="/galeri"    class="ps-link {{ request()->is('galeri') ? 'active' : '' }}">Galeri</a>
-  <a href="/informasi" class="ps-link {{ request()->is('informasi*') ? 'active' : '' }}">Informasi</a>
-  @guest<a href="/login" class="ps-cta">Masuk →</a>@endguest
-</nav>
+<div class="nav-drawer" id="nav-drawer">
+  <div class="nav-drawer-header">
+    <div class="nav-logo">
+      <div class="nav-logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 8v14h7v-7h6v7h7V8L12 2z"/></svg>
+      </div>
+      <div>
+        <div class="nav-brand">GP2 RT10<span>Golden Park 2 · Cisauk</span></div>
+      </div>
+    </div>
+    <button class="nav-drawer-close" onclick="toggleNavDrawer()" aria-label="Tutup">
+      <i class="fa fa-xmark"></i>
+    </button>
+  </div>
+  <div class="nav-drawer-links">
+    <a href="/" class="{{ !request()->path() ? 'active' : '' }}">
+      <i class="fa fa-house"></i> Beranda
+    </a>
+    <a href="/kampanye" class="{{ request()->is('kampanye*') ? 'active' : '' }}">
+      <i class="fa fa-flag"></i> Kampanye
+    </a>
+    <a href="/donasi" class="{{ request()->is('donasi') ? 'active' : '' }}">
+      <i class="fa fa-heart"></i> Donasi
+    </a>
+    <a href="/agenda" class="{{ request()->is('agenda') ? 'active' : '' }}">
+      <i class="fa fa-calendar-days"></i> Agenda
+    </a>
+    <a href="/galeri" class="{{ request()->is('galeri') ? 'active' : '' }}">
+      <i class="fa fa-images"></i> Galeri
+    </a>
+    <a href="/informasi" class="{{ request()->is('informasi*') ? 'active' : '' }}">
+      <i class="fa fa-circle-info"></i> Informasi
+    </a>
+  </div>
+  <div class="nav-drawer-footer">
+    @guest
+    <a href="/login" class="nav-cta" style="display:block;text-align:center">Masuk →</a>
+    @endguest
+    @auth
+    @php $drawerInitial = strtoupper(substr(auth()->user()->nama ?? 'W', 0, 1)); @endphp
+    <a href="/dashboard" class="nav-drawer-user">
+      @if(auth()->user()->avatar_url)
+        <img src="{{ auth()->user()->avatar_url }}" class="nav-avatar" alt="{{ $drawerInitial }}"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="nav-avatar-placeholder" style="display:none">{{ $drawerInitial }}</div>
+      @else
+        <div class="nav-avatar-placeholder">{{ $drawerInitial }}</div>
+      @endif
+      <div>
+        <div class="nav-drawer-user-name">{{ auth()->user()->nama ?? 'Warga' }}</div>
+        <div class="nav-drawer-user-sub">Buka Dashboard</div>
+      </div>
+    </a>
+    @endauth
+  </div>
+</div>
+<div class="nav-drawer-overlay" id="nav-drawer-overlay" onclick="toggleNavDrawer()"></div>
 
 @auth
 <nav class="member-nav">
@@ -240,11 +320,9 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
 @auth
 <nav class="bottom-nav" id="bottom-nav">
   @if(auth()->user()->isAdmin())
+  @php $moreActive = request()->is('dashboard/iuran') || request()->is('dashboard/riwayat') || request()->is('laporan'); @endphp
   <a href="/dashboard" class="bn-item {{ request()->is('dashboard') && !request()->is('dashboard/*') ? 'active' : '' }}">
     <i class="fa fa-gauge"></i><span>Dashboard</span>
-  </a>
-  <a href="/dashboard/iuran" class="bn-item {{ request()->is('dashboard/iuran') ? 'active' : '' }}">
-    <i class="fa fa-wallet"></i><span>Iuran</span>
   </a>
   <a href="/admin" class="bn-item {{ request()->is('admin*') ? 'active' : '' }}">
     <i class="fa fa-lock"></i><span>Admin</span>
@@ -252,27 +330,50 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
   <a href="/dashboard/profil" class="bn-item {{ request()->is('dashboard/profil') ? 'active' : '' }}">
     <i class="fa fa-user"></i><span>Profil</span>
   </a>
-  <button class="bn-item bn-logout" onclick="doLogout()">
-    <i class="fa fa-right-from-bracket"></i><span>Keluar</span>
+  <button class="bn-item {{ $moreActive ? 'active' : '' }}" onclick="toggleMoreSheet()">
+    <i class="fa fa-ellipsis"></i><span>Lainnya</span>
   </button>
   @else
+  @php $moreActive = request()->is('dashboard/riwayat') || request()->is('laporan'); @endphp
   <a href="/dashboard" class="bn-item {{ request()->is('dashboard') && !request()->is('dashboard/*') ? 'active' : '' }}">
     <i class="fa fa-gauge"></i><span>Dashboard</span>
   </a>
   <a href="/donasi" class="bn-item {{ request()->is('donasi') ? 'active' : '' }}">
     <i class="fa fa-heart"></i><span>Donasi</span>
   </a>
-  <a href="/dashboard/riwayat" class="bn-item {{ request()->is('dashboard/riwayat') ? 'active' : '' }}">
-    <i class="fa fa-clock-rotate-left"></i><span>Riwayat</span>
-  </a>
   <a href="/dashboard/profil" class="bn-item {{ request()->is('dashboard/profil') ? 'active' : '' }}">
     <i class="fa fa-user"></i><span>Profil</span>
   </a>
-  <button class="bn-item bn-logout" onclick="doLogout()">
-    <i class="fa fa-right-from-bracket"></i><span>Keluar</span>
+  <button class="bn-item {{ $moreActive ? 'active' : '' }}" onclick="toggleMoreSheet()">
+    <i class="fa fa-ellipsis"></i><span>Lainnya</span>
   </button>
   @endif
 </nav>
+@endauth
+
+@auth
+<div class="more-sheet" id="more-sheet">
+  <div class="more-sheet-handle"></div>
+  <div class="more-sheet-title">Menu Lainnya</div>
+  <div class="more-sheet-links">
+    @if(auth()->user()->isAdmin())
+    <a href="/dashboard/iuran" class="{{ request()->is('dashboard/iuran') ? 'active' : '' }}">
+      <i class="fa fa-wallet"></i> Iuran Bulanan
+    </a>
+    @endif
+    <a href="/dashboard/riwayat" class="{{ request()->is('dashboard/riwayat') ? 'active' : '' }}">
+      <i class="fa fa-clock-rotate-left"></i> Riwayat Donasi
+    </a>
+    <a href="/laporan" class="{{ request()->is('laporan') ? 'active' : '' }}">
+      <i class="fa fa-chart-bar"></i> Laporan Keuangan
+    </a>
+    <div class="more-sheet-divider"></div>
+    <button class="ms-logout" onclick="doLogout();closeMoreSheet()">
+      <i class="fa fa-right-from-bracket"></i> Keluar
+    </button>
+  </div>
+</div>
+<div class="more-sheet-overlay" id="more-sheet-overlay" onclick="closeMoreSheet()"></div>
 @endauth
 
 @yield('content')
@@ -355,6 +456,25 @@ function showToast(msg, dur = 3000) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), dur);
+}
+function toggleNavDrawer() {
+  const drawer = document.getElementById('nav-drawer');
+  const overlay = document.getElementById('nav-drawer-overlay');
+  const isOpen = drawer.classList.toggle('open');
+  overlay.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+function toggleMoreSheet() {
+  const sheet = document.getElementById('more-sheet');
+  const overlay = document.getElementById('more-sheet-overlay');
+  const isOpen = sheet.classList.toggle('open');
+  overlay.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+function closeMoreSheet() {
+  document.getElementById('more-sheet').classList.remove('open');
+  document.getElementById('more-sheet-overlay').classList.remove('open');
+  document.body.style.overflow = '';
 }
 const observer = new IntersectionObserver(
   e => e.forEach(el => { if (el.isIntersecting) el.target.classList.add('visible') }),

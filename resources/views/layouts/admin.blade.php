@@ -268,6 +268,9 @@ a{text-decoration:none;color:inherit}
         <a href="/admin/kelembagaan/program-kerja" class="{{ request()->is('admin/kelembagaan/program-kerja*') ? 'active' : '' }}">
           <i class="fa fa-list-check"></i> Program Kerja
         </a>
+        <a href="/admin/kelembagaan/saran" class="{{ request()->is('admin/kelembagaan/saran*') ? 'active' : '' }}">
+          <i class="fa fa-comments"></i> Saran & Keluhan
+        </a>
       @endif
 
       {{-- System section: admin, super_admin only --}}
@@ -277,6 +280,14 @@ a{text-decoration:none;color:inherit}
         <a href="/admin/aktivitas" class="{{ request()->is('admin/aktivitas') ? 'active' : '' }}">
           <i class="fa fa-clock-rotate-left"></i> Log Aktivitas
         </a>
+        <a href="/admin/pengaturan" class="{{ request()->is('admin/pengaturan') ? 'active' : '' }}">
+          <i class="fa fa-gear"></i> Pengaturan
+        </a>
+        @if($authRole === 'super_admin')
+        <a href="/admin/seeder" class="{{ request()->is('admin/seeder') ? 'active' : '' }}">
+          <i class="fa fa-database"></i> Manajemen Seeder
+        </a>
+        @endif
       @endif
 
     </div>

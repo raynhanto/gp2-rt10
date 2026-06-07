@@ -86,6 +86,7 @@
       <button class="inf-tab" onclick="setTab('pengumuman',this)"><i class="fa fa-bullhorn" style="margin-right:6px"></i>Pengumuman</button>
       <button class="inf-tab" onclick="setTab('tata-tertib',this)"><i class="fa fa-scale-balanced" style="margin-right:6px"></i>Tata Tertib</button>
       <button class="inf-tab" onclick="setTab('program-kerja',this)"><i class="fa fa-list-check" style="margin-right:6px"></i>Program Kerja</button>
+      <button class="inf-tab" onclick="setTab('saran',this)"><i class="fa fa-comments" style="margin-right:6px"></i>Saran &amp; Keluhan</button>
     </div>
   </div>
 </div>
@@ -152,6 +153,74 @@
     </div>
   </div>
 
+  {{-- Saran & Keluhan --}}
+  <div id="tab-saran" style="display:none">
+
+    {{-- Submission form --}}
+    <div class="card" style="margin-bottom:1.5rem">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--forest);margin-bottom:.25rem">Kirim Saran atau Keluhan</div>
+      <div style="font-size:13px;color:var(--ink-soft);margin-bottom:1.25rem">Pesan kamu akan dibaca dan ditanggapi oleh pengurus RT.</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+        <div>
+          <label style="font-size:11px;font-weight:600;color:var(--ink-mid);display:block;margin-bottom:.3rem">Kategori</label>
+          <select id="sk-kategori" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.5rem .75rem;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink)">
+            <option value="saran">Saran</option>
+            <option value="keluhan">Keluhan</option>
+            <option value="pertanyaan">Pertanyaan</option>
+          </select>
+        </div>
+        <div id="sk-nama-wrap">
+          <label style="font-size:11px;font-weight:600;color:var(--ink-mid);display:block;margin-bottom:.3rem">Nama Pengirim</label>
+          <input id="sk-nama" type="text" placeholder="{{ auth()->check() ? auth()->user()->nama : 'Nama kamu' }}" value="{{ auth()->check() ? auth()->user()->nama : '' }}"
+            style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.5rem .75rem;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink)">
+        </div>
+      </div>
+
+      <div style="margin-bottom:.75rem">
+        <label style="font-size:11px;font-weight:600;color:var(--ink-mid);display:block;margin-bottom:.3rem">Judul</label>
+        <input id="sk-judul" type="text" placeholder="Ringkasan singkat pesanmu"
+          style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.5rem .75rem;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink)">
+      </div>
+
+      <div style="margin-bottom:.75rem">
+        <label style="font-size:11px;font-weight:600;color:var(--ink-mid);display:block;margin-bottom:.3rem">Pesan</label>
+        <textarea id="sk-isi" rows="4" placeholder="Tulis pesan selengkapnya di sini..."
+          style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.5rem .75rem;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);resize:vertical"></textarea>
+      </div>
+
+      <div style="margin-bottom:.75rem">
+        <label style="font-size:11px;font-weight:600;color:var(--ink-mid);display:block;margin-bottom:.3rem">Nomor WhatsApp <span style="font-weight:400;color:var(--ink-mute)">(opsional, agar bisa dihubungi)</span></label>
+        <input id="sk-wa" type="tel" placeholder="08123456789"
+          style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.5rem .75rem;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink)">
+      </div>
+
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;cursor:pointer" onclick="toggleSkAnonym()">
+        <div id="sk-anonym-toggle" data-checked="0"
+          style="width:36px;height:20px;border-radius:99px;background:#e5e5e5;border:1.5px solid var(--border);display:flex;align-items:center;padding:2px;transition:.2s;flex-shrink:0">
+          <div id="sk-anonym-knob" style="width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s"></div>
+        </div>
+        <span style="font-size:13px;color:var(--ink-mid)">Kirim sebagai anonim</span>
+      </div>
+
+      <button onclick="submitSaran()" id="sk-submit-btn" class="btn-primary" style="width:100%;justify-content:center">
+        <i class="fa fa-paper-plane"></i> Kirim Pesan
+      </button>
+      <div id="sk-msg" style="display:none;margin-top:.75rem;padding:.75rem 1rem;border-radius:8px;font-size:13px"></div>
+    </div>
+
+    {{-- Own submissions (if logged in) --}}
+    @auth
+    <div id="sk-mine-wrap">
+      <div style="font-size:13px;font-weight:600;color:var(--ink-mid);margin-bottom:.75rem">Pesan Saya</div>
+      <div id="sk-mine-list">
+        <div style="text-align:center;padding:2rem;color:var(--ink-soft)">Memuat...</div>
+      </div>
+    </div>
+    @endauth
+
+  </div>
+
 </div>
 </main>
 
@@ -178,7 +247,7 @@ function setTab(tab, btn, pushState = true) {
   else document.querySelectorAll('.inf-tab').forEach(b => {
     if (b.getAttribute('onclick')?.includes(`'${tab}'`)) b.classList.add('active');
   });
-  ['berita','pengumuman','tata-tertib','program-kerja'].forEach(t => {
+  ['berita','pengumuman','tata-tertib','program-kerja','saran'].forEach(t => {
     document.getElementById('tab-' + t).style.display = t === tab ? '' : 'none';
   });
   _curTab = tab;
@@ -192,6 +261,7 @@ async function loadTab(tab) {
   if (tab === 'pengumuman')    await loadPengumuman();
   if (tab === 'tata-tertib')   await loadTataTertib();
   if (tab === 'program-kerja') await initPk();
+  if (tab === 'saran')         await loadSkMine();
 }
 
 // Category placeholder: bg, accent color, inline SVG path
@@ -378,8 +448,105 @@ function renderPk(list, tahun) {
     </div>`).join('');
 }
 
+// ── Saran & Keluhan ───────────────────────────────────────────
+const _isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
+let _skAnonym = false;
+
+function toggleSkAnonym() {
+  _skAnonym = !_skAnonym;
+  const tog  = document.getElementById('sk-anonym-toggle');
+  const knob = document.getElementById('sk-anonym-knob');
+  const nameWrap = document.getElementById('sk-nama-wrap');
+  tog.style.background  = _skAnonym ? 'var(--forest)' : '#e5e5e5';
+  tog.style.borderColor = _skAnonym ? 'var(--forest)' : 'var(--border)';
+  knob.style.transform  = _skAnonym ? 'translateX(16px)' : 'translateX(0)';
+  nameWrap.style.opacity = _skAnonym ? '.4' : '1';
+}
+
+async function submitSaran() {
+  const btn   = document.getElementById('sk-submit-btn');
+  const msgEl = document.getElementById('sk-msg');
+  const judul = document.getElementById('sk-judul').value.trim();
+  const isi   = document.getElementById('sk-isi').value.trim();
+  const nama  = document.getElementById('sk-nama').value.trim();
+  const wa    = document.getElementById('sk-wa').value.trim();
+  const kat   = document.getElementById('sk-kategori').value;
+
+  if (judul.length < 3) { showSkMsg('Judul minimal 3 karakter.', false); return; }
+  if (isi.length < 10)  { showSkMsg('Isi pesan minimal 10 karakter.', false); return; }
+  if (!_isLoggedIn && !_skAnonym && nama.length < 2) {
+    showSkMsg('Masukkan nama pengirim atau aktifkan anonim.', false); return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Mengirim...';
+
+  const r = await fetch('/api/saran-keluhan', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': _csrfToken },
+    body: JSON.stringify({ judul, isi, kategori: kat, nama, no_wa: wa, is_anonym: _skAnonym ? 1 : 0 }),
+  });
+  const j = await r.json();
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa fa-paper-plane"></i> Kirim Pesan';
+
+  if (j.success) {
+    showSkMsg(j.message, true);
+    document.getElementById('sk-judul').value = '';
+    document.getElementById('sk-isi').value   = '';
+    document.getElementById('sk-wa').value    = '';
+    _loaded['saran'] = false;
+    if (_isLoggedIn) loadSkMine();
+  } else {
+    showSkMsg(j.message || 'Terjadi kesalahan.', false);
+  }
+}
+
+function showSkMsg(msg, ok) {
+  const el = document.getElementById('sk-msg');
+  el.style.display    = '';
+  el.style.background = ok ? '#e8f5ec' : '#fdecea';
+  el.style.color      = ok ? 'var(--forest)' : 'var(--rust)';
+  el.textContent      = msg;
+}
+
+const SK_KAT_LBL    = { saran:'Saran', keluhan:'Keluhan', pertanyaan:'Pertanyaan' };
+const SK_STATUS_LBL = { baru:'Baru', dibaca:'Dibaca', diproses:'Diproses', selesai:'Selesai' };
+const SK_STATUS_COLOR = { baru:'var(--rust)', dibaca:'var(--gold-dark)', diproses:'var(--forest-light)', selesai:'var(--ink-mute)' };
+
+async function loadSkMine() {
+  const wrap = document.getElementById('sk-mine-wrap');
+  const el   = document.getElementById('sk-mine-list');
+  if (!wrap || !el) return;
+  const r = await fetch('/api/saran-keluhan/mine');
+  const j = await r.json();
+  if (!j.success || !j.data.length) {
+    el.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--ink-soft);font-size:13px">Belum ada pesan yang kamu kirim.</div>';
+    return;
+  }
+  el.innerHTML = j.data.map(s => {
+    const dt   = new Date((s.created_at||'').replace(' ','T'));
+    const tgl  = isNaN(dt) ? '' : dt.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+    const color = SK_STATUS_COLOR[s.status] || 'var(--ink-mute)';
+    return `<div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:.875rem 1rem;margin-bottom:.5rem">
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem;flex-wrap:wrap">
+        <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--forest-pale);color:var(--forest)">${SK_KAT_LBL[s.kategori]||s.kategori}</span>
+        <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${color}18;color:${color}">${SK_STATUS_LBL[s.status]||s.status}</span>
+        <span style="font-size:11px;color:var(--ink-mute);margin-left:auto">${tgl}</span>
+      </div>
+      <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:.2rem">${esc(s.judul)}</div>
+      ${s.tanggapan ? `
+        <div style="margin-top:.625rem;background:var(--forest-pale);border-radius:6px;padding:.625rem .875rem">
+          <div style="font-size:10px;font-weight:700;color:var(--forest);margin-bottom:.2rem"><i class="fa fa-reply" style="font-size:9px"></i> Tanggapan Pengurus</div>
+          <div style="font-size:12.5px;color:var(--forest);white-space:pre-line;line-height:1.6">${esc(s.tanggapan)}</div>
+        </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
 // ── Init: restore tab from URL hash ───────────────────────────
-const TABS = ['berita','pengumuman','tata-tertib','program-kerja'];
+const TABS = ['berita','pengumuman','tata-tertib','program-kerja','saran'];
 const initTab = TABS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'berita';
 setTab(initTab, null, false);
 
