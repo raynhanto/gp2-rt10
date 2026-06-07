@@ -159,12 +159,11 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
   <div class="nav-divider"></div>
 
   <div class="nav-links">
-    <a href="/kampanye" class="{{ request()->is('kampanye*') ? 'active' : '' }}">Kampanye</a>
-    <a href="/donasi"   class="{{ request()->is('donasi') ? 'active' : '' }}">Donasi</a>
-    <a href="/donatur"  class="{{ request()->is('donatur') ? 'active' : '' }}">Donatur</a>
-    <a href="/agenda"   class="{{ request()->is('agenda') ? 'active' : '' }}">Agenda</a>
-    <a href="/galeri"   class="{{ request()->is('galeri') ? 'active' : '' }}">Galeri</a>
-    @auth<a href="/laporan"  class="{{ request()->is('laporan') ? 'active' : '' }}">Laporan</a>@endauth
+    <a href="/kampanye"  class="{{ request()->is('kampanye*') ? 'active' : '' }}">Kampanye</a>
+    <a href="/donasi"    class="{{ request()->is('donasi') ? 'active' : '' }}">Donasi</a>
+    <a href="/agenda"    class="{{ request()->is('agenda') ? 'active' : '' }}">Agenda</a>
+    <a href="/galeri"    class="{{ request()->is('galeri') ? 'active' : '' }}">Galeri</a>
+    <a href="/informasi" class="{{ request()->is('informasi*') ? 'active' : '' }}">Informasi</a>
   </div>
 
   <div class="nav-divider"></div>
@@ -189,18 +188,18 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
 </nav>
 
 <nav class="pub-strip">
-  <a href="/" class="ps-link {{ !request()->path() ? 'active' : '' }}">Beranda</a>
-  <a href="/kampanye" class="ps-link {{ request()->is('kampanye*') ? 'active' : '' }}">Kampanye</a>
-  <a href="/donasi" class="ps-link {{ request()->is('donasi') ? 'active' : '' }}">Donasi</a>
-  <a href="/donatur" class="ps-link {{ request()->is('donatur') ? 'active' : '' }}">Donatur</a>
-  <a href="/agenda" class="ps-link {{ request()->is('agenda') ? 'active' : '' }}">Agenda</a>
-  @auth<a href="/laporan" class="ps-link {{ request()->is('laporan') ? 'active' : '' }}">Laporan</a>@endauth
+  <a href="/"          class="ps-link {{ !request()->path() ? 'active' : '' }}">Beranda</a>
+  <a href="/kampanye"  class="ps-link {{ request()->is('kampanye*') ? 'active' : '' }}">Kampanye</a>
+  <a href="/donasi"    class="ps-link {{ request()->is('donasi') ? 'active' : '' }}">Donasi</a>
+  <a href="/agenda"    class="ps-link {{ request()->is('agenda') ? 'active' : '' }}">Agenda</a>
+  <a href="/galeri"    class="ps-link {{ request()->is('galeri') ? 'active' : '' }}">Galeri</a>
+  <a href="/informasi" class="ps-link {{ request()->is('informasi*') ? 'active' : '' }}">Informasi</a>
   @guest<a href="/login" class="ps-cta">Masuk →</a>@endguest
 </nav>
 
 @auth
 <nav class="member-nav">
-  <a href="/dashboard" class="{{ request()->is('dashboard') ? 'active' : '' }}">
+  <a href="/dashboard" class="{{ request()->is('dashboard') && !request()->is('dashboard/*') ? 'active' : '' }}">
     <i class="fa fa-gauge"></i> Dashboard
   </a>
   @if(auth()->user()->isAdmin())
@@ -210,6 +209,9 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
   @endif
   <a href="/dashboard/riwayat" class="{{ request()->is('dashboard/riwayat') ? 'active' : '' }}">
     <i class="fa fa-clock-rotate-left"></i> Riwayat
+  </a>
+  <a href="/laporan" class="{{ request()->is('laporan') ? 'active' : '' }}">
+    <i class="fa fa-chart-bar"></i> Laporan
   </a>
   <a href="/dashboard/profil" class="{{ request()->is('dashboard/profil') ? 'active' : '' }}">
     <i class="fa fa-user"></i> Profil
@@ -291,8 +293,9 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
           <a href="/">Beranda</a>
           <a href="/kampanye">Kampanye</a>
           <a href="/donasi">Donasi</a>
-          <a href="/donatur">Papan Donatur</a>
-          @auth<a href="/laporan">Laporan Keuangan</a>@endauth
+          <a href="/agenda">Agenda</a>
+          <a href="/galeri">Galeri</a>
+          <a href="/informasi">Informasi RT</a>
         </div>
       </div>
       <div>
@@ -302,7 +305,10 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
             <i class="fa fa-location-dot" style="width:14px;color:var(--gold);margin-right:4px"></i>
             Jl. Golden Park 2, Cisauk, Tangerang Selatan, Banten
           </span>
-          <a href="/login" style="display:inline-flex;align-items:center;gap:6px;margin-top:0.5rem">
+          <a href="/donatur" style="display:inline-flex;align-items:center;gap:6px;margin-top:0.25rem">
+            <i class="fa fa-users" style="width:14px;color:var(--gold)"></i> Papan Donatur
+          </a>
+          <a href="/login" style="display:inline-flex;align-items:center;gap:6px;margin-top:0.25rem">
             <i class="fa fa-right-to-bracket" style="width:14px;color:var(--gold)"></i> Login Warga
           </a>
         </div>

@@ -150,6 +150,31 @@ Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
     Route::delete('/galeri/foto/{fotoId}',    [Api\GaleriController::class, 'deleteFoto'])->where('fotoId', '[0-9]+');
 });
 
+// ── Berita ────────────────────────────────────────────────────
+Route::get('/berita',      [Api\BeritaController::class, 'index']);
+Route::get('/berita/{id}', [Api\BeritaController::class, 'show'])->where('id', '[0-9]+');
+Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
+    Route::post('/berita',        [Api\BeritaController::class, 'store']);
+    Route::post('/berita/{id}',   [Api\BeritaController::class, 'update'])->where('id', '[0-9]+'); // POST for multipart
+    Route::delete('/berita/{id}', [Api\BeritaController::class, 'destroy'])->where('id', '[0-9]+');
+});
+
+// ── Tata Tertib ───────────────────────────────────────────────
+Route::get('/tata-tertib', [Api\TataTertibController::class, 'index']);
+Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
+    Route::post('/tata-tertib',        [Api\TataTertibController::class, 'store']);
+    Route::put('/tata-tertib/{id}',    [Api\TataTertibController::class, 'update'])->where('id', '[0-9]+');
+    Route::delete('/tata-tertib/{id}', [Api\TataTertibController::class, 'destroy'])->where('id', '[0-9]+');
+});
+
+// ── Program Kerja ─────────────────────────────────────────────
+Route::get('/program-kerja', [Api\ProgramKerjaController::class, 'index']);
+Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
+    Route::post('/program-kerja',        [Api\ProgramKerjaController::class, 'store']);
+    Route::put('/program-kerja/{id}',    [Api\ProgramKerjaController::class, 'update'])->where('id', '[0-9]+');
+    Route::delete('/program-kerja/{id}', [Api\ProgramKerjaController::class, 'destroy'])->where('id', '[0-9]+');
+});
+
 // ── Agenda ────────────────────────────────────────────────────
 Route::get('/agenda', [Api\AgendaController::class, 'index']);
 Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {

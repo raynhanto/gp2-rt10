@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             KampanyeSeeder::class,
             KategoriKeuanganSeeder::class,
             DonasiSeeder::class,
+            InformasiSeeder::class,
         ]);
     }
 }

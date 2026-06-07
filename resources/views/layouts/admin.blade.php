@@ -259,6 +259,15 @@ a{text-decoration:none;color:inherit}
         <a href="/admin/kelembagaan/galeri" class="{{ request()->is('admin/kelembagaan/galeri*') ? 'active' : '' }}">
           <i class="fa fa-images"></i> Galeri Foto
         </a>
+        <a href="/admin/kelembagaan/berita" class="{{ request()->is('admin/kelembagaan/berita*') ? 'active' : '' }}">
+          <i class="fa fa-newspaper"></i> Berita & Info
+        </a>
+        <a href="/admin/kelembagaan/tata-tertib" class="{{ request()->is('admin/kelembagaan/tata-tertib*') ? 'active' : '' }}">
+          <i class="fa fa-scale-balanced"></i> Tata Tertib
+        </a>
+        <a href="/admin/kelembagaan/program-kerja" class="{{ request()->is('admin/kelembagaan/program-kerja*') ? 'active' : '' }}">
+          <i class="fa fa-list-check"></i> Program Kerja
+        </a>
       @endif
 
       {{-- System section: admin, super_admin only --}}

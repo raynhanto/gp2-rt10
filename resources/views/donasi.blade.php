@@ -111,6 +111,17 @@
       <div id="donasi-result"></div>
     </div>
   </div>
+
+  {{-- Papan Donatur teaser --}}
+  <div style="margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+    <div>
+      <div style="font-size:13px;font-weight:600;color:var(--ink-mid)">Papan Donatur</div>
+      <div style="font-size:12px;color:var(--ink-mute);margin-top:2px">Lihat siapa saja yang sudah berkontribusi untuk RT 10.</div>
+    </div>
+    <a href="/donatur" class="btn-secondary" style="flex-shrink:0">
+      <i class="fa fa-users" style="font-size:11px"></i> Lihat Papan Donatur
+    </a>
+  </div>
 </div>
 </main>
 
