@@ -22,6 +22,13 @@
 .rank-2 .rank-amount-val{color:#666}
 .rank-3 .rank-amount-val{color:#A0673A}
 .rank-divider{height:1px;background:var(--border);margin:2px 0}
+.donatur-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
+.donatur-cols{display:grid;grid-template-columns:3fr 2fr;gap:1.5rem;align-items:start}
+@media(max-width:640px){
+  .donatur-stats{gap:0.5rem}
+  .donatur-stats>div{padding:1rem 0.75rem}
+  .donatur-cols{grid-template-columns:1fr}
+}
 </style>
 @endsection
 @section('content')
@@ -33,7 +40,7 @@
     <div class="section-title">Warga yang sudah<br>bergerak bersama</div>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem">
+  <div class="donatur-stats">
     <div style="background:var(--cream);border-radius:var(--radius-sm);padding:1.25rem;text-align:center">
       <div style="margin-bottom:5px;color:var(--forest);font-size:18px"><i class="fa-solid fa-users"></i></div>
       <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--forest)" id="total-donatur">—</div>
@@ -58,7 +65,7 @@
     </select>
   </div>
 
-  <div style="display:grid;grid-template-columns:3fr 2fr;gap:1.5rem;align-items:start">
+  <div class="donatur-cols">
 
     {{-- Leaderboard --}}
     <div class="card fade-in" style="padding:0;overflow:hidden">

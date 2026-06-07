@@ -256,6 +256,9 @@ a{text-decoration:none;color:inherit}
         <a href="/admin/kelembagaan/agenda" class="{{ request()->is('admin/kelembagaan/agenda*') ? 'active' : '' }}">
           <i class="fa fa-calendar-days"></i> Agenda Kegiatan
         </a>
+        <a href="/admin/kelembagaan/galeri" class="{{ request()->is('admin/kelembagaan/galeri*') ? 'active' : '' }}">
+          <i class="fa fa-images"></i> Galeri Foto
+        </a>
       @endif
 
       {{-- System section: admin, super_admin only --}}
