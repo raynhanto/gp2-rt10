@@ -185,14 +185,16 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
   <a href="/dashboard" class="{{ request()->is('dashboard') ? 'active' : '' }}">
     <i class="fa fa-gauge"></i> Dashboard
   </a>
-  <a href="/dashboard/profil" class="{{ request()->is('dashboard/profil') ? 'active' : '' }}">
-    <i class="fa fa-user"></i> Profil
+  @if(auth()->user()->isAdmin())
+  <a href="/dashboard/iuran" class="{{ request()->is('dashboard/iuran') ? 'active' : '' }}">
+    <i class="fa fa-wallet"></i> Iuran
   </a>
+  @endif
   <a href="/dashboard/riwayat" class="{{ request()->is('dashboard/riwayat') ? 'active' : '' }}">
     <i class="fa fa-clock-rotate-left"></i> Riwayat
   </a>
-  <a href="/dashboard/iuran" class="{{ request()->is('dashboard/iuran') ? 'active' : '' }}">
-    <i class="fa fa-wallet"></i> Iuran
+  <a href="/dashboard/profil" class="{{ request()->is('dashboard/profil') ? 'active' : '' }}">
+    <i class="fa fa-user"></i> Profil
   </a>
   @if(auth()->user()->isAdmin())
   <a href="/admin" class="{{ request()->is('admin*') ? 'active' : '' }}">
@@ -223,9 +225,9 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
   <hr style="border:none;border-top:1px solid var(--border);margin:4px 0">
   @auth
     <a href="/dashboard">Dashboard</a>
-    <a href="/dashboard/profil">Profil</a>
+    @if(auth()->user()->isAdmin())<a href="/dashboard/iuran">Iuran</a>@endif
     <a href="/dashboard/riwayat">Riwayat</a>
-    <a href="/dashboard/iuran">Iuran</a>
+    <a href="/dashboard/profil">Profil</a>
     @if(auth()->user()->isAdmin())<a href="/admin">{{ $roleLabel ?? 'Admin' }}</a>@endif
     <a href="#" onclick="doLogout()" style="color:var(--rust)">Keluar</a>
   @else

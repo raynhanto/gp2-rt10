@@ -26,9 +26,7 @@
 @endsection
 @section('content')
 @php
-  $whitelistRaw = config('app.iuran_whitelist', '');
-  $whitelist = array_filter(array_map('trim', explode(',', $whitelistRaw)));
-  $isAllowed = in_array(auth()->user()->email, $whitelist, true);
+  $isAllowed = auth()->user()->isAdmin();
 @endphp
 <main style="padding:5rem 0 3rem">
 <div class="container" style="max-width:720px">
