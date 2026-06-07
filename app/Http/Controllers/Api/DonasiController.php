@@ -49,7 +49,7 @@ class DonasiController extends Controller
             ->leftJoin('kampanye as k', 'k.id', '=', 'd.kampanye_id')
             ->select(
                 'd.id', 'd.kampanye_id', 'd.nominal', 'd.is_anonym', 'd.created_at',
-                DB::raw('IF(d.is_anonym=1,"Donatur Anonim",u.nama) as nama'),
+                DB::raw('IF(d.is_anonym=1,"Donatur Anonim",COALESCE(u.nama,d.donatur_nama,"Donatur Anonim")) as nama'),
                 DB::raw('COALESCE(k.judul,"Donasi Umum") as judul')
             )
             ->where('d.status', 'verified')
@@ -57,6 +57,24 @@ class DonasiController extends Controller
             ->limit(100);
         if ($kampanyeId) $q->where('d.kampanye_id', $kampanyeId);
 
+        return response()->json(['success' => true, 'data' => $q->get()]);
+    }
+
+    public function publicList(Request $request): JsonResponse
+    {
+        $kampanyeId = $request->query('kampanye_id');
+        $q = DB::table('donasi as d')
+            ->leftJoin('users as u', 'u.id', '=', 'd.user_id')
+            ->leftJoin('kampanye as k', 'k.id', '=', 'd.kampanye_id')
+            ->select(
+                'd.id', 'd.kampanye_id', 'd.nominal', 'd.is_anonym', 'd.created_at',
+                DB::raw('IF(d.is_anonym=1,"Donatur Anonim",COALESCE(u.nama,d.donatur_nama,"Donatur Anonim")) as nama'),
+                DB::raw('COALESCE(k.judul,"Donasi Umum") as judul')
+            )
+            ->where('d.status', 'verified')
+            ->orderByDesc('d.created_at')
+            ->limit(100);
+        if ($kampanyeId) $q->where('d.kampanye_id', $kampanyeId);
         return response()->json(['success' => true, 'data' => $q->get()]);
     }
 

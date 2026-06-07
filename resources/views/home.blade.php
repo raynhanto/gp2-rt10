@@ -62,8 +62,8 @@
           Perumahan Golden Park 2 · Cisauk
         </div>
       </div>
-      <h1 class="hero-h1">Patungan digital<br>warga <em>RT 10</em></h1>
-      <p class="hero-sub">Donasi untuk kebutuhan lingkungan kita bersama.<br>Transparan, mudah, dan bisa dipantau oleh seluruh warga RT 10.</p>
+      <h1 class="hero-h1">Platform digital<br>warga <em>RT 10</em></h1>
+      <p class="hero-sub">Kampanye donasi, laporan keuangan, dan informasi RT — semua dalam satu tempat.<br>Transparan, mudah, dan terbuka untuk seluruh warga.</p>
       <div class="hero-actions">
         <a href="/donasi" class="btn-gold" style="font-size:15px;padding:13px 28px">Donasi Sekarang →</a>
         <a href="/kampanye" style="background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.22);font-size:15px;font-weight:500;padding:13px 28px;border-radius:100px;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;backdrop-filter:blur(8px)" onmouseenter="this.style.background='rgba(255,255,255,0.18)'" onmouseleave="this.style.background='rgba(255,255,255,0.1)'">Lihat Kampanye</a>

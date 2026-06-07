@@ -25,6 +25,7 @@ Route::middleware('admin:bendahara,admin,super_admin')->group(function () {
 
 // ── Donasi ────────────────────────────────────────────────────
 Route::get('/donasi', [Api\DonasiController::class, 'index']);
+Route::get('/donasi/public', [Api\DonasiController::class, 'publicList']);
 Route::middleware('login')->group(function () {
     Route::post('/donasi',                [Api\DonasiController::class, 'store']);
     Route::patch('/donasi/{id}/metode',   [Api\DonasiController::class, 'updateMetode'])->where('id', '[0-9]+');
@@ -136,6 +137,17 @@ Route::middleware('admin:bendahara,admin,super_admin')->group(function () {
     Route::get('/transaksi-instan',         [Api\TransaksiInstanController::class, 'index']);
     Route::post('/transaksi-instan',        [Api\TransaksiInstanController::class, 'store']);
     Route::delete('/transaksi-instan/{id}', [Api\TransaksiInstanController::class, 'destroy'])->where('id', '[0-9]+');
+});
+
+// ── Galeri ────────────────────────────────────────────────────
+Route::get('/galeri',       [Api\GaleriController::class, 'index']);
+Route::get('/galeri/{id}',  [Api\GaleriController::class, 'show'])->where('id', '[0-9]+');
+Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
+    Route::post('/galeri',                    [Api\GaleriController::class, 'store']);
+    Route::put('/galeri/{id}',                [Api\GaleriController::class, 'update'])->where('id', '[0-9]+');
+    Route::post('/galeri/{id}/foto',          [Api\GaleriController::class, 'addFotos'])->where('id', '[0-9]+');
+    Route::delete('/galeri/{id}',             [Api\GaleriController::class, 'destroy'])->where('id', '[0-9]+');
+    Route::delete('/galeri/foto/{fotoId}',    [Api\GaleriController::class, 'deleteFoto'])->where('fotoId', '[0-9]+');
 });
 
 // ── Agenda ────────────────────────────────────────────────────

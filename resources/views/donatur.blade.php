@@ -24,6 +24,10 @@
 .rank-divider{height:1px;background:var(--border);margin:2px 0}
 .donatur-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
 .donatur-cols{display:grid;grid-template-columns:3fr 2fr;gap:1.5rem;align-items:start}
+.filter-pills{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;margin-bottom:1.5rem;scrollbar-width:none}
+.filter-pills::-webkit-scrollbar{display:none}
+.filter-pill{flex-shrink:0;padding:6px 14px;border-radius:100px;border:1.5px solid var(--border);background:#fff;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);cursor:pointer;white-space:nowrap;transition:background 0.15s,color 0.15s,border-color 0.15s}
+.filter-pill.active{background:var(--forest);color:#fff;border-color:var(--forest)}
 @media(max-width:640px){
   .donatur-stats{gap:0.5rem}
   .donatur-stats>div{padding:1rem 0.75rem}
@@ -58,11 +62,8 @@
     </div>
   </div>
 
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem">
-    <label style="font-size:13px;color:var(--ink-soft)">Filter:</label>
-    <select id="filter-kampanye" onchange="loadDonatur()" style="padding:7px 14px;border:1.5px solid var(--border);border-radius:100px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;color:var(--ink);background:#fff;cursor:pointer">
-      <option value="">Semua kampanye</option>
-    </select>
+  <div class="filter-pills" id="filter-pills">
+    <button class="filter-pill active" data-id="" onclick="selectPill(this)">Semua kampanye</button>
   </div>
 
   <div class="donatur-cols">
@@ -126,7 +127,10 @@ function renderLeaderboard(ranked) {
   const medals = medalColors.map(([c,bg]) => `<div style="width:24px;height:24px;border-radius:50%;background:${bg};border:2px solid ${c};display:flex;align-items:center;justify-content:center;margin:0 auto"><svg viewBox="0 0 24 24" fill="${c}" style="width:12px;height:12px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>`);
   const maxTotal = ranked[0].total;
 
-  el.innerHTML = ranked.map((r, i) => {
+  const visible = ranked.slice(0, 10);
+  const hasMore = ranked.length > 10;
+
+  el.innerHTML = visible.map((r, i) => {
     const av = avatarPalette[i % avatarPalette.length];
     const ini = initials(r.nama);
     const pct = Math.round((r.total / maxTotal) * 100);
@@ -154,6 +158,20 @@ function renderLeaderboard(ranked) {
       </div>
     </div>`;
   }).join('');
+
+  if (hasMore) {
+    el.insertAdjacentHTML('beforeend', `
+      <div style="text-align:center;padding:0.875rem 1rem;border-top:1px solid var(--border)">
+        <a href="/dashboard" style="font-size:13px;color:var(--forest);font-weight:500;text-decoration:none">
+          Lihat semua ${ranked.length} donatur <i class="fa-solid fa-arrow-right" style="font-size:11px"></i>
+        </a>
+      </div>`);
+  }
+}
+
+function parseDate(str) {
+  // MySQL timestamps use space; iOS Safari requires 'T' separator
+  return new Date((str || '').replace(' ', 'T'));
 }
 
 function renderRecent(list) {
@@ -164,7 +182,8 @@ function renderRecent(list) {
     return;
   }
   el.innerHTML = recent.map(d => {
-    const tgl = new Date(d.created_at).toLocaleDateString('id-ID', {day:'numeric', month:'short'});
+    const dt = parseDate(d.created_at);
+    const tgl = isNaN(dt) ? '—' : dt.toLocaleDateString('id-ID', {day:'numeric', month:'short'});
     const nama = d.nama || 'Donatur Anonim';
     const ini  = initials(nama);
     return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
@@ -178,30 +197,57 @@ function renderRecent(list) {
   }).join('');
 }
 
+let activeKampanyeId = '';
+
+function selectPill(el) {
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  activeKampanyeId = el.dataset.id;
+  loadDonatur();
+}
+
 async function loadDonatur() {
-  const kampanyeId = document.getElementById('filter-kampanye').value;
-  const url = '/api/donasi' + (kampanyeId ? '?kampanye_id=' + kampanyeId : '');
-  const res  = await fetch(url);
-  const data = await res.json();
-  if (!data.success) return;
+  const errMsg = '<div style="text-align:center;padding:2.5rem;color:var(--ink-soft)">Gagal memuat data.</div>';
+  try {
+    const url = '/api/donasi/public' + (activeKampanyeId ? '?kampanye_id=' + activeKampanyeId : '');
+    const res  = await fetch(url, {credentials:'same-origin'});
+    const data = await res.json();
+    if (!data.success) {
+      document.getElementById('leaderboard-list').innerHTML = errMsg;
+      document.getElementById('recent-list').innerHTML = errMsg;
+      return;
+    }
 
-  const list   = data.data;
-  const ranked = buildRanking(list);
+    const list   = data.data;
+    const ranked = buildRanking(list);
 
-  document.getElementById('total-donatur').textContent  = ranked.length;
-  document.getElementById('total-terkumpul').textContent = 'Rp ' + list.reduce((s, d) => s + parseInt(d.nominal), 0).toLocaleString('id-ID');
+    document.getElementById('total-donatur').textContent  = ranked.length;
+    document.getElementById('total-terkumpul').textContent = 'Rp ' + list.reduce((s, d) => s + parseInt(d.nominal), 0).toLocaleString('id-ID');
 
-  renderLeaderboard(ranked);
-  renderRecent(list);
+    renderLeaderboard(ranked);
+    renderRecent(list);
+  } catch(e) {
+    document.getElementById('leaderboard-list').innerHTML = errMsg;
+    document.getElementById('recent-list').innerHTML = errMsg;
+  }
 }
 
 async function loadKampanye() {
-  const res  = await fetch('/api/kampanye');
-  const data = await res.json();
-  if (!data.success) return;
-  document.getElementById('total-kampanye').textContent = data.data.filter(k => k.status === 'aktif' || k.status === 'urgent').length;
-  const sel = document.getElementById('filter-kampanye');
-  sel.innerHTML += data.data.map(k => `<option value="${k.id}">${k.judul}</option>`).join('');
+  try {
+    const res  = await fetch('/api/kampanye', {credentials:'same-origin'});
+    const data = await res.json();
+    if (!data.success) return;
+    document.getElementById('total-kampanye').textContent = data.data.filter(k => k.status === 'aktif' || k.status === 'urgent').length;
+    const pills = document.getElementById('filter-pills');
+    data.data.forEach(k => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-pill';
+      btn.dataset.id = k.id;
+      btn.textContent = k.judul;
+      btn.onclick = () => selectPill(btn);
+      pills.appendChild(btn);
+    });
+  } catch(e) {}
 }
 
 loadKampanye();

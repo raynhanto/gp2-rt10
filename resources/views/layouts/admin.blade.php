@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>@yield('title', 'Admin') — Kas RT 10</title>
+<title>@yield('title', 'Admin') — GP2 RT10</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -177,7 +177,7 @@ a{text-decoration:none;color:inherit}
         <svg viewBox="0 0 24 24"><path d="M12 2L2 8v14h7v-7h6v7h7V8L12 2z"/></svg>
       </div>
       <div class="sidebar-brand">
-        Kas RT 10
+        GP2 RT10
         <small>Admin Panel</small>
       </div>
     </div>

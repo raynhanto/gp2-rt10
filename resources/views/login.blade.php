@@ -13,7 +13,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Masuk — Kas RT 10 Golden Park 2</title>
+<title>Masuk — RT 10 Golden Park 2</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -35,8 +35,8 @@ h1{font-family:'DM Serif Display',serif;font-size:1.6rem;color:#1C3D2E;margin-bo
   <div class="logo-mark">
     <svg viewBox="0 0 24 24"><path d="M12 2L2 8v14h7v-7h6v7h7V8L12 2z"/></svg>
   </div>
-  <h1>Kas RT 10</h1>
-  <p class="sub">Golden Park 2 · Cisauk, Banten<br>Masuk untuk mulai berdonasi</p>
+  <h1>RT 10 Golden Park 2</h1>
+  <p class="sub">Portal Warga · Cisauk, Banten<br>Masuk untuk mulai berdonasi</p>
 
   @if($errorMsg)
     <div class="error">{{ $errorMsg }}</div>

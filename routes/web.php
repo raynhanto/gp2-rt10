@@ -24,6 +24,7 @@ Route::get('/onboarding', fn() => view('onboarding'))->middleware('login')->name
 
 // ── Warga dashboard ───────────────────────────────────────────
 Route::view('/agenda',  'agenda')->name('agenda');
+Route::view('/galeri',  'galeri')->name('galeri');
 Route::view('/laporan', 'laporan')->middleware('login')->name('laporan');
 
 Route::middleware('login')->prefix('dashboard')->name('dashboard.')->group(function () {
@@ -73,6 +74,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::prefix('kelembagaan')->name('kelembagaan.')->group(function () {
             Route::view('/agenda', 'admin.kelembagaan.agenda')->name('agenda');
+            Route::view('/galeri', 'admin.kelembagaan.galeri')->name('galeri');
         });
 
         Route::prefix('kependudukan')->name('kependudukan.')->group(function () {

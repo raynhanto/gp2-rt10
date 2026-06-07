@@ -34,8 +34,8 @@ let selectedFile = null;
 let selectedMetode = null;
 
 const REKENING = [
-  { bank: 'BRI', norek: '123456789012345', display: '1234-5678-9012-345', nama: 'Bendahara RT 10 GP2' },
-  { bank: 'BCA', norek: '1234567890',      display: '123-456-7890',       nama: 'Bendahara RT 10 GP2' },
+  { bank: 'BRI', norek: '123456789012345', display: '1234-5678-9012-345', nama: 'Bendahara GP2 RT10' },
+  { bank: 'BCA', norek: '1234567890',      display: '123-456-7890',       nama: 'Bendahara GP2 RT10' },
 ];
 
 const METODE = [
@@ -267,7 +267,7 @@ function updateWaLink() {
   if (!btn || !_donasi) return;
   const metodeLabel = { qris: 'QRIS', transfer: 'Transfer Bank', gopay: 'GoPay/OVO' };
   const msg = encodeURIComponent(
-    `Halo Pengurus RT 10 GP2,\n\nSaya ingin konfirmasi donasi:\n` +
+    `Halo Pengurus GP2 RT10,\n\nSaya ingin konfirmasi donasi:\n` +
     `• Kampanye: ${_donasi.judul || '-'}\n` +
     `• Nominal: Rp ${parseInt(_donasi.nominal).toLocaleString('id-ID')}\n` +
     `• Metode: ${metodeLabel[selectedMetode] || selectedMetode}\n` +

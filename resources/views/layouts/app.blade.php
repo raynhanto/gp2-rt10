@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>@yield('title', 'Kas RT 10 Golden Park 2') — Kas RT 10</title>
+<title>@yield('title', 'RT 10 Golden Park 2') — GP2 RT10</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -152,7 +152,7 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
       <svg viewBox="0 0 24 24"><path d="M12 2L2 8v14h7v-7h6v7h7V8L12 2z"/></svg>
     </div>
     <div>
-      <div class="nav-brand">Kas RT 10<span>Golden Park 2 · Cisauk</span></div>
+      <div class="nav-brand">GP2 RT10<span>Golden Park 2 · Cisauk</span></div>
     </div>
   </a>
 
@@ -282,8 +282,8 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
         <div class="footer-brand-mark">
           <svg viewBox="0 0 24 24"><path d="M12 2L2 8v14h7v-7h6v7h7V8L12 2z"/></svg>
         </div>
-        <div class="footer-brand">Kas RT 10<br>Golden Park 2</div>
-        <div class="footer-brand-sub">Platform patungan & manajemen keuangan warga RT 10, Perumahan Golden Park 2, Cisauk, Banten.</div>
+        <div class="footer-brand">RT 10<br>Golden Park 2</div>
+        <div class="footer-brand-sub">Portal digital warga RT 10, Perumahan Golden Park 2, Cisauk, Tangerang Selatan, Banten.</div>
       </div>
       <div>
         <div class="footer-col-title">Navigasi</div>
