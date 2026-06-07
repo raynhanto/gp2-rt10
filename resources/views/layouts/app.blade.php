@@ -98,14 +98,14 @@ button.bn-item{background:none;border:none;font-family:inherit;-webkit-appearanc
 .nav-user{display:flex;align-items:center;gap:8px}
 .nav-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid var(--gold-light)}
 .nav-avatar-placeholder{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--forest),var(--forest-mid));color:var(--gold);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.member-nav{position:fixed;top:4.25rem;left:50%;transform:translateX(-50%);z-index:99;display:flex;align-items:center;gap:1px;padding:3px;background:rgba(253,250,242,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(200,160,48,0.32);border-radius:100px;box-shadow:0 2px 12px rgba(26,61,43,0.07);white-space:nowrap}
-.member-nav a{font-size:13px;font-weight:500;color:var(--ink-soft);padding:7px 15px;border-radius:100px;transition:color 0.18s,background 0.18s;display:flex;align-items:center;gap:6px}
+.member-nav{position:fixed;top:4.25rem;left:50%;transform:translateX(-50%);z-index:99;display:flex;align-items:center;gap:1px;padding:3px;background:rgba(245,236,197,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(200,160,48,0.45);border-radius:100px;box-shadow:0 4px 16px rgba(154,120,24,0.14);white-space:nowrap}
+.member-nav a{font-size:13px;font-weight:500;color:var(--ink-mid);padding:7px 15px;border-radius:100px;transition:color 0.18s,background 0.18s;display:flex;align-items:center;gap:6px}
 .member-nav a i{font-size:12px}
-.member-nav a:hover{color:var(--forest);background:var(--forest-pale)}
-.member-nav a.active{background:var(--forest);color:#fff;box-shadow:0 2px 8px rgba(26,61,43,0.22)}
+.member-nav a:hover{color:var(--gold-dark);background:rgba(200,160,48,0.14)}
+.member-nav a.active{background:var(--gold-dark);color:#fff;box-shadow:0 2px 8px rgba(154,120,24,0.28)}
 .member-nav .mn-logout{color:var(--rust)}
-.member-nav .mn-logout:hover{background:#FDECEA;color:var(--rust)}
-.mn-divider{width:1px;height:16px;background:rgba(200,160,48,0.28);margin:0 2px;flex-shrink:0}
+.member-nav .mn-logout:hover{background:rgba(181,64,26,0.1);color:var(--rust)}
+.mn-divider{width:1px;height:16px;background:rgba(200,160,48,0.35);margin:0 2px;flex-shrink:0}
 main{padding-top:5rem;min-height:100vh}
 body.has-member main{padding-top:7.5rem!important}
 .container{max-width:1100px;margin:0 auto;padding:0 2rem}

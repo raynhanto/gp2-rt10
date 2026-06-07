@@ -83,10 +83,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         Route::prefix('kependudukan')->name('kependudukan.')->group(function () {
-            Route::view('/',          'admin.kependudukan.index')->name('index');
-            Route::view('/warga',     'admin.kependudukan.warga')->name('warga');
-            Route::get('/warga/{id}', fn(int $id) => view('admin.kependudukan.detail'))
+            Route::view('/',           'admin.kependudukan.index')->name('index');
+            Route::view('/warga',      'admin.kependudukan.warga')->name('warga');
+            Route::get('/warga/{id}',  fn(int $id) => view('admin.kependudukan.detail'))
                 ->where('id', '[0-9]+')->name('detail');
+            Route::view('/kendaraan',  'admin.kependudukan.kendaraan')->name('kendaraan');
         });
     });
 

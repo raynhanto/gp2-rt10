@@ -250,6 +250,9 @@ a{text-decoration:none;color:inherit}
         <a href="/admin/kependudukan/warga" class="{{ request()->is('admin/kependudukan/warga*') ? 'active' : '' }}">
           <i class="fa fa-id-card"></i> Data Warga & KK
         </a>
+        <a href="/admin/kependudukan/kendaraan" class="{{ request()->is('admin/kependudukan/kendaraan*') ? 'active' : '' }}">
+          <i class="fa fa-car"></i> Data Kendaraan
+        </a>
 
         <div class="sidebar-divider"></div>
         <div class="sidebar-group-label">Kelembagaan</div>

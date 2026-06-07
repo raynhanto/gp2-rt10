@@ -59,6 +59,11 @@ class KependudukanController extends Controller
             $q->whereHas('unitRumah', fn($r) => $r->where('blok', $blok));
         }
 
+        if ($request->query('all') === '1') {
+            $items = $q->get();
+            return response()->json(['success' => true, 'data' => $items->all(), 'meta' => ['total' => $items->count()]]);
+        }
+
         $perPage = min(50, (int) ($request->query('per_page', 20)));
         $data    = $q->paginate($perPage);
 
