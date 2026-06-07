@@ -12,7 +12,7 @@ class Donasi extends Model
     protected $table = 'donasi';
 
     protected $fillable = [
-        'user_id', 'kampanye_id', 'nominal', 'metode',
+        'user_id', 'donatur_nama', 'kampanye_id', 'nominal', 'metode',
         'is_anonym', 'bukti_url', 'status',
         'catatan_admin', 'verified_by', 'verified_at',
     ];

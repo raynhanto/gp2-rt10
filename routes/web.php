@@ -52,15 +52,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::view('/laporan',     'admin.laporan')->name('laporan');
 
         Route::prefix('keuangan')->name('keuangan.')->group(function () {
-            Route::view('/',             'admin.keuangan.dashboard')->name('dashboard');
-            Route::view('/kas',          'admin.keuangan.kas')->name('kas');
-            Route::view('/pengeluaran',  'admin.keuangan.pengeluaran')->name('pengeluaran');
-            Route::view('/anggaran',     'admin.keuangan.anggaran')->name('anggaran');
-            Route::view('/kategori',     'admin.keuangan.kategori')->name('kategori');
-            Route::view('/iuran',        'admin.keuangan.iuran')->name('iuran');
-            Route::view('/iuran/matrix', 'admin.keuangan.matrix')->name('matrix');
-            Route::view('/laporan',      'admin.keuangan.laporan')->name('laporan');
-            Route::view('/gsheet',       'admin.keuangan.gsheet')->name('gsheet');
+            Route::view('/',                   'admin.keuangan.dashboard')->name('dashboard');
+            Route::view('/kas',                'admin.keuangan.kas')->name('kas');
+            Route::view('/transaksi-instan',   'admin.keuangan.transaksi-instan')->name('transaksi-instan');
+            Route::view('/pengeluaran',        'admin.keuangan.pengeluaran')->name('pengeluaran');
+            Route::view('/anggaran',           'admin.keuangan.anggaran')->name('anggaran');
+            Route::view('/kategori',           'admin.keuangan.kategori')->name('kategori');
+            Route::view('/iuran',              'admin.keuangan.iuran')->name('iuran');
+            Route::view('/iuran/matrix',       'admin.keuangan.matrix')->name('matrix');
+            Route::view('/laporan',            'admin.keuangan.laporan')->name('laporan');
+            Route::view('/gsheet',             'admin.keuangan.gsheet')->name('gsheet');
         });
     });
 

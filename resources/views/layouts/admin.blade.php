@@ -208,6 +208,9 @@ a{text-decoration:none;color:inherit}
         <a href="/admin/keuangan/kas" class="{{ request()->is('admin/keuangan/kas') ? 'active' : '' }}">
           <i class="fa fa-coins"></i> Kas
         </a>
+        <a href="/admin/keuangan/transaksi-instan" class="{{ request()->is('admin/keuangan/transaksi-instan') ? 'active' : '' }}">
+          <i class="fa fa-right-left"></i> Transaksi Instan
+        </a>
         <a href="/admin/keuangan/iuran" class="{{ request()->is('admin/keuangan/iuran*') ? 'active' : '' }}">
           <i class="fa fa-calendar-check"></i> Iuran Bulanan
         </a>

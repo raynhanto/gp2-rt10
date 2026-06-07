@@ -30,10 +30,11 @@ Route::middleware('login')->group(function () {
     Route::patch('/donasi/{id}/metode',   [Api\DonasiController::class, 'updateMetode'])->where('id', '[0-9]+');
     Route::post('/donasi/{id}/bukti',     [Api\DonasiController::class, 'uploadBukti'])->where('id', '[0-9]+');
 });
-// Verifikasi donasi: bendahara, admin, super_admin
-Route::post('/donasi/{id}/verify', [Api\DonasiController::class, 'verify'])
-    ->where('id', '[0-9]+')
-    ->middleware('admin:bendahara,admin,super_admin');
+// Verifikasi & admin input donasi: bendahara, admin, super_admin
+Route::middleware('admin:bendahara,admin,super_admin')->group(function () {
+    Route::post('/donasi/admin',       [Api\DonasiController::class, 'adminStore']);
+    Route::post('/donasi/{id}/verify', [Api\DonasiController::class, 'verify'])->where('id', '[0-9]+');
+});
 
 // ── Kas (bendahara, admin, super_admin) ───────────────────────
 Route::get('/kas/summary', [Api\KasController::class, 'summary']);
@@ -128,6 +129,13 @@ Route::middleware('admin:bendahara,admin,super_admin')->group(function () {
     Route::post('/gsheet/sync/{tab}',  [Api\GsheetController::class, 'syncTab']);
     Route::post('/gsheet/sync-all',    [Api\GsheetController::class, 'syncAll']);
     Route::get('/gsheet/logs',         [Api\GsheetController::class, 'logs']);
+});
+
+// ── Transaksi Instan (bendahara, admin, super_admin) ──────────
+Route::middleware('admin:bendahara,admin,super_admin')->group(function () {
+    Route::get('/transaksi-instan',         [Api\TransaksiInstanController::class, 'index']);
+    Route::post('/transaksi-instan',        [Api\TransaksiInstanController::class, 'store']);
+    Route::delete('/transaksi-instan/{id}', [Api\TransaksiInstanController::class, 'destroy'])->where('id', '[0-9]+');
 });
 
 // ── Pengumuman ────────────────────────────────────────────────

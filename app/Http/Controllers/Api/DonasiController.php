@@ -28,7 +28,7 @@ class DonasiController extends Controller
             if ($request->query('status'))  $q->where('status', $request->query('status'));
             if ($kampanyeId)                $q->where('kampanye_id', $kampanyeId);
             $data = $q->get()->map(fn($d) => array_merge($d->toArray(), [
-                'nama'  => $d->user?->nama,
+                'nama'  => $d->user?->nama ?? $d->donatur_nama,
                 'email' => $d->user?->email,
                 'judul' => $d->kampanye?->judul ?? 'Donasi Umum',
             ]));
@@ -133,6 +133,68 @@ class DonasiController extends Controller
         );
 
         return response()->json(['success' => true, 'message' => $msg]);
+    }
+
+    public function adminStore(Request $request): JsonResponse
+    {
+        $body       = $request->json()->all();
+        $nominal    = (int) ($body['nominal'] ?? 0);
+        $kampanyeId = isset($body['kampanye_id']) && $body['kampanye_id'] !== ''
+            ? (int) $body['kampanye_id'] : null;
+        $nama       = trim($body['donatur_nama'] ?? '');
+
+        if ($nominal < 1000) {
+            return response()->json(['success' => false, 'message' => 'Nominal minimal Rp 1.000.'], 422);
+        }
+
+        $kampanye = null;
+        if ($kampanyeId !== null) {
+            $kampanye = Kampanye::find($kampanyeId);
+            if (!$kampanye) {
+                return response()->json(['success' => false, 'message' => 'Kampanye tidak ditemukan.'], 404);
+            }
+        }
+
+        $userId = isset($body['user_id']) && $body['user_id'] ? (int) $body['user_id'] : null;
+
+        DB::transaction(function () use ($body, $nominal, $kampanyeId, $nama, $kampanye, $userId) {
+            $donasi = Donasi::create([
+                'user_id'      => $userId,
+                'donatur_nama' => $userId ? null : ($nama ?: 'Donatur Tunai'),
+                'kampanye_id'  => $kampanyeId,
+                'nominal'      => $nominal,
+                'metode'       => $body['metode'] ?? 'tunai',
+                'is_anonym'    => !empty($body['is_anonym']),
+                'status'       => 'verified',
+                'catatan_admin' => $body['catatan'] ?? 'Input manual oleh admin',
+                'verified_by'  => Auth::id(),
+                'verified_at'  => now(),
+            ]);
+
+            $kampanye?->refreshTerkumpul();
+
+            $label = $kampanye ? "Donasi manual — {$kampanye->judul}" : 'Donasi manual — Donasi Umum';
+
+            Kas::create([
+                'jenis'       => 'masuk',
+                'nominal'     => $nominal,
+                'keterangan'  => $label,
+                'kampanye_id' => $kampanyeId,
+                'donasi_id'   => $donasi->id,
+                'created_by'  => Auth::id(),
+            ]);
+
+            $donaturLabel = $donasi->donatur_nama ?? ($donasi->user?->nama ?? 'Warga');
+            $this->logActivity(
+                'admin_store_donasi',
+                "Input manual donasi Rp " . number_format($nominal, 0, ',', '.') . " — {$donaturLabel}",
+                Donasi::class,
+                $donasi->id,
+                ['nominal' => $nominal, 'donatur' => $donaturLabel]
+            );
+        });
+
+        return response()->json(['success' => true, 'message' => 'Donasi berhasil dicatat dan diverifikasi.'], 201);
     }
 
     public function updateMetode(Request $request, int $id): JsonResponse

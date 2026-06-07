@@ -1,7 +1,7 @@
 # CLAUDE.md — RT 10 Golden Park 2 Platform (Laravel)
 
 > Last updated: 2026-06-07
-> Live URL: https://gp2rt10.vensalor-kingdom.com
+> Live URL: https://gp2rt10.com
 > Legacy (vanilla PHP): `/Users/galanteo/Desktop/Trash/code_project/rt10-platform`
 
 ---
@@ -18,14 +18,26 @@ This is the **Laravel 13 migration** of the original vanilla PHP app. All existi
 | Layer | Tool | Notes |
 |---|---|---|
 | Frontend | Blade + Vanilla JS | No npm/Vite, styles inline in views |
-| Backend | Laravel 13, PHP ^8.2 | Eloquent ORM, Socialite, Middleware |
-| Database | MySQL | Shared hosting (Rumahweb) |
+| Backend | Laravel 13, PHP ^8.3 | Eloquent ORM, Socialite, Middleware |
+| Database | MySQL | Shared hosting (cPanel) |
 | Auth | Google OAuth 2.0 | Laravel Socialite |
-| Hosting | Rumahweb cPanel | vens5525 account |
+| Hosting | cPanel | gp2r2845 account |
 
-**Domain:** `gp2rt10.vensalor-kingdom.com`
-**Document root:** `/home/vens5525/public_html/gp2rt10.vensalor-kingdom.com/public`
-**PHP target:** 8.2 (production), tested on 8.5 locally
+**Domain:** `gp2rt10.com`
+**Document root:** `public_html/` (FTP root = document root)
+**PHP version:** 8.4 (production), 8.3/8.5 locally
+**FTP host:** `ftp.gp2rt10.com` — credentials in `secret/deploy.json` (gitignored)
+**DB credentials:** in `secret/deploy.json` (gitignored)
+
+### Deployment Instructions
+To deploy updates to the server, use `lftp` with credentials from `secret/deploy.json`:
+```bash
+# Upload changed files (example)
+lftp -c "open ftp://ftp.gp2rt10.com; user 'gp2rt10@gp2rt10.com' 'PASS'; set ftp:passive-mode yes; set ssl:verify-certificate no; lcd /path/to/rt10-laravel; put app/Http/Controllers/Api/SomeController.php -o app/Http/Controllers/Api/SomeController.php"
+```
+- **vendor/** — only re-upload if composer dependencies change (zip via `zip -r /tmp/vendor.zip vendor/` then extract via cPanel)
+- **After uploading PHP files** — clear cache via `deploy.php` or by deleting `bootstrap/cache/*.php`
+- **composer.json platform** is set to `8.4.0` to match production
 
 ---
 
@@ -114,7 +126,7 @@ rt10-laravel/
 | Manual `$_POST` CSRF | `X-CSRF-TOKEN` header / `_token` field |
 | `session_start()` + `$_SESSION` | Laravel session (file driver) |
 
-**IMPORTANT:** Google Console redirect URI must be updated to `https://gp2rt10.vensalor-kingdom.com/auth/callback` (was `/api/auth/callback`).
+**IMPORTANT:** Google Console redirect URI must be `https://gp2rt10.com/auth/callback`.
 
 ---
 
