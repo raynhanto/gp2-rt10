@@ -16,7 +16,11 @@ class UsersController extends Controller
 {
     public function index(): JsonResponse
     {
-        $users = User::with('units:user_id,blok,nomor,is_primary')
+        $users = User::with([
+                'units:user_id,blok,nomor,is_primary',
+                'kepalaKeluarga:id,user_id,nama,unit_rumah_id',
+                'kepalaKeluarga.unitRumah:id,blok,nomor',
+            ])
             ->select('id', 'email', 'nama', 'no_wa', 'role', 'profil_lengkap', 'avatar_url', 'created_at')
             ->orderByDesc('created_at')
             ->get();

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\KepalaKeluarga;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -81,6 +83,11 @@ class User extends Authenticatable
             ->orderByDesc('is_primary')
             ->orderBy('blok')
             ->orderBy('nomor');
+    }
+
+    public function kepalaKeluarga(): HasOne
+    {
+        return $this->hasOne(KepalaKeluarga::class);
     }
 
     public static function upsertFromGoogle(array $googleData): self

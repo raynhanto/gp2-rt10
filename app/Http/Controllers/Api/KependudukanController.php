@@ -9,11 +9,13 @@ use App\Models\AnggotaKeluarga;
 use App\Models\KepalaKeluarga;
 use App\Models\Kendaraan;
 use App\Models\UnitRumah;
+use App\Services\ExcelExportService;
 use App\Traits\LogsAdminActivity;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class KependudukanController extends Controller
 {
@@ -44,7 +46,7 @@ class KependudukanController extends Controller
 
     public function kepalaIndex(Request $request): JsonResponse
     {
-        $q = KepalaKeluarga::with(['unitRumah:id,blok,nomor'])
+        $q = KepalaKeluarga::with(['unitRumah:id,blok,nomor', 'user:id,nama,email,avatar_url'])
             ->orderBy('nama');
 
         if ($search = $request->query('search')) {
@@ -89,6 +91,10 @@ class KependudukanController extends Controller
 
         if (!empty($body['nik']) && KepalaKeluarga::where('nik', $body['nik'])->exists()) {
             return response()->json(['success' => false, 'message' => 'NIK sudah terdaftar.'], 422);
+        }
+
+        if (!empty($body['user_id']) && KepalaKeluarga::where('user_id', $body['user_id'])->exists()) {
+            return response()->json(['success' => false, 'message' => 'Akun pengguna ini sudah terhubung ke KK lain.'], 422);
         }
 
         $kk = KepalaKeluarga::create([
@@ -137,22 +143,34 @@ class KependudukanController extends Controller
             return response()->json(['success' => false, 'message' => 'NIK sudah terdaftar.'], 422);
         }
 
-        $kk->update(array_filter([
-            'unit_rumah_id'    => $body['unit_rumah_id'] ?? $kk->unit_rumah_id,
-            'no_kk'            => $body['no_kk'] ?? $kk->no_kk,
-            'nama'             => $body['nama'] ?? $kk->nama,
-            'nik'              => $body['nik'] ?? $kk->nik,
-            'tempat_lahir'     => $body['tempat_lahir'] ?? $kk->tempat_lahir,
-            'tanggal_lahir'    => $body['tanggal_lahir'] ?? $kk->tanggal_lahir,
-            'jenis_kelamin'    => $body['jenis_kelamin'] ?? $kk->jenis_kelamin,
-            'agama'            => $body['agama'] ?? $kk->agama,
-            'pendidikan'       => $body['pendidikan'] ?? $kk->pendidikan,
-            'pekerjaan'        => $body['pekerjaan'] ?? $kk->pekerjaan,
-            'no_wa'            => $body['no_wa'] ?? $kk->no_wa,
+        if (!empty($body['user_id']) && $body['user_id'] !== $kk->user_id &&
+            KepalaKeluarga::where('user_id', $body['user_id'])->where('id', '!=', $id)->exists()) {
+            return response()->json(['success' => false, 'message' => 'Akun pengguna ini sudah terhubung ke KK lain.'], 422);
+        }
+
+        $updates = array_filter([
+            'unit_rumah_id'     => $body['unit_rumah_id'] ?? $kk->unit_rumah_id,
+            'no_kk'             => $body['no_kk'] ?? $kk->no_kk,
+            'nama'              => $body['nama'] ?? $kk->nama,
+            'nik'               => $body['nik'] ?? $kk->nik,
+            'tempat_lahir'      => $body['tempat_lahir'] ?? $kk->tempat_lahir,
+            'tanggal_lahir'     => $body['tanggal_lahir'] ?? $kk->tanggal_lahir,
+            'jenis_kelamin'     => $body['jenis_kelamin'] ?? $kk->jenis_kelamin,
+            'agama'             => $body['agama'] ?? $kk->agama,
+            'pendidikan'        => $body['pendidikan'] ?? $kk->pendidikan,
+            'pekerjaan'         => $body['pekerjaan'] ?? $kk->pekerjaan,
+            'no_wa'             => $body['no_wa'] ?? $kk->no_wa,
             'status_perkawinan' => $body['status_perkawinan'] ?? $kk->status_perkawinan,
-            'status_tinggal'   => $body['status_tinggal'] ?? $kk->status_tinggal,
-            'keterangan'       => $body['keterangan'] ?? $kk->keterangan,
-        ], fn($v) => $v !== null));
+            'status_tinggal'    => $body['status_tinggal'] ?? $kk->status_tinggal,
+            'keterangan'        => $body['keterangan'] ?? $kk->keterangan,
+        ], fn($v) => $v !== null);
+
+        // user_id can be explicitly set to null to unlink — handle outside array_filter
+        if (array_key_exists('user_id', $body)) {
+            $updates['user_id'] = $body['user_id'];
+        }
+
+        $kk->update($updates);
 
         $this->logActivity('update_kk', "Update KK: {$kk->nama}", 'KepalaKeluarga', $kk->id);
 
@@ -402,5 +420,73 @@ class KependudukanController extends Controller
             ->map(fn($u) => ['id' => $u->id, 'label' => "Blok {$u->blok}-{$u->nomor}"]);
 
         return response()->json(['success' => true, 'data' => $units]);
+    }
+
+    // ── Laporan Kependudukan ──────────────────────────────────────
+
+    public function laporan(): JsonResponse
+    {
+        // Per-blok summary
+        $perBlok = DB::table('kepala_keluarga as kk')
+            ->join('unit_rumah as u', 'u.id', '=', 'kk.unit_rumah_id')
+            ->leftJoin('anggota_keluarga as ag', 'ag.kepala_keluarga_id', '=', 'kk.id')
+            ->leftJoin('kendaraan as kend', 'kend.kepala_keluarga_id', '=', 'kk.id')
+            ->select(
+                'u.blok',
+                DB::raw('COUNT(DISTINCT kk.id) as jumlah_kk'),
+                DB::raw('COUNT(DISTINCT kk.id) + COUNT(DISTINCT ag.id) as jumlah_jiwa'),
+                DB::raw('COUNT(DISTINCT kend.id) as jumlah_kendaraan'),
+                DB::raw('SUM(CASE WHEN kk.status_tinggal = "tetap" THEN 1 ELSE 0 END) as tetap'),
+                DB::raw('SUM(CASE WHEN kk.status_tinggal = "kontrak" THEN 1 ELSE 0 END) as kontrak'),
+                DB::raw('SUM(CASE WHEN kk.status_tinggal = "kos" THEN 1 ELSE 0 END) as kos'),
+            )
+            ->groupBy('u.blok')
+            ->orderBy('u.blok')
+            ->get();
+
+        // Gender breakdown (anggota keluarga + kepala)
+        $genderAnggota = DB::table('anggota_keluarga')
+            ->select('jenis_kelamin', DB::raw('COUNT(*) as total'))
+            ->groupBy('jenis_kelamin')
+            ->pluck('total', 'jenis_kelamin');
+
+        // Status tinggal totals
+        $statusTinggal = DB::table('kepala_keluarga')
+            ->select('status_tinggal', DB::raw('COUNT(*) as total'))
+            ->groupBy('status_tinggal')
+            ->pluck('total', 'status_tinggal');
+
+        // Total summary
+        $totalKK   = KepalaKeluarga::count();
+        $totalJiwa = $totalKK + AnggotaKeluarga::count();
+        $totalKend = Kendaraan::count();
+
+        return response()->json([
+            'success' => true,
+            'data'    => compact('perBlok', 'genderAnggota', 'statusTinggal', 'totalKK', 'totalJiwa', 'totalKend'),
+        ]);
+    }
+
+    public function laporanDetail(Request $request): JsonResponse
+    {
+        $blok = $request->query('blok');
+
+        $q = KepalaKeluarga::with([
+            'unitRumah:id,blok,nomor',
+            'anggotaKeluarga:id,kepala_keluarga_id,nama,hubungan,jenis_kelamin,tanggal_lahir',
+            'kendaraan:id,kepala_keluarga_id,jenis,merek,plat_nomor,warna',
+        ])->orderByRaw('(SELECT CONCAT(u.blok, LPAD(u.nomor,3,"0")) FROM unit_rumah u WHERE u.id = kepala_keluarga.unit_rumah_id)');
+
+        if ($blok) {
+            $q->whereHas('unitRumah', fn($r) => $r->where('blok', strtoupper($blok)));
+        }
+
+        return response()->json(['success' => true, 'data' => $q->get()]);
+    }
+
+    public function exportKependudukan(Request $request): StreamedResponse
+    {
+        $blok = $request->query('blok') ?: null;
+        return app(ExcelExportService::class)->exportKependudukan($blok);
     }
 }

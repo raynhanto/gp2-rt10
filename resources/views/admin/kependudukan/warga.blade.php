@@ -72,6 +72,13 @@
             <option value="">— Pilih Unit —</option>
           </select>
         </div>
+        <div style="grid-column:1/-1">
+          <label style="font-size:12px;font-weight:600;color:var(--ink-soft)">Akun Pengguna</label>
+          <select id="f-user" style="width:100%;margin-top:4px;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;background:#fff">
+            <option value="">— Tidak terhubung —</option>
+          </select>
+          <div style="font-size:11px;color:var(--ink-soft);margin-top:5px">Hubungkan ke akun Google yang sudah terdaftar di sistem.</div>
+        </div>
         <div>
           <label style="font-size:12px;font-weight:600;color:var(--ink-soft)">Tempat Lahir</label>
           <input id="f-tempat-lahir" type="text"
@@ -161,14 +168,31 @@
 @endsection
 @section('scripts')
 <script>
-let _editId  = null;
-let _page    = 1;
+let _editId   = null;
+let _page     = 1;
 let _debounce = null;
-const _BLOK  = ['A','B','C','D','E','F','G','H'];
+let _users    = [];
+const _BLOK   = ['A','B','C','D','E','F','G','H'];
 
 function debounceLoad() {
   clearTimeout(_debounce);
   _debounce = setTimeout(() => loadWarga(1), 400);
+}
+
+async function loadUsers() {
+  try {
+    const r = await fetch('/api/users');
+    const j = await r.json();
+    if (!j.success) return;
+    _users = j.data || [];
+    const sel = document.getElementById('f-user');
+    _users.forEach(u => {
+      const opt = document.createElement('option');
+      opt.value = u.id;
+      opt.textContent = (u.nama || u.email) + (u.nama ? ` (${u.email})` : '');
+      sel.appendChild(opt);
+    });
+  } catch(e) {}
 }
 
 async function loadWarga(page = 1) {
@@ -214,6 +238,7 @@ function renderTable(data, meta) {
           <th style="padding:10px 20px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft)">Nama</th>
           <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft)">Unit</th>
           <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft)">NIK</th>
+          <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft)">Akun</th>
           <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft)">Status</th>
           <th style="padding:10px 16px;text-align:right;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft)">Aksi</th>
         </tr>
@@ -229,6 +254,16 @@ function renderTable(data, meta) {
               ${d.unit_rumah ? `Blok ${d.unit_rumah.blok}-${d.unit_rumah.nomor}` : '<span style="color:var(--ink-mute)">—</span>'}
             </td>
             <td style="padding:12px 16px;font-size:13px;color:var(--ink-soft)">${d.nik || '—'}</td>
+            <td style="padding:12px 16px">
+              ${d.user ? `
+                <div style="display:flex;align-items:center;gap:7px">
+                  ${d.user.avatar_url
+                    ? `<img src="${d.user.avatar_url}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0">`
+                    : `<div style="width:22px;height:22px;border-radius:50%;background:var(--forest-pale);color:var(--forest);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${(d.user.nama||d.user.email||'?')[0].toUpperCase()}</div>`
+                  }
+                  <span style="font-size:12px;color:var(--forest);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px" title="${d.user.nama||d.user.email}">${d.user.nama||d.user.email}</span>
+                </div>` : `<span style="font-size:11px;color:var(--ink-mute)">—</span>`}
+            </td>
             <td style="padding:12px 16px">
               <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;background:${TINGGAL_COLOR[d.status_tinggal]}18;color:${TINGGAL_COLOR[d.status_tinggal]}">
                 ${TINGGAL[d.status_tinggal] || d.status_tinggal}
@@ -285,6 +320,7 @@ function openModal(data = null) {
   document.getElementById('f-wa').value            = data?.no_wa || '';
   document.getElementById('f-tinggal').value       = data?.status_tinggal || 'tetap';
   document.getElementById('f-keterangan').value    = data?.keterangan || '';
+  document.getElementById('f-user').value          = data?.user_id || '';
   document.getElementById('modal-err').style.display = 'none';
   document.getElementById('modal-bg').style.display = 'flex';
 }
@@ -318,6 +354,7 @@ async function saveKK() {
     no_wa:            document.getElementById('f-wa').value.trim() || null,
     status_tinggal:   document.getElementById('f-tinggal').value,
     keterangan:       document.getElementById('f-keterangan').value.trim() || null,
+    user_id:          parseInt(document.getElementById('f-user').value) || null,
   };
 
   try {
@@ -356,6 +393,7 @@ function showErr(msg) {
 
 loadWarga(1);
 loadUnits();
+loadUsers();
 
 // auto open tambah modal jika ?tambah=1
 if (new URLSearchParams(location.search).get('tambah') === '1') openModal();

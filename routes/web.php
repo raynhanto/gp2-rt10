@@ -94,6 +94,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 ->where('id', '[0-9]+')->name('detail');
             Route::view('/kendaraan',  'admin.kependudukan.kendaraan')->name('kendaraan');
             Route::view('/peta',       'admin.kependudukan.peta')->name('peta');
+            Route::view('/laporan',    'admin.kependudukan.laporan')->name('laporan');
         });
     });
 

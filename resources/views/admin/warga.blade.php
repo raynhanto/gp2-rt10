@@ -224,6 +224,7 @@ function renderStats() {
   const pengurus   = allUsers.filter(u => ['admin','super_admin','bendahara','sekretaris'].includes(u.role)).length;
   const wargaCount = allUsers.filter(u => u.role === 'warga').length;
   const incomplete = allUsers.filter(u => !u.profil_lengkap).length;
+  const linkedKK   = allUsers.filter(u => u.kepala_keluarga).length;
 
   const sharedUnits = Object.values(unitUserMap).filter(ids => ids.length > 1).length;
 
@@ -232,6 +233,7 @@ function renderStats() {
     {label:'Pengurus',    value:pengurus,    bg:'#FDF6E4', col:'#7A5C00'},
     {label:'Warga',       value:wargaCount,  bg:'#F4F4F4', col:'#555'},
     {label:'Belum Lengkap', value:incomplete, bg:'#FDECEA', col:'#B5451B'},
+    {label:'Terhubung KK',  value:linkedKK,   bg:'#F3EEFF', col:'#5C3B8A'},
   ];
   if (sharedUnits > 0) {
     stats.push({label:'Unit Bersama', value:sharedUnits, bg:'#E8F0FD', col:'#2D5AA8'});
@@ -295,6 +297,12 @@ function renderTable() {
     const tgl      = new Date(u.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'});
 
     // Units with shared indicator
+    const kk = u.kepala_keluarga;
+    const kkHtml = kk
+      ? `<a href="/admin/kependudukan/warga/${kk.id}" style="font-size:12px;font-weight:500;color:var(--forest);white-space:nowrap">${kk.nama}</a>
+         ${kk.unit_rumah ? `<div style="font-size:11px;color:var(--ink-mute)">Blok ${kk.unit_rumah.blok}-${kk.unit_rumah.nomor}</div>` : ''}`
+      : `<span style="font-size:12px;color:var(--ink-mute)">—</span>`;
+
     const unitHtml = (u.units && u.units.length)
       ? u.units.map(uu => {
           const key    = `${uu.blok}|${uu.nomor}`;
@@ -330,6 +338,7 @@ function renderTable() {
         </div>
       </td>
       <td style="padding:12px 16px;font-size:12px;line-height:1.8">${unitHtml}</td>
+      <td style="padding:12px 16px">${kkHtml}</td>
       <td style="padding:12px 16px;font-size:12px;color:var(--ink-soft)">${u.no_wa || '—'}</td>
       <td style="padding:12px 16px">${profilBadge}</td>
       <td style="padding:12px 16px">${roleBadge(u.role)}</td>
@@ -338,7 +347,7 @@ function renderTable() {
     </tr>`;
   }).join('');
 
-  const headers = ['Nama / Email','Unit Rumah','No. WA','Profil','Role','Bergabung','Aksi'];
+  const headers = ['Nama / Email','Unit Rumah','KK Terhubung','No. WA','Profil','Role','Bergabung','Aksi'];
 
   document.getElementById('warga-list').innerHTML = `
     <div class="card" style="padding:0;overflow:hidden">

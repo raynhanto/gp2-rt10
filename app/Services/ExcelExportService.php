@@ -198,4 +198,84 @@ class ExcelExportService
 
         return $this->streamXlsx($s, 'pengeluaran-rt10-' . now()->format('Ymd') . '.xlsx');
     }
+
+    public function exportKependudukan(?string $blok): StreamedResponse
+    {
+        $q = DB::table('kepala_keluarga as kk')
+            ->join('unit_rumah as u', 'u.id', '=', 'kk.unit_rumah_id')
+            ->orderBy('u.blok')->orderBy('u.nomor');
+
+        if ($blok) $q->where('u.blok', strtoupper($blok));
+
+        $kepalaRows = $q->select(
+            'kk.id', 'u.blok', 'u.nomor',
+            'kk.nama', 'kk.nik', 'kk.no_kk', 'kk.no_wa', 'kk.status_tinggal'
+        )->get();
+
+        $anggota = DB::table('anggota_keluarga')
+            ->whereIn('kepala_keluarga_id', $kepalaRows->pluck('id'))
+            ->get()
+            ->groupBy('kepala_keluarga_id');
+
+        $s = new Spreadsheet();
+
+        // Sheet 1: Daftar KK
+        $sheet = $s->getActiveSheet()->setTitle('Daftar KK');
+        $this->applyHeader($s, 'Laporan Kependudukan RT 10 Golden Park 2');
+        $this->applyHeaderRow($s, 2, [
+            'No', 'Blok', 'No.', 'Nama Kepala KK', 'NIK', 'No. KK', 'No. WA', 'Status Tinggal', 'Jml Anggota',
+        ]);
+
+        foreach ($kepalaRows as $i => $kk) {
+            $row = $i + 3;
+            $jumlahAnggota = isset($anggota[$kk->id]) ? $anggota[$kk->id]->count() : 0;
+            $sheet->fromArray([
+                $i + 1,
+                $kk->blok,
+                $kk->nomor,
+                $kk->nama,
+                $kk->nik ?? '',
+                $kk->no_kk ?? '',
+                $kk->no_wa ?? '',
+                ucfirst($kk->status_tinggal ?? ''),
+                $jumlahAnggota,
+            ], null, "A{$row}");
+        }
+
+        foreach (range('A', 'I') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // Sheet 2: Anggota Keluarga
+        $s->createSheet()->setTitle('Anggota Keluarga');
+        $s->setActiveSheetIndex(1);
+        $sheet2 = $s->getActiveSheet();
+        $this->applyHeaderRow($s, 1, [
+            'Blok', 'No.', 'Nama KK', 'Nama Anggota', 'Hubungan', 'Jenis Kelamin', 'Tanggal Lahir',
+        ]);
+
+        $row2 = 2;
+        foreach ($kepalaRows as $kk) {
+            foreach ($anggota[$kk->id] ?? [] as $ag) {
+                $sheet2->fromArray([
+                    $kk->blok,
+                    $kk->nomor,
+                    $kk->nama,
+                    $ag->nama,
+                    $ag->hubungan ?? '',
+                    $ag->jenis_kelamin === 'L' ? 'Laki-laki' : ($ag->jenis_kelamin === 'P' ? 'Perempuan' : ''),
+                    $ag->tanggal_lahir ? substr($ag->tanggal_lahir, 0, 10) : '',
+                ], null, "A{$row2}");
+                $row2++;
+            }
+        }
+
+        foreach (range('A', 'G') as $col) {
+            $sheet2->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $s->setActiveSheetIndex(0);
+
+        return $this->streamXlsx($s, 'kependudukan-rt10-' . now()->format('Ymd') . '.xlsx');
+    }
 }
