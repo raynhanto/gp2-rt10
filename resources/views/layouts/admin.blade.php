@@ -253,6 +253,9 @@ a{text-decoration:none;color:inherit}
         <a href="/admin/kependudukan/kendaraan" class="{{ request()->is('admin/kependudukan/kendaraan*') ? 'active' : '' }}">
           <i class="fa fa-car"></i> Data Kendaraan
         </a>
+        <a href="/admin/kependudukan/peta" class="{{ request()->is('admin/kependudukan/peta*') ? 'active' : '' }}">
+          <i class="fa fa-map-location-dot"></i> Peta Warga
+        </a>
 
         <div class="sidebar-divider"></div>
         <div class="sidebar-group-label">Surat &amp; Dokumen</div>

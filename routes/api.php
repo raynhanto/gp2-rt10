@@ -206,6 +206,8 @@ Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
     Route::post('/kependudukan/kepala/{kkId}/kendaraan', [Api\KependudukanController::class, 'kendaraanStore'])->where('kkId', '[0-9]+');
     Route::put('/kependudukan/kendaraan/{id}',           [Api\KependudukanController::class, 'kendaraanUpdate'])->where('id', '[0-9]+');
     Route::delete('/kependudukan/kendaraan/{id}',        [Api\KependudukanController::class, 'kendaraanDestroy'])->where('id', '[0-9]+');
+    Route::get('/kependudukan/map',                      [Api\KependudukanController::class, 'mapData']);
+    Route::put('/kependudukan/units/{id}/coordinates',   [Api\KependudukanController::class, 'updateCoordinates'])->where('id', '[0-9]+');
 });
 
 // ── Users (sekretaris, admin, super_admin) ────────────────────

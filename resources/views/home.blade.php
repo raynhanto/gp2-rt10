@@ -3,7 +3,7 @@
 @section('styles')
 <style>
 /* ── Hero ─────────────────────────────────────────────────────── */
-.hero-wrap{position:relative;overflow:hidden;background:linear-gradient(145deg,#0F2318 0%,#1A3D2B 55%,#1F4A32 100%);margin-top:-5rem;padding:5.5rem 0 3rem}
+.hero-wrap{position:relative;overflow:hidden;background:linear-gradient(145deg,#0F2318 0%,#1A3D2B 55%,#1F4A32 100%);margin-top:-5rem;padding:5rem 0 3.25rem}
 .hero-wrap::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.055) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
 .hero-blob{position:absolute;pointer-events:none}
 .hero-blob-1{width:420px;height:420px;top:-100px;right:-80px;border-radius:62% 38% 54% 46%/48% 60% 40% 52%;background:rgba(255,255,255,0.03)}
@@ -144,39 +144,29 @@
         </div>
       </div>
       <h1 class="hero-h1">Platform digital<br>warga <em>RT 10</em></h1>
-      <p class="hero-sub">Donasi, iuran bulanan, laporan keuangan, data kependudukan, galeri, dan informasi RT — semua dalam satu platform. Transparan, mudah, dan terbuka untuk seluruh warga Golden Park 2.</p>
+      <p class="hero-sub">Donasi, iuran, laporan keuangan, dan informasi RT — transparan dan terbuka untuk seluruh warga.</p>
       <div class="hero-actions">
-        <a href="/donasi" class="btn-gold" style="font-size:15px;padding:13px 28px">Donasi Sekarang →</a>
-        <a href="/kampanye" style="background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.22);font-size:15px;font-weight:500;padding:13px 28px;border-radius:100px;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;backdrop-filter:blur(8px)" onmouseenter="this.style.background='rgba(255,255,255,0.18)'" onmouseleave="this.style.background='rgba(255,255,255,0.1)'">Lihat Kampanye</a>
-      </div>
-      @guest
-      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:1.5rem">
-        <div style="width:40px;height:1px;background:rgba(255,255,255,0.18)"></div>
-        <span style="font-size:12px;color:rgba(255,255,255,0.4)">atau</span>
-        <div style="width:40px;height:1px;background:rgba(255,255,255,0.18)"></div>
-      </div>
-      <a href="/login" style="display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.85);font-size:14px;font-weight:500;padding:11px 24px;border-radius:100px;backdrop-filter:blur(8px);transition:all 0.2s;margin-bottom:2.25rem" onmouseenter="this.style.background='rgba(255,255,255,0.15)'" onmouseleave="this.style.background='rgba(255,255,255,0.08)'">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 01-5.279-5.28 5.27 5.27 0 015.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 00-8.934 8.934 8.908 8.908 0 008.934 8.934c4.467 0 8.529-3.249 8.529-8.934 0-.528-.081-1.097-.202-1.625z" fill="currentColor"/></svg>
-        Masuk sebagai Warga
-      </a>
-      @endguest
-      @auth
-      <div style="margin-bottom:2.25rem">
-        <a href="/dashboard" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.9);font-size:13.5px;font-weight:500;padding:9px 20px;border-radius:100px;backdrop-filter:blur(8px);transition:all 0.2s" onmouseenter="this.style.background='rgba(255,255,255,0.18)'" onmouseleave="this.style.background='rgba(255,255,255,0.1)'">
+        @guest
+        <a href="/login" class="btn-gold" style="font-size:15px;padding:13px 28px;display:inline-flex;align-items:center;gap:9px">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 01-5.279-5.28 5.27 5.27 0 015.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 00-8.934 8.934 8.908 8.908 0 008.934 8.934c4.467 0 8.529-3.249 8.529-8.934 0-.528-.081-1.097-.202-1.625z" fill="currentColor"/></svg>
+          Masuk sebagai Warga
+        </a>
+        @endguest
+        @auth
+        <a href="/dashboard" class="btn-gold" style="font-size:15px;padding:13px 28px;display:inline-flex;align-items:center;gap:9px">
           @if(auth()->user()->avatar_url)
-          <img src="{{ auth()->user()->avatar_url }}" style="width:22px;height:22px;border-radius:50%;object-fit:cover" alt="">
+          <img src="{{ auth()->user()->avatar_url }}" style="width:20px;height:20px;border-radius:50%;object-fit:cover" alt="">
           @else
-          <i class="fa fa-circle-user" style="font-size:18px;color:var(--gold)"></i>
+          <i class="fa fa-circle-user"></i>
           @endif
           Halo, {{ explode(' ', auth()->user()->name)[0] }}! → Dashboard
         </a>
+        @endauth
+        <a href="/kampanye" style="background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.22);font-size:15px;font-weight:500;padding:13px 28px;border-radius:100px;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;backdrop-filter:blur(8px)" onmouseenter="this.style.background='rgba(255,255,255,0.18)'" onmouseleave="this.style.background='rgba(255,255,255,0.1)'">Lihat Kampanye</a>
       </div>
-      @endauth
       <div class="hero-chips">
         <div class="hero-chip" id="chip-aktif"><i class="fa fa-layer-group"></i><span>Memuat kampanye…</span></div>
-        <div class="hero-chip"><i class="fa fa-chart-bar"></i><span>Laporan terbuka</span></div>
         <div class="hero-chip"><i class="fa fa-shield-halved"></i><span>Diverifikasi pengurus RT</span></div>
-        <div class="hero-chip"><i class="fa fa-building"></i><span>Data kependudukan digital</span></div>
       </div>
     </div>
   </div>

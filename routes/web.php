@@ -90,6 +90,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/warga/{id}',  fn(int $id) => view('admin.kependudukan.detail'))
                 ->where('id', '[0-9]+')->name('detail');
             Route::view('/kendaraan',  'admin.kependudukan.kendaraan')->name('kendaraan');
+            Route::view('/peta',       'admin.kependudukan.peta')->name('peta');
         });
     });
 

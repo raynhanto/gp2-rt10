@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
 class UnitRumah extends Model
@@ -14,16 +15,25 @@ class UnitRumah extends Model
 
     protected $table = 'unit_rumah';
 
-    protected $fillable = ['user_id', 'blok', 'nomor', 'is_primary'];
+    protected $fillable = ['user_id', 'blok', 'nomor', 'is_primary', 'lat', 'lng'];
 
     protected function casts(): array
     {
-        return ['is_primary' => 'boolean'];
+        return [
+            'is_primary' => 'boolean',
+            'lat'        => 'float',
+            'lng'        => 'float',
+        ];
     }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function kepalaKeluarga(): HasMany
+    {
+        return $this->hasMany(KepalaKeluarga::class);
     }
 
     public function format(): string

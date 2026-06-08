@@ -289,6 +289,62 @@ class KependudukanController extends Controller
         return response()->json(['success' => true, 'message' => 'Kendaraan dihapus.']);
     }
 
+    // ── Peta Warga ────────────────────────────────────────────────
+
+    public function mapData(): JsonResponse
+    {
+        $units = UnitRumah::with(['kepalaKeluarga:id,unit_rumah_id,nama,status_tinggal'])
+            ->select('id', 'blok', 'nomor', 'lat', 'lng')
+            ->orderBy('blok')
+            ->orderBy('nomor')
+            ->get()
+            ->map(function (UnitRumah $u): array {
+                $kk = $u->kepalaKeluarga->first();
+                return [
+                    'id'             => $u->id,
+                    'label'          => "Blok {$u->blok}-{$u->nomor}",
+                    'blok'           => $u->blok,
+                    'nomor'          => $u->nomor,
+                    'lat'            => $u->lat,
+                    'lng'            => $u->lng,
+                    'has_pin'        => $u->lat !== null && $u->lng !== null,
+                    'has_warga'      => $kk !== null,
+                    'kk_id'          => $kk?->id,
+                    'kk_nama'        => $kk?->nama,
+                    'status_tinggal' => $kk?->status_tinggal,
+                ];
+            });
+
+        return response()->json(['success' => true, 'data' => $units]);
+    }
+
+    public function updateCoordinates(Request $request, int $id): JsonResponse
+    {
+        $unit = UnitRumah::findOrFail($id);
+        $body = $request->json()->all();
+
+        $lat = array_key_exists('lat', $body) ? ($body['lat'] !== null ? (float) $body['lat'] : null) : $unit->lat;
+        $lng = array_key_exists('lng', $body) ? ($body['lng'] !== null ? (float) $body['lng'] : null) : $unit->lng;
+
+        if ($lat !== null && ($lat < -90 || $lat > 90)) {
+            return response()->json(['success' => false, 'message' => 'Latitude tidak valid.'], 422);
+        }
+        if ($lng !== null && ($lng < -180 || $lng > 180)) {
+            return response()->json(['success' => false, 'message' => 'Longitude tidak valid.'], 422);
+        }
+
+        $unit->update(['lat' => $lat, 'lng' => $lng]);
+
+        $this->logActivity(
+            'update_koordinat',
+            "Update koordinat: Blok {$unit->blok}-{$unit->nomor}",
+            'UnitRumah',
+            $unit->id
+        );
+
+        return response()->json(['success' => true, 'data' => ['id' => $unit->id, 'lat' => $unit->lat, 'lng' => $unit->lng]]);
+    }
+
     // ── Unit Rumah list (untuk dropdown) ─────────────────────────
 
     public function unitList(): JsonResponse
