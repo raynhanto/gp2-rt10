@@ -90,6 +90,10 @@
           style="padding:8px 16px;border-radius:8px;background:#1A3D2B;color:#fff;border:none;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif">
           <i class="fa fa-magnifying-glass"></i> Cari
         </button>
+        <button onclick="startTambahUnit()" id="btn-tambah-unit" title="Tambah unit rumah baru ke peta"
+          style="padding:8px 14px;border-radius:8px;background:#fff;color:#1A3D2B;border:1.5px solid rgba(26,61,43,0.2);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;transition:all 0.15s">
+          <i class="fa fa-plus"></i> Tambah Unit
+        </button>
         <button onclick="fitArea()" title="Fit ke area semua pin"
           style="padding:8px 12px;border-radius:8px;background:#fff;color:#1A3D2B;border:1.5px solid rgba(26,61,43,0.2);font-size:13px;cursor:pointer"
           id="btn-fit">
@@ -136,6 +140,47 @@
 
 <div id="placing-hint"></div>
 <div class="toast-msg" id="toast"></div>
+
+{{-- Modal: Tambah Unit Baru --}}
+<div id="modal-tambah" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9998;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:1.75rem 2rem;width:340px;max-width:90vw;box-shadow:0 20px 48px rgba(0,0,0,0.18)">
+    <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:#1A3D2B;margin-bottom:0.25rem">Tambah Unit Rumah</div>
+    <div style="font-size:12px;color:#6B6050;margin-bottom:1.25rem">Lokasi sudah ditandai di peta. Isi data unit lalu simpan.</div>
+
+    <div style="display:flex;gap:0.75rem;margin-bottom:1rem">
+      <div style="flex:1">
+        <label style="font-size:11px;font-weight:600;color:#6B6050;display:block;margin-bottom:4px">BLOK</label>
+        <input id="new-blok" type="text" maxlength="1" placeholder="A"
+          style="width:100%;padding:8px 10px;border-radius:8px;border:1.5px solid rgba(26,61,43,0.2);font-size:15px;font-family:'DM Sans',sans-serif;text-transform:uppercase;text-align:center;outline:none"
+          onfocus="this.style.borderColor='#1A3D2B'" onblur="this.style.borderColor='rgba(26,61,43,0.2)'" oninput="this.value=this.value.toUpperCase()">
+      </div>
+      <div style="flex:1">
+        <label style="font-size:11px;font-weight:600;color:#6B6050;display:block;margin-bottom:4px">NOMOR</label>
+        <input id="new-nomor" type="number" min="1" max="99" placeholder="1"
+          style="width:100%;padding:8px 10px;border-radius:8px;border:1.5px solid rgba(26,61,43,0.2);font-size:15px;font-family:'DM Sans',sans-serif;text-align:center;outline:none"
+          onfocus="this.style.borderColor='#1A3D2B'" onblur="this.style.borderColor='rgba(26,61,43,0.2)'">
+      </div>
+    </div>
+
+    <div style="background:#EBF3EE;border-radius:8px;padding:8px 12px;font-size:12px;color:#1A3D2B;margin-bottom:1.25rem">
+      <i class="fa fa-location-dot" style="margin-right:5px"></i>
+      Koordinat: <span id="new-coords" style="font-weight:600"></span>
+    </div>
+
+    <div id="modal-error" style="display:none;background:#FDECEA;border-radius:8px;padding:8px 12px;font-size:12px;color:#B5401A;margin-bottom:1rem"></div>
+
+    <div style="display:flex;gap:0.75rem">
+      <button onclick="tutupModalTambah()"
+        style="flex:1;padding:9px;border-radius:8px;border:1.5px solid rgba(26,61,43,0.2);background:none;color:#6B6050;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">
+        Batal
+      </button>
+      <button onclick="simpanUnitBaru()" id="btn-simpan-unit"
+        style="flex:2;padding:9px;border-radius:8px;border:none;background:#1A3D2B;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">
+        <i class="fa fa-floppy-disk"></i> Simpan Unit
+      </button>
+    </div>
+  </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -174,16 +219,22 @@
     });
   }
 
-  // ── Map init — default: Serang, Banten, zoom 17 ─────────────
-  const map = L.map('map', { zoomControl: true }).setView([-6.1174, 106.1505], 17);
+  // ── Map init — default: Serang, Banten, zoom 19 ─────────────
+  const map = L.map('map', { zoomControl: true, maxZoom: 20 }).setView([-6.1174, 106.1505], 19);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    maxZoom: 19,
+    maxZoom: 20,
+    maxNativeZoom: 19,
   }).addTo(map);
 
-  // Click on map: place pin
+  // Click on map: tambah unit baru OR place existing pin
   map.on('click', function (e) {
+    if (addingUnit) {
+      cancelTambahUnit();
+      bukaModalTambah(e.latlng.lat, e.latlng.lng);
+      return;
+    }
     if (placingUnitId === null) return;
     const unit = allUnits.find(function (u) { return u.id === placingUnitId; });
     if (!unit) return;
@@ -413,6 +464,174 @@
       } catch (e) { /* fitBounds may fail on single point edge case */ }
     }
   }
+
+  // ── Tambah Unit Baru ──────────────────────────────────────────
+  let pendingNewLat = null;
+  let pendingNewLng = null;
+  let addingUnit = false;
+
+  window.startTambahUnit = function () {
+    if (addingUnit) { cancelTambahUnit(); return; }
+    addingUnit = true;
+    const btn = document.getElementById('btn-tambah-unit');
+    btn.style.background = '#1A3D2B';
+    btn.style.color = '#fff';
+    btn.innerHTML = '<i class="fa fa-xmark"></i> Batal';
+    showPlacingHint('Klik lokasi rumah di peta untuk menandai posisi');
+    document.getElementById('map').classList.add('placing-cursor');
+  };
+
+  function cancelTambahUnit() {
+    addingUnit = false;
+    pendingNewLat = null;
+    pendingNewLng = null;
+    const btn = document.getElementById('btn-tambah-unit');
+    btn.style.background = '';
+    btn.style.color = '#1A3D2B';
+    btn.innerHTML = '<i class="fa fa-plus"></i> Tambah Unit';
+    hidePlacingHint();
+    document.getElementById('map').classList.remove('placing-cursor');
+  }
+
+  function bukaModalTambah(lat, lng) {
+    pendingNewLat = lat;
+    pendingNewLng = lng;
+    document.getElementById('new-blok').value = '';
+    document.getElementById('new-nomor').value = '';
+    document.getElementById('modal-error').style.display = 'none';
+    document.getElementById('new-coords').textContent = lat.toFixed(6) + ', ' + lng.toFixed(6);
+    const modal = document.getElementById('modal-tambah');
+    modal.style.display = 'flex';
+    setTimeout(function () { document.getElementById('new-blok').focus(); }, 80);
+  }
+
+  window.tutupModalTambah = function () {
+    document.getElementById('modal-tambah').style.display = 'none';
+    pendingNewLat = null;
+    pendingNewLng = null;
+  };
+
+  window.simpanUnitBaru = async function () {
+    const blok  = document.getElementById('new-blok').value.trim().toUpperCase();
+    const nomor = parseInt(document.getElementById('new-nomor').value, 10);
+    const errEl = document.getElementById('modal-error');
+
+    if (!blok || !/^[A-Z]$/.test(blok)) {
+      errEl.textContent = 'Blok harus satu huruf (A–Z).';
+      errEl.style.display = 'block'; return;
+    }
+    if (!nomor || nomor < 1 || nomor > 99) {
+      errEl.textContent = 'Nomor harus antara 1–99.';
+      errEl.style.display = 'block'; return;
+    }
+    errEl.style.display = 'none';
+
+    const btn = document.getElementById('btn-simpan-unit');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-circle-notch fa-spin"></i> Menyimpan...';
+
+    try {
+      const r = await fetch('/api/kependudukan/units', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': _csrf },
+        body: JSON.stringify({ blok: blok, nomor: nomor, lat: pendingNewLat, lng: pendingNewLng }),
+      });
+      const j = await r.json();
+
+      if (!j.success) {
+        errEl.textContent = j.message || 'Gagal menyimpan.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-floppy-disk"></i> Simpan Unit';
+        return;
+      }
+
+      // Add to allUnits and place marker if has pin
+      allUnits.push(j.data);
+      if (j.data.has_pin) placeMarker(j.data);
+      updateStats();
+      tutupModalTambah();
+      showToast('Unit Blok ' + blok + '-' + nomor + ' berhasil ditambahkan');
+
+    } catch (err) {
+      errEl.textContent = 'Terjadi kesalahan koneksi.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa fa-floppy-disk"></i> Simpan Unit';
+    }
+  };
+
+  // Intercept map click for addingUnit mode (runs before pin-place mode)
+  // Injected into the existing map click handler via flag check
+  // (handled inside the existing map.on('click') by checking addingUnit first)
+
+  // ── Geocode search ────────────────────────────────────────────
+  window.cariAlamat = async function () {
+    const q = document.getElementById('alamat-input').value.trim();
+    if (!q) return;
+
+    const btn = document.getElementById('btn-cari');
+    btn.innerHTML = '<i class="fa fa-circle-notch fa-spin"></i>';
+    btn.disabled = true;
+
+    try {
+      const r = await fetch(
+        'https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + encodeURIComponent(q),
+        { headers: { 'Accept-Language': 'id', 'User-Agent': 'RT10PetaWarga/1.0' } }
+      );
+      const results = await r.json();
+
+      if (!results.length) {
+        showToast('Alamat tidak ditemukan');
+      } else if (results.length === 1) {
+        map.setView([parseFloat(results[0].lat), parseFloat(results[0].lon)], 18);
+        showToast('Ditemukan: ' + results[0].display_name.split(',').slice(0,3).join(', '));
+      } else {
+        // show dropdown of results
+        const box = document.getElementById('search-results');
+        box.innerHTML = '<div style="position:absolute;top:0;left:0;right:0;background:#fff;border:1px solid rgba(26,61,43,0.15);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.1);z-index:9999;overflow:hidden">'
+          + results.map(function (res, i) {
+              const label = res.display_name.split(',').slice(0, 3).join(', ');
+              return '<div onclick="pickResult(' + res.lat + ',' + res.lon + ',\'' + escHtml(label) + '\')"'
+                + ' style="padding:8px 12px;font-size:12px;cursor:pointer;border-bottom:1px solid rgba(26,61,43,0.06);transition:background 0.1s"'
+                + ' onmouseover="this.style.background=\'#EBF3EE\'" onmouseout="this.style.background=\'\'">'
+                + '<i class="fa fa-location-dot" style="color:#1A3D2B;margin-right:6px"></i>' + escHtml(label)
+                + '</div>';
+            }).join('')
+          + '</div>';
+      }
+    } catch (err) {
+      showToast('Gagal mencari alamat');
+    }
+
+    btn.innerHTML = '<i class="fa fa-magnifying-glass"></i> Cari';
+    btn.disabled = false;
+  };
+
+  window.pickResult = function (lat, lon, label) {
+    map.setView([parseFloat(lat), parseFloat(lon)], 18);
+    document.getElementById('search-results').innerHTML = '';
+    showToast('Menampilkan: ' + label);
+  };
+
+  // Close dropdown on outside click
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('#search-results') && !e.target.closest('#alamat-input') && !e.target.closest('#btn-cari')) {
+      document.getElementById('search-results').innerHTML = '';
+    }
+  });
+
+  // ── Fit to all pins ───────────────────────────────────────────
+  window.fitArea = function () {
+    const placed = allUnits.filter(function (u) { return u.has_pin; });
+    if (!placed.length) { showToast('Belum ada pin yang dipasang'); return; }
+    try {
+      map.fitBounds(
+        L.latLngBounds(placed.map(function (u) { return [u.lat, u.lng]; })).pad(0.15),
+        { maxZoom: 19 }
+      );
+    } catch (e) { /* single point fallback */ }
+  };
 
   loadMap();
 

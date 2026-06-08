@@ -289,6 +289,53 @@ class KependudukanController extends Controller
         return response()->json(['success' => true, 'message' => 'Kendaraan dihapus.']);
     }
 
+    // ── Unit Rumah CRUD ───────────────────────────────────────────
+
+    public function storeUnit(Request $request): JsonResponse
+    {
+        $body  = $request->json()->all();
+        $blok  = strtoupper(trim((string) ($body['blok'] ?? '')));
+        $nomor = (int) ($body['nomor'] ?? 0);
+
+        if (!preg_match('/^[A-Z]$/', $blok)) {
+            return response()->json(['success' => false, 'message' => 'Blok tidak valid (harus huruf A–Z).'], 422);
+        }
+        if ($nomor < 1 || $nomor > 99) {
+            return response()->json(['success' => false, 'message' => 'Nomor tidak valid (1–99).'], 422);
+        }
+        if (UnitRumah::where('blok', $blok)->where('nomor', $nomor)->exists()) {
+            return response()->json(['success' => false, 'message' => "Unit Blok {$blok}-{$nomor} sudah ada."], 422);
+        }
+
+        $lat = isset($body['lat']) && $body['lat'] !== null ? (float) $body['lat'] : null;
+        $lng = isset($body['lng']) && $body['lng'] !== null ? (float) $body['lng'] : null;
+
+        $unit = UnitRumah::create([
+            'user_id'    => null,
+            'blok'       => $blok,
+            'nomor'      => $nomor,
+            'is_primary' => false,
+            'lat'        => $lat,
+            'lng'        => $lng,
+        ]);
+
+        $this->logActivity('tambah_unit', "Tambah unit: Blok {$blok}-{$nomor}", 'UnitRumah', $unit->id);
+
+        return response()->json(['success' => true, 'data' => [
+            'id'             => $unit->id,
+            'label'          => "Blok {$blok}-{$nomor}",
+            'blok'           => $unit->blok,
+            'nomor'          => $unit->nomor,
+            'lat'            => $unit->lat,
+            'lng'            => $unit->lng,
+            'has_pin'        => $unit->lat !== null && $unit->lng !== null,
+            'has_warga'      => false,
+            'kk_id'          => null,
+            'kk_nama'        => null,
+            'status_tinggal' => null,
+        ]], 201);
+    }
+
     // ── Peta Warga ────────────────────────────────────────────────
 
     public function mapData(): JsonResponse
