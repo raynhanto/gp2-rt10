@@ -21,7 +21,7 @@
         <textarea id="isi" rows="6" placeholder="Tulis pesan untuk warga RT 10..."
           style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;resize:vertical"></textarea>
       </div>
-      <div style="margin-bottom:1.5rem">
+      <div style="margin-bottom:1rem">
         <label style="display:block;font-size:12px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">Target penerima</label>
         <div style="display:flex;gap:8px">
           @foreach(['semua'=>'<i class="fa-solid fa-users" style="margin-right:5px"></i>Semua warga','donatur'=>'<i class="fa-solid fa-heart" style="margin-right:5px"></i>Donatur saja'] as $v=>$l)
@@ -33,7 +33,26 @@
         </div>
         <input type="hidden" id="target" value="semua">
       </div>
-      <button onclick="kirimPengumuman()" class="btn-primary" style="width:100%;justify-content:center"><i class="fa-solid fa-bullhorn" style="margin-right:6px"></i>Kirim Pengumuman</button>
+
+      {{-- Channel toggles --}}
+      <div style="margin-bottom:1.5rem">
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Kirim juga via</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <label id="toggle-email" onclick="toggleChannel('email')" style="display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:13px;font-weight:500;color:var(--ink-soft);user-select:none;transition:all .15s">
+            <i class="fa fa-envelope"></i> Email
+          </label>
+          <label id="toggle-wa" onclick="toggleChannel('wa')" style="display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:13px;font-weight:500;color:var(--ink-soft);user-select:none;transition:all .15s">
+            <i class="fa-brands fa-whatsapp"></i> WhatsApp Blast
+          </label>
+        </div>
+        <div id="wa-note" style="display:none;margin-top:8px;font-size:12px;color:var(--ink-soft)">
+          <i class="fa fa-circle-info"></i> WA blast dikirim ke semua warga yang memiliki nomor WA terdaftar.
+        </div>
+      </div>
+
+      <button onclick="kirimPengumuman()" class="btn-primary" style="width:100%;justify-content:center">
+        <i class="fa-solid fa-bullhorn" style="margin-right:6px"></i>Kirim Pengumuman
+      </button>
     </div>
 
     <div>
@@ -45,6 +64,7 @@
 @endsection
 @section('scripts')
 <script>
+const _channels = { email: false, wa: false };
 
 function selectTarget(val) {
   document.getElementById('target').value = val;
@@ -54,6 +74,19 @@ function selectTarget(val) {
     el.style.background = active?'#F0F7F3':'#fff';
     el.style.color = active?'var(--forest)':'var(--ink-soft)';
   });
+}
+
+function toggleChannel(ch) {
+  _channels[ch] = !_channels[ch];
+  const el = document.getElementById('toggle-' + ch);
+  const on = _channels[ch];
+  const colors = ch === 'wa'
+    ? { bg:'#E8F7EE', border:'#25D366', color:'#128C4E' }
+    : { bg:'#EBF0F9', border:'#2d5aa8', color:'#2d5aa8' };
+  el.style.background   = on ? colors.bg    : '#fff';
+  el.style.borderColor  = on ? colors.border : 'var(--border)';
+  el.style.color        = on ? colors.color  : 'var(--ink-soft)';
+  if (ch === 'wa') document.getElementById('wa-note').style.display = on ? '' : 'none';
 }
 
 async function loadPengumuman() {
@@ -77,9 +110,11 @@ async function loadPengumuman() {
 
 async function kirimPengumuman() {
   const body = {
-    judul: document.getElementById('judul').value.trim(),
-    isi: document.getElementById('isi').value.trim(),
-    target: document.getElementById('target').value
+    judul:       document.getElementById('judul').value.trim(),
+    isi:         document.getElementById('isi').value.trim(),
+    target:      document.getElementById('target').value,
+    kirim_email: _channels.email,
+    kirim_wa:    _channels.wa,
   };
   if (!body.judul || !body.isi) { alert('Judul dan isi wajib diisi.'); return; }
   const res = await fetch('/api/pengumuman', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':_csrfToken}, body: JSON.stringify(body) });
@@ -87,7 +122,7 @@ async function kirimPengumuman() {
   if (data.success) {
     document.getElementById('judul').value = '';
     document.getElementById('isi').value = '';
-    showToast('Pengumuman berhasil dikirim!');
+    showToast(data.message);
     loadPengumuman();
   } else alert(data.message);
 }

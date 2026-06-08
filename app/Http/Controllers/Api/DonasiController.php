@@ -6,14 +6,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\Upload;
 use App\Http\Controllers\Controller;
+use App\Mail\DonasiStatusMail;
 use App\Models\Donasi;
 use App\Models\Kampanye;
 use App\Models\Kas;
+use App\Services\WhatsappService;
 use App\Traits\LogsAdminActivity;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class DonasiController extends Controller
 {
@@ -165,6 +169,27 @@ class DonasiController extends Controller
             $id,
             ['nominal' => $donasi->nominal, 'catatan' => $body['catatan'] ?? null]
         );
+
+        // Notify donor via email + WA
+        $donasi->load(['user', 'kampanye:id,judul']);
+        if ($donasi->user) {
+            try {
+                if ($donasi->user->email) {
+                    Mail::to($donasi->user->email)->send(new DonasiStatusMail($donasi));
+                }
+                if ($donasi->user->no_wa) {
+                    $wa  = app(WhatsappService::class);
+                    $rp  = 'Rp ' . number_format($donasi->nominal, 0, ',', '.');
+                    $kamp = $donasi->kampanye?->judul ?? 'Donasi Umum';
+                    $msg_wa = $newStatus === 'verified'
+                        ? "Halo {$donasi->user->nama}! Donasi Anda ({$kamp}) sebesar *{$rp}* telah *diverifikasi*. Terima kasih atas kontribusinya! 🙏\n\n-- RT 10 Golden Park 2"
+                        : "Halo {$donasi->user->nama}! Mohon maaf, donasi Anda ({$kamp}) sebesar *{$rp}* tidak dapat diverifikasi." . ($donasi->catatan_admin ? "\nCatatan: {$donasi->catatan_admin}" : '') . "\n\nSilakan hubungi pengurus RT untuk info lebih lanjut.\n\n-- RT 10 Golden Park 2";
+                    $wa->send($donasi->user->no_wa, $msg_wa);
+                }
+            } catch (\Throwable $e) {
+                Log::warning('Donasi notify failed: ' . $e->getMessage());
+            }
+        }
 
         return response()->json(['success' => true, 'message' => $msg]);
     }

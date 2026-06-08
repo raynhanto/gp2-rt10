@@ -1,6 +1,6 @@
 # CLAUDE.md — RT 10 Golden Park 2 Platform (Laravel)
 
-> Last updated: 2026-06-07
+> Last updated: 2026-06-08
 > Live URL: https://gp2rt10.com
 > Legacy (vanilla PHP): `/Users/galanteo/Desktop/Trash/code_project/rt10-platform`
 
@@ -52,59 +52,79 @@ rt10-laravel/
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   ├── Auth/
-│   │   │   │   └── GoogleController.php    ← Socialite redirect/callback/logout
+│   │   │   │   └── GoogleController.php         ← Socialite redirect/callback/logout
 │   │   │   └── Api/
-│   │   │       ├── AuthController.php      ← me()
-│   │   │       ├── UserController.php      ← updateProfile, myDonasi
-│   │   │       ├── KampanyeController.php  ← CRUD + uploadFoto
-│   │   │       ├── DonasiController.php    ← index, store, verify, uploadBukti
-│   │   │       ├── KasController.php       ← index, summary, store
-│   │   │       ├── AnggaranController.php  ← index, store
-│   │   │       ├── PengeluaranController.php← index, publicList, store
-│   │   │       ├── PengumumanController.php ← index, store
-│   │   │       └── UsersController.php     ← index (admin)
+│   │   │       ├── AuthController.php            ← me()
+│   │   │       ├── UserController.php            ← updateProfile, myDonasi
+│   │   │       ├── KampanyeController.php        ← CRUD + uploadFoto
+│   │   │       ├── DonasiController.php          ← index, store, verify (+ email/WA notify), uploadBukti
+│   │   │       ├── KasController.php             ← index, summary, store (paginated)
+│   │   │       ├── AnggaranController.php        ← index, store
+│   │   │       ├── PengeluaranController.php     ← index, publicList, store
+│   │   │       ├── PengumumanController.php      ← index, store (+ email/WA blast)
+│   │   │       ├── UsersController.php           ← index (admin)
+│   │   │       ├── IuranController.php           ← admin: periode/tagihan/bayar CRUD + verify (+ email/WA notify)
+│   │   │       ├── IuranWargaController.php      ← warga: tagihan list, submit bayar, upload bukti
+│   │   │       ├── KependudukanController.php    ← kepala KK/anggota/kendaraan CRUD + laporan + Excel export
+│   │   │       ├── SuratController.php           ← permohonan surat CRUD, status update, print
+│   │   │       ├── BantuanSosialController.php   ← CRUD
+│   │   │       ├── UsulanPembangunanController.php ← CRUD + public submit
+│   │   │       └── InventarisController.php      ← CRUD
 │   │   └── Middleware/
 │   │       ├── RequireLogin.php    ← alias 'login': 401 JSON / redirect /login
 │   │       └── RequireAdmin.php    ← alias 'admin': 403 JSON / abort(403)
-│   └── Models/
-│       ├── User.php                ← Authenticatable, upsertFromGoogle, isAdmin()
-│       ├── UnitRumah.php           ← syncForUser, isTaken, $timestamps=false
-│       ├── Kampanye.php            ← refreshTerkumpul()
-│       ├── Donasi.php
-│       ├── Kas.php                 ← $timestamps=false
-│       ├── Anggaran.php
-│       ├── Pengeluaran.php
-│       └── Pengumuman.php          ← $timestamps=false
+│   ├── Mail/
+│   │   ├── AgendaReminderMail.php   ← agenda reminder (sent by AgendaController)
+│   │   ├── DonasiStatusMail.php     ← donasi verified/rejected notification
+│   │   ├── IuranStatusMail.php      ← iuran bayar verified/rejected notification
+│   │   └── PengumumanMail.php       ← pengumuman blast email
+│   ├── Models/
+│   │   ├── User.php                ← Authenticatable, upsertFromGoogle, isAdmin()
+│   │   ├── UnitRumah.php           ← syncForUser, isTaken, $timestamps=false
+│   │   ├── Kampanye.php            ← refreshTerkumpul()
+│   │   ├── Donasi.php
+│   │   ├── Kas.php                 ← $timestamps=false
+│   │   ├── Anggaran.php
+│   │   ├── Pengeluaran.php
+│   │   ├── Pengumuman.php          ← $timestamps=false
+│   │   ├── IuranPeriode.php / IuranTagihan.php / IuranBayar.php
+│   │   ├── KepalaKeluarga.php / AnggotaKeluarga.php / Kendaraan.php
+│   │   ├── SuratPermohonan.php     ← JENIS const (12 types), data_tambahan JSON
+│   │   ├── BantuanSosial.php / UsulanPembangunan.php / Inventaris.php
+│   │   └── ...
+│   └── Services/
+│       ├── ExcelExportService.php  ← PhpSpreadsheet: kas, iuran, pengeluaran, kependudukan exports
+│       ├── WhatsappService.php     ← Fonnte API wrapper: send(), blast(); disabled if FONNTE_TOKEN empty
+│       ├── SeederManager.php       ← Centralized seeder registry
+│       └── GsheetService.php       ← Google Sheets JWT sync
 ├── bootstrap/app.php               ← API routes enabled, middleware aliases registered
 ├── config/
 │   ├── app.php                     ← timezone=Asia/Jakarta, upload_max_mb
-│   └── services.php                ← Google Socialite block
-├── database/migrations/            ← 8 migrations (001–008), includes is_anonym on donasi
+│   └── services.php                ← Google Socialite + Fonnte (services.fonnte.token) block
+├── database/migrations/            ← 25+ migrations
 ├── resources/views/
-│   ├── layouts/app.blade.php       ← Nav, footer, CSS vars, doLogout() JS
-│   ├── home.blade.php
-│   ├── kampanye.blade.php
-│   ├── kampanye-detail.blade.php   ← Fetches /api/kampanye/{id}, renders detail
-│   ├── donasi.blade.php
-│   ├── donatur.blade.php
-│   ├── laporan.blade.php
-│   ├── login.blade.php             ← Standalone (no layout)
-│   ├── onboarding.blade.php        ← Standalone (no layout)
+│   ├── layouts/
+│   │   ├── app.blade.php           ← Nav, footer, CSS vars, doLogout() JS
+│   │   └── admin.blade.php         ← Dark sidebar (rail + panel), all admin pages
+│   ├── emails/
+│   │   ├── agenda-reminder.blade.php
+│   │   ├── donasi-status.blade.php ← Styled HTML for verify/reject
+│   │   ├── iuran-status.blade.php  ← Styled HTML for iuran confirm/reject
+│   │   └── pengumuman.blade.php    ← Styled HTML for pengumuman blast
+│   ├── home.blade.php / kampanye.blade.php / donasi.blade.php / donatur.blade.php
+│   ├── laporan.blade.php / galeri.blade.php / agenda.blade.php / informasi.blade.php
+│   ├── login.blade.php / onboarding.blade.php ← Standalone (no layout)
 │   ├── dashboard/
-│   │   ├── index.blade.php
-│   │   ├── riwayat.blade.php
-│   │   ├── konfirmasi.blade.php
-│   │   └── profil.blade.php
+│   │   ├── index.blade.php / riwayat.blade.php / konfirmasi.blade.php / profil.blade.php
+│   │   ├── iuran.blade.php         ← Warga iuran self-pay (whitelist-gated)
+│   │   └── surat.blade.php         ← Warga surat permohonan
 │   └── admin/
-│       ├── dashboard.blade.php
-│       ├── kampanye.blade.php
-│       ├── verifikasi.blade.php
-│       ├── kas.blade.php
-│       ├── anggaran.blade.php
-│       ├── pengeluaran.blade.php
-│       ├── laporan.blade.php
-│       ├── warga.blade.php
-│       └── pengumuman.blade.php
+│       ├── dashboard.blade.php / kampanye.blade.php / verifikasi.blade.php
+│       ├── kas.blade.php / anggaran.blade.php / pengeluaran.blade.php / laporan.blade.php
+│       ├── warga.blade.php / pengumuman.blade.php / surat.blade.php
+│       ├── keuangan/               ← dashboard, kas, transaksi-instan, pengeluaran, anggaran, kategori, iuran, matrix, laporan, gsheet
+│       ├── kependudukan/           ← index, warga, detail, kendaraan, peta, laporan
+│       └── kelembagaan/            ← agenda, galeri, berita, tata-tertib, program-kerja, saran, usulan, bantuan-sosial, inventaris
 ├── routes/
 │   ├── web.php                     ← Page routes + auth routes (/auth/google etc)
 │   └── api.php                     ← All /api/* routes
@@ -168,8 +188,11 @@ All return JSON via `Response::success/error()`. Prefix: `/api/`
 | GET | `/api/pengeluaran/public` | — | Public spending |
 | POST | `/api/pengeluaran` | admin | Record spending |
 | GET | `/api/pengumuman` | — | Announcements list |
-| POST | `/api/pengumuman` | admin | Send announcement |
+| POST | `/api/pengumuman` | admin | Send announcement (+ optional `kirim_email`/`kirim_wa` blast) |
 | GET | `/api/users` | admin | All users with units |
+| GET | `/api/kependudukan/laporan` | sekretaris+ | Per-blok kependudukan summary |
+| GET | `/api/kependudukan/laporan/detail` | sekretaris+ | Full KK list with anggota+kendaraan (`?blok=`) |
+| GET | `/api/kependudukan/laporan/export` | sekretaris+ | Excel export 2-sheet (`?blok=`) |
 
 ---
 
@@ -179,24 +202,59 @@ All return JSON via `Response::success/error()`. Prefix: `/api/`
 | `/` | `home` | Public |
 | `/kampanye` | `kampanye` | Public |
 | `/kampanye/{id}` | `kampanye-detail` | Public |
-| `/donasi` | `donasi` | Public |
+| `/donasi` | `donasi` | login |
 | `/donatur` | `donatur` | Public |
-| `/laporan` | `laporan` | Public |
+| `/laporan` | `laporan` | login |
+| `/agenda` | `agenda` | Public |
+| `/galeri` | `galeri` | Public |
+| `/informasi` | `informasi` | Public |
 | `/login` | `login` | Public |
 | `/onboarding` | `onboarding` | login |
 | `/dashboard` | `dashboard.index` | login |
 | `/dashboard/riwayat` | `dashboard.riwayat` | login |
+| `/dashboard/bayar` | `dashboard.bayar` | login |
 | `/dashboard/konfirmasi` | `dashboard.konfirmasi` | login |
 | `/dashboard/profil` | `dashboard.profil` | login |
+| `/dashboard/iuran` | `dashboard.iuran` | login |
+| `/dashboard/surat` | `dashboard.surat` | login |
 | `/admin` | `admin.dashboard` | admin |
-| `/admin/kampanye` | `admin.kampanye` | admin |
-| `/admin/verifikasi` | `admin.verifikasi` | admin |
-| `/admin/kas` | `admin.kas` | admin |
-| `/admin/anggaran` | `admin.anggaran` | admin |
-| `/admin/pengeluaran` | `admin.pengeluaran` | admin |
-| `/admin/laporan` | `admin.laporan` | admin |
-| `/admin/warga` | `admin.warga` | admin |
-| `/admin/pengumuman` | `admin.pengumuman` | admin |
+| `/admin/kampanye` | `admin.kampanye` | bendahara+ |
+| `/admin/verifikasi` | `admin.verifikasi` | bendahara+ |
+| `/admin/kas` | `admin.kas` | bendahara+ |
+| `/admin/anggaran` | `admin.anggaran` | bendahara+ |
+| `/admin/pengeluaran` | `admin.pengeluaran` | bendahara+ |
+| `/admin/laporan` | `admin.laporan` | bendahara+ |
+| `/admin/keuangan` | `admin.keuangan.dashboard` | bendahara+ |
+| `/admin/keuangan/kas` | `admin.keuangan.kas` | bendahara+ |
+| `/admin/keuangan/transaksi-instan` | `admin.keuangan.transaksi-instan` | bendahara+ |
+| `/admin/keuangan/pengeluaran` | `admin.keuangan.pengeluaran` | bendahara+ |
+| `/admin/keuangan/anggaran` | `admin.keuangan.anggaran` | bendahara+ |
+| `/admin/keuangan/kategori` | `admin.keuangan.kategori` | bendahara+ |
+| `/admin/keuangan/iuran` | `admin.keuangan.iuran` | bendahara+ |
+| `/admin/keuangan/iuran/matrix` | `admin.keuangan.matrix` | bendahara+ |
+| `/admin/keuangan/laporan` | `admin.keuangan.laporan` | bendahara+ |
+| `/admin/keuangan/gsheet` | `admin.keuangan.gsheet` | bendahara+ |
+| `/admin/warga` | `admin.warga` | sekretaris+ |
+| `/admin/pengumuman` | `admin.pengumuman` | sekretaris+ |
+| `/admin/surat` | `admin.surat` | sekretaris+ |
+| `/admin/kelembagaan/agenda` | `admin.kelembagaan.agenda` | sekretaris+ |
+| `/admin/kelembagaan/galeri` | `admin.kelembagaan.galeri` | sekretaris+ |
+| `/admin/kelembagaan/berita` | `admin.kelembagaan.berita` | sekretaris+ |
+| `/admin/kelembagaan/tata-tertib` | `admin.kelembagaan.tata-tertib` | sekretaris+ |
+| `/admin/kelembagaan/program-kerja` | `admin.kelembagaan.program-kerja` | sekretaris+ |
+| `/admin/kelembagaan/saran` | `admin.kelembagaan.saran` | sekretaris+ |
+| `/admin/kelembagaan/usulan` | `admin.kelembagaan.usulan` | sekretaris+ |
+| `/admin/kelembagaan/bantuan-sosial` | `admin.kelembagaan.bantuan-sosial` | sekretaris+ |
+| `/admin/kelembagaan/inventaris` | `admin.kelembagaan.inventaris` | sekretaris+ |
+| `/admin/kependudukan` | `admin.kependudukan.index` | sekretaris+ |
+| `/admin/kependudukan/warga` | `admin.kependudukan.warga` | sekretaris+ |
+| `/admin/kependudukan/warga/{id}` | `admin.kependudukan.detail` | sekretaris+ |
+| `/admin/kependudukan/kendaraan` | `admin.kependudukan.kendaraan` | sekretaris+ |
+| `/admin/kependudukan/peta` | `admin.kependudukan.peta` | sekretaris+ |
+| `/admin/kependudukan/laporan` | `admin.kependudukan.laporan` | sekretaris+ |
+| `/admin/aktivitas` | `admin.aktivitas` | admin+ |
+| `/admin/pengaturan` | `admin.pengaturan` | admin+ |
+| `/admin/seeder` | `admin.seeder` | super_admin |
 
 ---
 
@@ -204,7 +262,7 @@ All return JSON via `Response::success/error()`. Prefix: `/api/`
 | Table | Key columns |
 |---|---|
 | `users` | `google_id`, `role` (warga/sekretaris/bendahara/admin/super_admin), `profil_lengkap` bool, `avatar_url` |
-| `unit_rumah` | `blok` CHAR(1), `nomor` TINYINT, `is_primary`, `user_id` FK |
+| `unit_rumah` | `blok` CHAR(1), `nomor` TINYINT, `is_primary`, `user_id` FK, `lat` decimal(10,8) nullable, `lng` decimal(11,8) nullable |
 | `kampanye` | `target`/`terkumpul` unsignedBigInt, `status` (aktif/urgent/selesai/arsip) |
 | `donasi` | `nominal`, `metode`, `status` (pending/verified/rejected), `is_anonym` |
 | `kas` | `jenis` (masuk/keluar), `kategori_id` FK, `created_by` FK, no `updated_at` |
@@ -223,6 +281,19 @@ All return JSON via `Response::success/error()`. Prefix: `/api/`
 | `anggota_keluarga` | `kepala_keluarga_id` FK, `nik`, `nama`, `hubungan`, `jenis_kelamin`, `tanggal_lahir` |
 | `kendaraan` | `kepala_keluarga_id` FK, `jenis`, `merek`, `plat_nomor`, `warna` |
 | `seeder_runs` | `seeder_key`, `seeded_ids` JSON, `run_by` FK, `run_at`, `rolled_back_by` FK, `rolled_back_at`, `status` (applied/rolled_back) |
+| `app_settings` | `key` unique, `value` text, `type` (string/boolean/integer/json), `label`, `group` |
+| `transaksi_instan` | `nama`, `jenis` (masuk/keluar), `nominal`, `kategori_id` FK, `keterangan` |
+| `agenda` | `judul`, `deskripsi`, `tanggal`, `waktu_mulai`, `waktu_selesai`, `lokasi`, `audience` (semua/pengurus/warga), `recurrence` (none/weekly/monthly), `color` |
+| `galeri` | `nama` (album name), `deskripsi`, `cover_url`, `created_by` FK |
+| `galeri_foto` | `galeri_id` FK, `url`, `keterangan`, `urutan`, `created_by` FK |
+| `berita` | `judul`, `konten`, `cover_url`, `status` (draft/published), `created_by` FK |
+| `tata_tertib` | `judul`, `konten`, `urutan`, `created_by` FK |
+| `program_kerja` | `nama`, `deskripsi`, `bidang`, `status` (rencana/berjalan/selesai), `tahun`, `created_by` FK |
+| `saran_keluhan` | `nama`, `kontak`, `jenis` (saran/keluhan), `pesan`, `status` (baru/dibaca/ditindaklanjuti/selesai), `catatan_admin`, `user_id` FK nullable |
+| `bantuan_sosial` | `nama_penerima`, `unit_rumah_id` FK, `jenis` (sembako/uang_tunai/kesehatan/pendidikan/lainnya), `nominal`, `keterangan`, `tanggal`, `created_by` FK |
+| `usulan_pembangunan` | `judul`, `deskripsi`, `lokasi`, `prioritas` (rendah/sedang/tinggi), `status` (baru/dikaji/disetujui/ditolak/selesai), `catatan_admin`, `user_id` FK, `created_by` FK |
+| `inventaris` | `nama`, `kode`, `jumlah`, `satuan`, `kondisi` (baik/rusak_ringan/rusak_berat), `lokasi`, `tanggal_beli`, `nilai`, `keterangan`, `created_by` FK |
+| `surat_permohonan` | `user_id` FK, `jenis` (12 types), `keperluan`, `status` (menunggu/diproses/selesai/ditolak), `catatan`, `tanggal_surat`, `data_tambahan` JSON, `created_by` FK |
 
 ---
 
@@ -271,7 +342,7 @@ API: `GET /api/admin/seeder`, `POST /api/admin/seeder/{key}/run`, `POST /api/adm
 
 ## Business Rules
 1. `donasi.status` flow: `pending` → `verified` or `rejected`
-2. On verify: auto-create `kas` masuk entry + call `kampanye->refreshTerkumpul()`
+2. On verify: auto-create `kas` masuk entry + call `kampanye->refreshTerkumpul()` + notify donor via email + WA
 3. `kampanye.terkumpul` = SUM of verified donasi (never set manually)
 4. On `pengeluaran` save: auto-create `kas` keluar + update `anggaran.realisasi`
 5. One unit (blok+nomor) → only ONE user account (unique constraint)
@@ -280,8 +351,10 @@ API: `GET /api/admin/seeder`, `POST /api/admin/seeder/{key}/run`, `POST /api/adm
 8. Timezone: `Asia/Jakarta`
 9. Google OAuth: Testing mode — only whitelisted emails can login
 10. `iuran_tagihan.status` flow: `belum` → `pending` (on bayar submit) → `lunas` or back to `belum` (on verify/reject)
-11. On iuran verify: auto-create `kas` masuk entry
+11. On iuran verify: auto-create `kas` masuk entry + notify warga via email + WA
 12. Warga iuran self-pay is whitelist-gated: `IURAN_WHITELIST` env var (comma-separated emails)
+13. Notifications (email/WA) are fire-and-forget — failure is logged but never blocks API response
+14. WA is disabled silently when `FONNTE_TOKEN` env var is empty; email disabled when `MAIL_HOST` not configured
 
 ---
 
@@ -335,6 +408,19 @@ SESSION_ENCRYPT=false
 
 # Iuran warga self-pay whitelist (comma-separated emails, empty = disabled for all warga)
 IURAN_WHITELIST=
+
+# Email — cPanel SMTP (port 465 SSL or 587 TLS)
+MAIL_MAILER=smtp
+MAIL_HOST=mail.gp2rt10.com
+MAIL_PORT=465
+MAIL_USERNAME=noreply@gp2rt10.com
+MAIL_PASSWORD=your_mail_password
+MAIL_ENCRYPTION=ssl
+MAIL_FROM_ADDRESS=noreply@gp2rt10.com
+MAIL_FROM_NAME="RT 10 Golden Park 2"
+
+# WhatsApp via Fonnte (https://fonnte.com) — leave blank to disable silently
+FONNTE_TOKEN=
 ```
 
 ---
@@ -345,13 +431,13 @@ IURAN_WHITELIST=
 All features from the vanilla PHP app have been migrated:
 - Infrastructure, auth, public pages, warga dashboard, admin panel, API layer, warga sub-pages
 
-### [TODO] Phase 8 — Polish & Production (TODO)
+### [PARTIAL] Phase 8 — Polish & Production (mostly done)
 - [ ] QRIS image upload by admin
-- [ ] WhatsApp confirmation link after donasi
-- [ ] Notification when donasi verified
+- [x] Notification when donasi verified/rejected — email (`DonasiStatusMail`) + WA (`WhatsappService`)
 - [x] Export laporan to Excel — `ExcelExportService` (PhpSpreadsheet), endpoints at `/api/laporan/export/{kas,iuran,pengeluaran}`
-- [ ] Pagination for donatur list and kas ledger
-- [ ] Error pages (403, 404, 500) with proper Blade design
+- [x] Pagination for kas ledger — smart ellipsis, per-page selector (25/50/100)
+- [ ] Pagination for donatur list
+- [x] Error pages (403, 404, 419, 500) — styled Blade views in `resources/views/errors/`
 - [ ] `storage/uploads/` web-accessible path setup for shared hosting
 
 ### [DONE] Phase 10 — Keuangan & Kependudukan (DONE)
@@ -374,7 +460,7 @@ All features from the vanilla PHP app have been migrated:
 
 **Kependudukan module** (`/admin/kependudukan/*`):
 - `KependudukanController`: stats, units, kepala KK CRUD, anggota keluarga CRUD, kendaraan CRUD
-- Admin views: `index` (stats), `warga` (list), `detail` (per-KK detail with anggota + kendaraan)
+- Admin views: `index` (stats), `warga` (list), `detail` (per-KK detail with anggota + kendaraan), `laporan`
 
 ### [DONE] Phase 12 — Iuran Bulanan (DONE — admin complete, warga whitelist-gated)
 - Models: `IuranPeriode`, `IuranTagihan`, `IuranBayar`
@@ -384,20 +470,51 @@ All features from the vanilla PHP app have been migrated:
 - Admin view: `/admin/keuangan/iuran/matrix` (compliance matrix with Excel export + print)
 - Warga view: `/dashboard/iuran` (tagihan list, payment modal, bukti upload)
 - **Warga flow is whitelist-gated**: set `IURAN_WHITELIST=email1@gmail.com,email2@gmail.com` in `.env` to enable per user
-- On verify: auto-creates `kas` masuk entry
+- On verify: auto-creates `kas` masuk entry + notifies warga via email + WA
 
-### [TODO] Phase 11 — Laporan Kependudukan (TODO)
+### [DONE] Phase 11 — Laporan Kependudukan (DONE)
+- `KependudukanController::laporan()` — per-blok summary (jumlah KK, jiwa, kendaraan, tetap/kontrak/kos) via JOIN aggregates
+- `KependudukanController::laporanDetail()` — full KK list eager-loading anggota + kendaraan, filterable by `?blok=`
+- `KependudukanController::exportKependudukan()` — 2-sheet Excel: Daftar KK + Anggota Keluarga
+- `ExcelExportService::exportKependudukan(?string $blok)` — PhpSpreadsheet export
+- API: `GET /api/kependudukan/laporan`, `GET /api/kependudukan/laporan/detail?blok=`, `GET /api/kependudukan/laporan/export?blok=`
+- Admin view: `/admin/kependudukan/laporan` — 5 summary cards, 2 tabs (Ringkasan per Blok table + Daftar KK Lengkap grouped by blok), blok filter, print + Excel export
 
-### [TODO] Phase 13 — Kelembagaan & Informasi RT (TODO)
-New tables: `tata_tertib`, `inventaris`, `program_kerja`, `agenda`, `galeri`, `berita`, `saran_keluhan`, `bantuan_sosial`, `usulan_pembangunan`
+### [DONE] Phase 13 — Kelembagaan & Informasi RT (DONE)
+- Tables: `tata_tertib`, `program_kerja`, `agenda`, `galeri`, `galeri_foto`, `berita`, `saran_keluhan`, `bantuan_sosial`, `usulan_pembangunan`, `inventaris`
+- Controllers: `AgendaController`, `GaleriController`, `BeritaController`, `TataTertibController`, `ProgramKerjaController`, `SaranController`, `BantuanSosialController`, `UsulanPembangunanController`, `InventarisController`
+- Public pages: `/agenda`, `/galeri`, `/informasi` (tabs: berita, pengumuman, tata-tertib, program-kerja, saran, usulan)
+- Admin views under `/admin/kelembagaan/`: `agenda`, `galeri`, `berita`, `tata-tertib`, `program-kerja`, `saran`, `usulan`, `bantuan-sosial`, `inventaris`
+- `UsulanPembangunan`: warga submit via `/informasi` tab, admin responds via slide-in panel (status: baru→dikaji→disetujui/ditolak/selesai)
+- `BantuanSosial`: jenis (sembako/uang_tunai/kesehatan/pendidikan/lainnya), nominal only shown for uang_tunai
+- `Inventaris`: asset registry with jumlah, kondisi, tanggal_beli, nilai
 
-### [TODO] Phase 14 — Surat & Dokumen (TODO)
-New tables: `surat_permohonan`, `surat_keterangan`, `ttd_digital`
+### [DONE] Phase 14 — Surat & Dokumen (DONE)
+- Table: `surat_permohonan` with `data_tambahan` JSON for jenis-specific extra fields
+- `SuratPermohonan::JENIS` const — 12 document types (domisili, ktp_baru, kk_baru, usaha, izin_keramaian, kematian, kelahiran, pindah_masuk, pindah_keluar, tidak_mampu, nikah, lainnya)
+- `SuratController` (admin): index/show/updateStatus/cetakSurat; (warga): store/mine/jenis
+- Admin view `/admin/surat`: filter pills, list with color-coded left borders, slide-in detail panel with 2×2 solid status action buttons (menunggu/diproses/selesai/ditolak), tanggal surat autofill, letterhead print via `window.print()`
+- Warga view `/dashboard/surat`: dynamic extra fields rendered by `EXTRA_FIELDS` const based on jenis selection
+- Status buttons: inactive=flat grey, active=solid filled color with white text
 
 ### [TODO] Phase 15 — Keamanan Lingkungan (TODO)
 New tables: `jadwal_ronda`, `pos_keamanan`, `log_tamu_keamanan`
 
-### [TODO] Phase 16 — Notifikasi & Integrasi (TODO)
-- Email notifications (Laravel Mail)
-- WhatsApp blast integration
-- QRIS dinamis via Midtrans/Xendit
+### [DONE] Phase 16 — Notifikasi & Integrasi (partially done)
+**Email (Laravel Mail — SMTP):**
+- `DonasiStatusMail` → `emails/donasi-status.blade.php` — sent on donasi verify/reject
+- `IuranStatusMail` → `emails/iuran-status.blade.php` — sent on iuran bayar verify/reject
+- `PengumumanMail` → `emails/pengumuman.blade.php` — optional blast when creating pengumuman
+- `AgendaReminderMail` → `emails/agenda-reminder.blade.php` — sent by AgendaController for upcoming events
+- Configure: `MAIL_MAILER=smtp`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS`
+
+**WhatsApp (Fonnte — https://fonnte.com):**
+- `WhatsappService` — `send(string $noWa, string $message)` for single, `blast(array $numbers, string $message)` for bulk (chunked 50/req)
+- Number normalization: `08xxx` → `628xxx` automatically
+- Disabled silently when `FONNTE_TOKEN` is empty
+- Triggered on: donasi verify/reject, iuran verify/reject, pengumuman store (optional toggle)
+- Admin pengumuman view: "Kirim juga via" Email + WhatsApp toggle buttons; response shows count ("42 email terkirim, 38 WA terkirim")
+- Configure: `FONNTE_TOKEN=your_token` from fonnte.com
+
+**Pending:**
+- [ ] QRIS dinamis via Midtrans/Xendit

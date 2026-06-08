@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\IuranStatusMail;
 use App\Models\IuranBayar;
 use App\Models\IuranPeriode;
 use App\Models\IuranTagihan;
 use App\Models\Kas;
 use App\Models\UnitRumah;
+use App\Services\WhatsappService;
 use App\Traits\LogsAdminActivity;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class IuranController extends Controller
 {
@@ -185,6 +189,25 @@ class IuranController extends Controller
         if ($action === 'reject') {
             $bayar->update(['status' => 'rejected']);
             $bayar->tagihan->update(['status' => 'belum']);
+
+            try {
+                $bayar->load(['createdBy', 'tagihan.periode', 'tagihan.unitRumah']);
+                $user = $bayar->createdBy;
+                if ($user) {
+                    if ($user->email) Mail::to($user->email)->send(new IuranStatusMail($bayar));
+                    if ($user->no_wa) {
+                        $wa      = app(WhatsappService::class);
+                        $periode = $bayar->tagihan?->periode;
+                        $bulan   = $periode ? \Carbon\Carbon::create($periode->tahun, $periode->bulan)->locale('id')->isoFormat('MMMM Y') : '';
+                        $rp      = 'Rp ' . number_format($bayar->nominal, 0, ',', '.');
+                        $msg_wa  = "Halo {$user->nama}! Mohon maaf, pembayaran iuran *{$bulan}* sebesar *{$rp}* tidak dapat dikonfirmasi. Silakan unggah ulang bukti atau hubungi pengurus RT.\n\n-- RT 10 Golden Park 2";
+                        $wa->send($user->no_wa, $msg_wa);
+                    }
+                }
+            } catch (\Throwable $e) {
+                Log::warning('Iuran reject notify failed: ' . $e->getMessage());
+            }
+
             return response()->json(['success' => true, 'message' => 'Pembayaran ditolak.']);
         }
 
@@ -211,6 +234,29 @@ class IuranController extends Controller
         });
 
         $this->logActivity('verify_iuran', "Verifikasi iuran bayar #{$id}", IuranBayar::class, $id, ['nominal' => $bayar->nominal]);
+
+        // Notify via email + WA
+        try {
+            $bayar->load(['createdBy', 'tagihan.periode', 'tagihan.unitRumah']);
+            $user = $bayar->createdBy;
+            if ($user) {
+                if ($user->email) {
+                    Mail::to($user->email)->send(new IuranStatusMail($bayar));
+                }
+                if ($user->no_wa) {
+                    $wa      = app(WhatsappService::class);
+                    $periode = $bayar->tagihan?->periode;
+                    $unit    = $bayar->tagihan?->unitRumah;
+                    $bulan   = $periode ? \Carbon\Carbon::create($periode->tahun, $periode->bulan)->locale('id')->isoFormat('MMMM Y') : '';
+                    $rp      = 'Rp ' . number_format($bayar->nominal, 0, ',', '.');
+                    $unitStr = $unit ? " (Unit {$unit->blok}-{$unit->nomor})" : '';
+                    $msg_wa  = "Halo {$user->nama}! Pembayaran iuran *{$bulan}*{$unitStr} sebesar *{$rp}* telah *dikonfirmasi*. Terima kasih! 🙏\n\n-- RT 10 Golden Park 2";
+                    $wa->send($user->no_wa, $msg_wa);
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Iuran notify failed: ' . $e->getMessage());
+        }
 
         return response()->json(['success' => true, 'message' => 'Pembayaran terverifikasi.']);
     }
