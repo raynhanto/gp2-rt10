@@ -45,11 +45,16 @@
       <input type="date" id="f-sampai" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;outline:none">
       <button onclick="loadKas(1)" class="btn-secondary" style="padding:8px 16px;font-size:13px">Filter</button>
       <button onclick="resetFilter()" style="padding:8px 12px;border:none;background:none;font-size:12px;color:var(--ink-soft);cursor:pointer">Reset</button>
+      <select id="f-per-page" onchange="loadKas(1)" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:#fff;outline:none;margin-left:auto">
+        <option value="25">25 / hal</option>
+        <option value="50" selected>50 / hal</option>
+        <option value="100">100 / hal</option>
+      </select>
     </div>
   </div>
 
   <div id="kas-list"><div style="text-align:center;padding:3rem;color:var(--ink-soft)">Memuat...</div></div>
-  <div id="kas-pagination" style="display:flex;gap:8px;justify-content:center;padding:1rem 0"></div>
+  <div id="kas-pagination" style="display:flex;gap:6px;justify-content:center;align-items:center;padding:1.25rem 0;flex-wrap:wrap"></div>
 </div>
 
 {{-- Form Modal --}}
@@ -184,6 +189,7 @@ async function loadKas(page = 1) {
   currentPage = page;
   const params = new URLSearchParams({
     page,
+    per_page:    document.getElementById('f-per-page').value,
     search:      document.getElementById('f-search').value,
     jenis:       document.getElementById('f-jenis').value,
     kategori_id: document.getElementById('f-kategori').value,
@@ -237,15 +243,35 @@ async function loadKas(page = 1) {
 
   // Pagination
   const meta = j.meta;
-  let pagHtml = '';
-  if (meta.pages > 1) {
-    for (let p = 1; p <= meta.pages; p++) {
-      const active = p === meta.page;
-      pagHtml += `<button onclick="loadKas(${p})" style="padding:6px 12px;border:1.5px solid ${active?'var(--forest)':'var(--border)'};background:${active?'var(--forest)':'#fff'};color:${active?'#fff':'var(--ink-soft)'};border-radius:6px;cursor:pointer;font-size:13px">${p}</button>`;
-    }
-    pagHtml = `<span style="font-size:13px;color:var(--ink-soft)">${meta.total} transaksi</span>` + pagHtml;
+  document.getElementById('kas-pagination').innerHTML = renderPagination(meta.page, meta.pages, meta.total);
+}
+
+function renderPagination(cur, total, rowCount) {
+  if (total <= 1) return `<span style="font-size:12px;color:var(--ink-mute)">${rowCount} transaksi</span>`;
+
+  const btnStyle = (active) =>
+    `padding:6px 11px;border:1.5px solid ${active?'var(--forest)':'var(--border)'};background:${active?'var(--forest)':'#fff'};color:${active?'#fff':'var(--ink-soft)'};border-radius:6px;cursor:${active?'default':'pointer'};font-size:13px;font-family:'DM Sans',sans-serif;`;
+  const navStyle = (disabled) =>
+    `padding:6px 11px;border:1.5px solid var(--border);background:#fff;color:${disabled?'var(--border)':'var(--ink-soft)'};border-radius:6px;cursor:${disabled?'default':'pointer'};font-size:13px;font-family:'DM Sans',sans-serif;`;
+
+  const pages = [];
+  // Always show: first, last, current ± 2
+  const show = new Set([1, total, cur, cur-1, cur-2, cur+1, cur+2].filter(p => p >= 1 && p <= total));
+  const sorted = [...show].sort((a,b) => a-b);
+
+  let html = `<span style="font-size:12px;color:var(--ink-mute);margin-right:4px">${rowCount} transaksi</span>`;
+  html += `<button onclick="loadKas(${cur-1})" ${cur===1?'disabled':''} style="${navStyle(cur===1)}">&#8249;</button>`;
+
+  let prev = 0;
+  for (const p of sorted) {
+    if (p - prev > 1) html += `<span style="padding:6px 4px;color:var(--ink-mute);font-size:13px">…</span>`;
+    const active = p === cur;
+    html += `<button onclick="${active?'':('loadKas('+p+')')}" style="${btnStyle(active)}">${p}</button>`;
+    prev = p;
   }
-  document.getElementById('kas-pagination').innerHTML = pagHtml;
+
+  html += `<button onclick="loadKas(${cur+1})" ${cur===total?'disabled':''} style="${navStyle(cur===total)}">&#8250;</button>`;
+  return html;
 }
 
 function resetFilter() {

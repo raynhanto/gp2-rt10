@@ -249,6 +249,33 @@ Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
     Route::delete('/saran-keluhan/{id}', [Api\SaranKeluhanController::class, 'destroy'])->where('id', '[0-9]+');
 });
 
+// ── Bantuan Sosial ────────────────────────────────────────────
+Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
+    Route::get('/bantuan-sosial',         [Api\BantuanSosialController::class, 'index']);
+    Route::post('/bantuan-sosial',        [Api\BantuanSosialController::class, 'store']);
+    Route::put('/bantuan-sosial/{id}',    [Api\BantuanSosialController::class, 'update'])->where('id', '[0-9]+');
+    Route::delete('/bantuan-sosial/{id}', [Api\BantuanSosialController::class, 'destroy'])->where('id', '[0-9]+');
+});
+
+// ── Usulan Pembangunan ────────────────────────────────────────
+Route::middleware('login')->group(function () {
+    Route::post('/usulan',      [Api\UsulanPembangunanController::class, 'store']);
+    Route::get('/usulan/mine',  [Api\UsulanPembangunanController::class, 'mine']);
+});
+Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
+    Route::get('/usulan',            [Api\UsulanPembangunanController::class, 'index']);
+    Route::put('/usulan/{id}',       [Api\UsulanPembangunanController::class, 'update'])->where('id', '[0-9]+');
+    Route::delete('/usulan/{id}',    [Api\UsulanPembangunanController::class, 'destroy'])->where('id', '[0-9]+');
+});
+
+// ── Inventaris ────────────────────────────────────────────────
+Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
+    Route::get('/inventaris',         [Api\InventarisController::class, 'index']);
+    Route::post('/inventaris',        [Api\InventarisController::class, 'store']);
+    Route::put('/inventaris/{id}',    [Api\InventarisController::class, 'update'])->where('id', '[0-9]+');
+    Route::delete('/inventaris/{id}', [Api\InventarisController::class, 'destroy'])->where('id', '[0-9]+');
+});
+
 // ── Seeder Management (super_admin only) ──────────────────────
 Route::middleware('admin:super_admin')->group(function () {
     Route::get('/admin/seeder',                   [Api\SeederController::class, 'index']);

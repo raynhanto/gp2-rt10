@@ -283,6 +283,15 @@ a{text-decoration:none;color:inherit}
         <a href="/admin/kelembagaan/saran" class="{{ request()->is('admin/kelembagaan/saran*') ? 'active' : '' }}">
           <i class="fa fa-comments"></i> Saran & Keluhan
         </a>
+        <a href="/admin/kelembagaan/usulan" class="{{ request()->is('admin/kelembagaan/usulan*') ? 'active' : '' }}">
+          <i class="fa fa-lightbulb"></i> Usulan Pembangunan
+        </a>
+        <a href="/admin/kelembagaan/bantuan-sosial" class="{{ request()->is('admin/kelembagaan/bantuan-sosial*') ? 'active' : '' }}">
+          <i class="fa fa-hand-holding-heart"></i> Bantuan Sosial
+        </a>
+        <a href="/admin/kelembagaan/inventaris" class="{{ request()->is('admin/kelembagaan/inventaris*') ? 'active' : '' }}">
+          <i class="fa fa-boxes-stacked"></i> Inventaris RT
+        </a>
       @endif
 
       {{-- System section: admin, super_admin only --}}

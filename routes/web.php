@@ -76,12 +76,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::view('/surat',      'admin.surat')->name('surat');
 
         Route::prefix('kelembagaan')->name('kelembagaan.')->group(function () {
-            Route::view('/agenda',        'admin.kelembagaan.agenda')->name('agenda');
-            Route::view('/galeri',        'admin.kelembagaan.galeri')->name('galeri');
-            Route::view('/berita',        'admin.kelembagaan.berita')->name('berita');
-            Route::view('/tata-tertib',   'admin.kelembagaan.tata-tertib')->name('tata-tertib');
-            Route::view('/program-kerja', 'admin.kelembagaan.program-kerja')->name('program-kerja');
-            Route::view('/saran',         'admin.kelembagaan.saran')->name('saran');
+            Route::view('/agenda',          'admin.kelembagaan.agenda')->name('agenda');
+            Route::view('/galeri',          'admin.kelembagaan.galeri')->name('galeri');
+            Route::view('/berita',          'admin.kelembagaan.berita')->name('berita');
+            Route::view('/tata-tertib',     'admin.kelembagaan.tata-tertib')->name('tata-tertib');
+            Route::view('/program-kerja',   'admin.kelembagaan.program-kerja')->name('program-kerja');
+            Route::view('/saran',           'admin.kelembagaan.saran')->name('saran');
+            Route::view('/usulan',          'admin.kelembagaan.usulan')->name('usulan');
+            Route::view('/bantuan-sosial',  'admin.kelembagaan.bantuan-sosial')->name('bantuan-sosial');
+            Route::view('/inventaris',      'admin.kelembagaan.inventaris')->name('inventaris');
         });
 
         Route::prefix('kependudukan')->name('kependudukan.')->group(function () {

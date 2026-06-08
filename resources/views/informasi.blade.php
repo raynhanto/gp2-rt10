@@ -87,6 +87,7 @@
       <button class="inf-tab" onclick="setTab('tata-tertib',this)"><i class="fa fa-scale-balanced" style="margin-right:6px"></i>Tata Tertib</button>
       <button class="inf-tab" onclick="setTab('program-kerja',this)"><i class="fa fa-list-check" style="margin-right:6px"></i>Program Kerja</button>
       <button class="inf-tab" onclick="setTab('saran',this)"><i class="fa fa-comments" style="margin-right:6px"></i>Saran &amp; Keluhan</button>
+      <button class="inf-tab" onclick="setTab('usulan',this)"><i class="fa fa-lightbulb" style="margin-right:6px"></i>Usulan Pembangunan</button>
     </div>
   </div>
 </div>
@@ -221,6 +222,65 @@
 
   </div>
 
+  {{-- Usulan Pembangunan --}}
+  <div id="tab-usulan" style="display:none">
+
+    <div class="card" style="margin-bottom:1.5rem">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--forest);margin-bottom:.25rem">Kirim Usulan Pembangunan</div>
+      <div style="font-size:13px;color:var(--ink-soft);margin-bottom:1.25rem">Sampaikan ide atau usulan untuk perbaikan dan pengembangan lingkungan RT 10.</div>
+
+      @guest
+      <div style="background:var(--gold-pale);border-radius:10px;padding:1rem 1.25rem;font-size:13px;color:var(--gold-dark)">
+        <i class="fa fa-lock" style="margin-right:6px"></i>
+        <a href="/login" style="color:var(--gold-dark);font-weight:600">Masuk</a> terlebih dahulu untuk mengirim usulan.
+      </div>
+      @endguest
+
+      @auth
+      <div style="margin-bottom:.75rem">
+        <label style="font-size:12px;font-weight:600;color:var(--ink-mid);display:block;margin-bottom:.3rem">Judul Usulan <span style="color:var(--rust)">*</span></label>
+        <input id="up-judul" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--ink);background:#fff" placeholder="Singkat dan jelas, contoh: Perbaikan Lampu Jalan Blok C">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+        <div>
+          <label style="font-size:12px;font-weight:600;color:var(--ink-mid);display:block;margin-bottom:.3rem">Lokasi</label>
+          <input id="up-lokasi" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--ink);background:#fff" placeholder="Blok, jalan, atau area">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:var(--ink-mid);display:block;margin-bottom:.3rem">Prioritas</label>
+          <select id="up-prioritas" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--ink);background:#fff;cursor:pointer">
+            <option value="rendah">Rendah</option>
+            <option value="sedang" selected>Sedang</option>
+            <option value="tinggi">Tinggi</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:.75rem">
+        <label style="font-size:12px;font-weight:600;color:var(--ink-mid);display:block;margin-bottom:.3rem">Deskripsi <span style="color:var(--rust)">*</span></label>
+        <textarea id="up-deskripsi" rows="4" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--ink);background:#fff;resize:vertical" placeholder="Jelaskan usulan secara detail: masalah yang ada, solusi yang diusulkan, manfaatnya..."></textarea>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+        <input type="checkbox" id="up-anonym" style="accent-color:var(--forest);width:15px;height:15px">
+        <label for="up-anonym" style="font-size:13px;color:var(--ink-soft);cursor:pointer">Kirim sebagai anonim</label>
+      </div>
+
+      <div id="up-msg" style="display:none;font-size:13px;padding:10px 14px;border-radius:8px;margin-bottom:1rem"></div>
+
+      <button id="up-submit-btn" onclick="submitUsulan()" style="background:var(--forest);color:#fff;border:none;border-radius:var(--radius-sm);padding:11px 28px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%">
+        <i class="fa fa-paper-plane"></i> Kirim Usulan
+      </button>
+      @endauth
+    </div>
+
+    @auth
+    <div class="card">
+      <div style="font-size:14px;font-weight:600;color:var(--ink-mid);margin-bottom:1rem">Usulan Saya</div>
+      <div id="up-mine-list"><div style="text-align:center;padding:2rem;color:var(--ink-soft)">Memuat...</div></div>
+    </div>
+    @endauth
+
+  </div>
+
 </div>
 </main>
 
@@ -247,7 +307,7 @@ function setTab(tab, btn, pushState = true) {
   else document.querySelectorAll('.inf-tab').forEach(b => {
     if (b.getAttribute('onclick')?.includes(`'${tab}'`)) b.classList.add('active');
   });
-  ['berita','pengumuman','tata-tertib','program-kerja','saran'].forEach(t => {
+  ['berita','pengumuman','tata-tertib','program-kerja','saran','usulan'].forEach(t => {
     document.getElementById('tab-' + t).style.display = t === tab ? '' : 'none';
   });
   _curTab = tab;
@@ -262,6 +322,7 @@ async function loadTab(tab) {
   if (tab === 'tata-tertib')   await loadTataTertib();
   if (tab === 'program-kerja') await initPk();
   if (tab === 'saran')         await loadSkMine();
+  if (tab === 'usulan')        await loadUsulanMine();
 }
 
 // Category placeholder: bg, accent color, inline SVG path
@@ -545,8 +606,81 @@ async function loadSkMine() {
   }).join('');
 }
 
+// ── Usulan Pembangunan ────────────────────────────────────────
+async function submitUsulan() {
+  const judul     = document.getElementById('up-judul')?.value.trim();
+  const deskripsi = document.getElementById('up-deskripsi')?.value.trim();
+  const lokasi    = document.getElementById('up-lokasi')?.value.trim();
+  const prioritas = document.getElementById('up-prioritas')?.value;
+  const isAnonym  = document.getElementById('up-anonym')?.checked;
+  const msg       = document.getElementById('up-msg');
+
+  if (!judul || judul.length < 3)     { showUpMsg('Judul wajib diisi (min. 3 karakter).', false); return; }
+  if (!deskripsi || deskripsi.length < 10) { showUpMsg('Deskripsi wajib diisi (min. 10 karakter).', false); return; }
+
+  const btn = document.getElementById('up-submit-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Mengirim...';
+
+  const r = await fetch('/api/usulan', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': _csrfToken },
+    body: JSON.stringify({ judul, deskripsi, lokasi: lokasi || null, prioritas, is_anonym: isAnonym }),
+  });
+  const j = await r.json();
+  btn.disabled = false; btn.innerHTML = '<i class="fa fa-paper-plane"></i> Kirim Usulan';
+
+  if (j.success) {
+    showUpMsg('Usulan berhasil dikirim! Pengurus RT akan meninjaunya.', true);
+    document.getElementById('up-judul').value = '';
+    document.getElementById('up-lokasi').value = '';
+    document.getElementById('up-deskripsi').value = '';
+    document.getElementById('up-anonym').checked = false;
+    _loaded['usulan'] = false;
+    loadUsulanMine();
+  } else {
+    showUpMsg(j.message || 'Gagal mengirim usulan.', false);
+  }
+}
+
+function showUpMsg(text, ok) {
+  const el = document.getElementById('up-msg');
+  if (!el) return;
+  el.textContent = text; el.style.display = '';
+  el.style.background = ok ? '#E8F4ED' : '#FDECEA';
+  el.style.color = ok ? 'var(--forest)' : 'var(--rust)';
+  if (ok) setTimeout(() => el.style.display = 'none', 5000);
+}
+
+async function loadUsulanMine() {
+  const wrap = document.getElementById('up-mine-list');
+  if (!wrap) return;
+  const r = await fetch('/api/usulan/mine');
+  if (!r.ok) { wrap.innerHTML = ''; return; }
+  const j = await r.json();
+  if (!j.success || !j.data.length) {
+    wrap.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--ink-soft);font-size:13px">Belum ada usulan yang dikirim.</div>';
+    return;
+  }
+  const pLabel = { rendah:'Rendah', sedang:'Sedang', tinggi:'Tinggi' };
+  const sLabel = { baru:'Baru', dikaji:'Dikaji', disetujui:'Disetujui', ditolak:'Ditolak', selesai:'Selesai' };
+  const sBg    = { baru:'#fdecea', dikaji:'var(--gold-pale)', disetujui:'var(--forest-pale)', ditolak:'#efefed', selesai:'#e8f0fd' };
+  const sClr   = { baru:'var(--rust)', dikaji:'var(--gold-dark)', disetujui:'var(--forest)', ditolak:'var(--ink-soft)', selesai:'#2d5aa8' };
+  wrap.innerHTML = j.data.map(u => `
+    <div style="padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:14px;color:var(--ink)">${esc(u.judul)}</div>
+          <div style="font-size:12px;color:var(--ink-soft);margin-top:2px">${fmtTgl(u.created_at)}${u.lokasi ? ' · '+esc(u.lokasi) : ''}</div>
+          ${u.tanggapan ? `<div style="font-size:12px;color:var(--forest);margin-top:6px;padding:7px 10px;background:var(--forest-pale);border-radius:6px">${esc(u.tanggapan)}</div>` : ''}
+        </div>
+        <span style="font-size:10px;font-weight:700;padding:2px 9px;border-radius:99px;flex-shrink:0;background:${sBg[u.status]};color:${sClr[u.status]}">${sLabel[u.status]||u.status}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
 // ── Init: restore tab from URL hash ───────────────────────────
-const TABS = ['berita','pengumuman','tata-tertib','program-kerja','saran'];
+const TABS = ['berita','pengumuman','tata-tertib','program-kerja','saran','usulan'];
 const initTab = TABS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'berita';
 setTab(initTab, null, false);
 
