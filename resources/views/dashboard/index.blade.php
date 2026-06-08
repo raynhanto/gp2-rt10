@@ -42,6 +42,14 @@
   </div>
   @endif
 
+  <div class="card" style="margin-bottom:1.25rem">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:15px;font-weight:500"><i class="fa-solid fa-file-lines" style="margin-right:6px;color:var(--forest)"></i>Surat &amp; Dokumen</div>
+      <a href="/dashboard/surat" style="font-size:13px;color:var(--forest-light)">Ajukan surat →</a>
+    </div>
+    <div style="font-size:13px;color:var(--ink-soft);margin-top:.5rem">Ajukan permohonan surat keterangan RT secara online.</div>
+  </div>
+
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
       <div style="font-size:15px;font-weight:500">Donasi terbaru</div>

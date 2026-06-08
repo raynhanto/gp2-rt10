@@ -35,6 +35,7 @@ Route::middleware('login')->prefix('dashboard')->name('dashboard.')->group(funct
     Route::view('/konfirmasi', 'dashboard.konfirmasi')->name('konfirmasi');
     Route::view('/profil',     'dashboard.profil')->name('profil');
     Route::view('/iuran',      'dashboard.iuran')->name('iuran');
+    Route::view('/surat',      'dashboard.surat')->name('surat');
 });
 
 // ── Admin pages ───────────────────────────────────────────────
@@ -68,10 +69,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
     });
 
-    // Community roles: warga, pengumuman, kependudukan
+    // Community roles: warga, pengumuman, kependudukan, surat
     Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
         Route::view('/warga',      'admin.warga')->name('warga');
         Route::view('/pengumuman', 'admin.pengumuman')->name('pengumuman');
+        Route::view('/surat',      'admin.surat')->name('surat');
 
         Route::prefix('kelembagaan')->name('kelembagaan.')->group(function () {
             Route::view('/agenda',        'admin.kelembagaan.agenda')->name('agenda');

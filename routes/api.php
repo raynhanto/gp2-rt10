@@ -226,6 +226,18 @@ Route::get('/settings', [Api\SettingsController::class, 'index']);
 Route::post('/settings', [Api\SettingsController::class, 'update'])
     ->middleware('admin:admin,super_admin');
 
+// ── Surat & Dokumen ───────────────────────────────────────────
+Route::get('/surat/jenis',  [Api\SuratController::class, 'jenisList']);
+Route::middleware('login')->group(function () {
+    Route::post('/surat',           [Api\SuratController::class, 'store']);
+    Route::get('/surat/mine',       [Api\SuratController::class, 'mine']);
+});
+Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
+    Route::get('/surat',            [Api\SuratController::class, 'index']);
+    Route::put('/surat/{id}',       [Api\SuratController::class, 'update'])->where('id', '[0-9]+');
+    Route::delete('/surat/{id}',    [Api\SuratController::class, 'destroy'])->where('id', '[0-9]+');
+});
+
 // ── Saran & Keluhan ───────────────────────────────────────────
 Route::post('/saran-keluhan', [Api\SaranKeluhanController::class, 'store']);
 Route::get('/saran-keluhan/mine', [Api\SaranKeluhanController::class, 'mine'])->middleware('login');

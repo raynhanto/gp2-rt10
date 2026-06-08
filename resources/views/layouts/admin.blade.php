@@ -255,6 +255,12 @@ a{text-decoration:none;color:inherit}
         </a>
 
         <div class="sidebar-divider"></div>
+        <div class="sidebar-group-label">Surat &amp; Dokumen</div>
+        <a href="/admin/surat" class="{{ request()->is('admin/surat*') ? 'active' : '' }}">
+          <i class="fa fa-file-lines"></i> Permohonan Surat
+        </a>
+
+        <div class="sidebar-divider"></div>
         <div class="sidebar-group-label">Kelembagaan</div>
         <a href="/admin/kelembagaan/agenda" class="{{ request()->is('admin/kelembagaan/agenda*') ? 'active' : '' }}">
           <i class="fa fa-calendar-days"></i> Agenda Kegiatan
