@@ -311,8 +311,9 @@ function closeModal() {
 }
 
 document.getElementById('modal-confirm-btn').addEventListener('click', () => {
+  const action = _pendingAction;
   closeModal();
-  if (_pendingAction) _pendingAction();
+  if (action) action();
 });
 
 document.getElementById('confirm-modal').addEventListener('click', function(e) {
