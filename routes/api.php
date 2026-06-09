@@ -221,6 +221,11 @@ Route::middleware('admin:sekretaris,admin,super_admin')->group(function () {
     Route::put('/admin/users/{id}', [Api\UsersController::class, 'update'])->where('id', '[0-9]+');
 });
 
+// ── User delete (admin, super_admin) ──────────────────────────
+Route::middleware('admin:admin,super_admin')->group(function () {
+    Route::delete('/admin/users/{id}', [Api\UsersController::class, 'destroy'])->where('id', '[0-9]+');
+});
+
 // ── Admin Activity Log & Role Management (admin, super_admin) ─
 Route::middleware('admin:admin,super_admin')->group(function () {
     Route::get('/admin/aktivitas',         [Api\AdminActivityController::class, 'index']);

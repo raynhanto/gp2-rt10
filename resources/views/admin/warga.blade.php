@@ -83,6 +83,21 @@
   </div>
 </div>
 
+{{-- Delete User Modal --}}
+<div id="delete-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:420px;max-width:92vw;box-shadow:0 8px 32px rgba(0,0,0,.18)">
+    <div style="font-size:16px;font-weight:600;margin-bottom:.25rem;color:#B5401A"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px"></i>Hapus Akun Pengguna</div>
+    <div id="delete-modal-name" style="font-size:13px;color:var(--ink-soft);margin-bottom:1.25rem"></div>
+    <div style="background:#FDECEA;border:1px solid #F5C6C0;border-radius:var(--radius-sm);padding:12px 14px;font-size:12px;color:#7A2215;margin-bottom:1.25rem">
+      <strong>Tindakan ini tidak dapat dibatalkan.</strong> Semua data unit rumah akun ini akan ikut terhapus. Data keuangan terkait akan dipertahankan.
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="closeDeleteModal()" class="btn-secondary" style="padding:9px 18px;font-size:13px">Batal</button>
+      <button onclick="confirmDelete()" style="padding:9px 18px;font-size:13px;background:#B5401A;color:#fff;border:none;border-radius:var(--radius-sm);cursor:pointer;font-weight:600">Hapus Akun</button>
+    </div>
+  </div>
+</div>
+
 {{-- Role Change Modal --}}
 <div id="role-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center">
   <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:420px;max-width:92vw;box-shadow:0 8px 32px rgba(0,0,0,.18)">
@@ -161,6 +176,11 @@ function assignableRoles() {
 
 // Can the current actor change roles at all?
 function canChangeRole() {
+  return ['admin', 'super_admin'].includes(currentUserRole);
+}
+
+// Can the current actor delete users?
+function canDeleteUser() {
   return ['admin', 'super_admin'].includes(currentUserRole);
 }
 
@@ -327,6 +347,11 @@ function renderTable() {
            style="padding:4px 10px;font-size:11px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer"><i class="fa-solid fa-user-shield" style="font-size:10px;margin-right:3px"></i>Role</button>`
       : '';
 
+    const deleteBtn = (canDeleteUser() && canManage(u.role))
+      ? `<button onclick='openDeleteModal(${JSON.stringify({id:u.id, nama:u.nama||u.email, email:u.email})})' title="Hapus akun"
+           style="padding:4px 10px;font-size:11px;border:1px solid #F5C6C0;border-radius:6px;background:#FDECEA;color:#B5401A;cursor:pointer;margin-left:4px"><i class="fa-solid fa-trash" style="font-size:10px;margin-right:3px"></i>Hapus</button>`
+      : '';
+
     return `<tr style="border-top:1px solid var(--border)">
       <td style="padding:12px 16px">
         <div style="display:flex;align-items:center;gap:10px">
@@ -343,7 +368,7 @@ function renderTable() {
       <td style="padding:12px 16px">${profilBadge}</td>
       <td style="padding:12px 16px">${roleBadge(u.role)}</td>
       <td style="padding:12px 16px;font-size:11px;color:var(--ink-soft);white-space:nowrap">${tgl}</td>
-      <td style="padding:12px 16px;white-space:nowrap">${editBtn}${roleBtn}</td>
+      <td style="padding:12px 16px;white-space:nowrap">${editBtn}${roleBtn}${deleteBtn}</td>
     </tr>`;
   }).join('');
 
@@ -508,9 +533,43 @@ async function saveRole() {
   }
 }
 
+// ── Delete Modal ──────────────────────────────────────────────────
+let currentDeleteUser = null;
+
+function openDeleteModal(user) {
+  currentDeleteUser = user;
+  document.getElementById('delete-modal-name').textContent = `${user.nama} — ${user.email}`;
+  document.getElementById('delete-modal').style.display = 'flex';
+}
+
+function closeDeleteModal() {
+  document.getElementById('delete-modal').style.display = 'none';
+  currentDeleteUser = null;
+}
+
+async function confirmDelete() {
+  if (!currentDeleteUser) return;
+
+  const r = await fetch(`/api/admin/users/${currentDeleteUser.id}`, {
+    method: 'DELETE',
+    headers: {'X-CSRF-TOKEN': _csrfToken, 'Accept': 'application/json'},
+  });
+  const j = await r.json();
+
+  if (j.success) {
+    closeDeleteModal();
+    showToast(j.message || 'Akun berhasil dihapus.');
+    loadWarga();
+  } else {
+    closeDeleteModal();
+    alert(j.message || 'Terjadi kesalahan.');
+  }
+}
+
 // Close modals on backdrop click
 document.getElementById('edit-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeEditModal(); });
 document.getElementById('role-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeRoleModal(); });
+document.getElementById('delete-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeDeleteModal(); });
 
 loadWarga();
 </script>

@@ -109,3 +109,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::view('/seeder', 'admin.seeder')->name('seeder');
     });
 });
+
+// ── DEV-ONLY: instant login (remove before prod) ─────────────
+if (app()->environment('local')) {
+    Route::get('/__dev_login/{id}', function (int $id) {
+        \Illuminate\Support\Facades\Auth::loginUsingId($id);
+        return redirect('/admin/warga');
+    });
+}

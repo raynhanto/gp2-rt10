@@ -10,6 +10,7 @@ use App\Models\UnitRumah;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 
 class UsersController extends Controller
@@ -125,5 +126,55 @@ class UsersController extends Controller
             'message' => 'Data warga berhasil diperbarui.',
             'data'    => $user->fresh()->load('units'),
         ]);
+    }
+
+    public function destroy(int $userId): JsonResponse
+    {
+        $actor = auth()->user();
+
+        if (!in_array($actor->role, ['admin', 'super_admin'], true)) {
+            return Response::json(['success' => false, 'message' => 'Akses tidak diizinkan'], 403);
+        }
+
+        $user      = User::findOrFail($userId);
+        $actorIdx  = array_search($actor->role, User::ROLES, true);
+        $targetIdx = array_search($user->role, User::ROLES, true);
+
+        if ($actor->role !== 'super_admin' && $targetIdx >= $actorIdx) {
+            return Response::json(['success' => false, 'message' => 'Tidak dapat menghapus pengguna setingkat atau lebih tinggi'], 403);
+        }
+
+        if ($user->id === $actor->id) {
+            return Response::json(['success' => false, 'message' => 'Tidak dapat menghapus akun sendiri'], 422);
+        }
+
+        // Block if user has iuran payment records (non-nullable FK)
+        if (DB::table('iuran_bayar')->where('created_by', $userId)->exists()) {
+            return Response::json([
+                'success' => false,
+                'message' => 'Pengguna tidak dapat dihapus karena memiliki data pembayaran iuran. Ubah rolenya menjadi Warga untuk menonaktifkan akses.',
+            ], 422);
+        }
+
+        DB::transaction(function () use ($user, $actor) {
+            // Null out nullable FK references that have RESTRICT constraint
+            DB::table('iuran_bayar')->where('verified_by', $user->id)->update(['verified_by' => null]);
+
+            // Delete activity logs owned by this user (non-nullable FK, no cascade)
+            AdminActivityLog::where('user_id', $user->id)->delete();
+
+            $email = $user->email;
+            $user->delete();
+
+            AdminActivityLog::record(
+                'delete_user',
+                "Hapus akun warga: {$email}",
+                User::class,
+                $user->id,
+                ['deleted_email' => $email]
+            );
+        });
+
+        return Response::json(['success' => true, 'message' => 'Akun warga berhasil dihapus.']);
     }
 }
