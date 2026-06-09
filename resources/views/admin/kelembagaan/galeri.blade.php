@@ -54,6 +54,17 @@
       </div>
     </div>
 
+    {{-- Upload progress (shown during compress + upload) --}}
+    <div id="c-progress-area" style="display:none;margin-bottom:1.25rem;padding:12px 14px;background:#f0f7f2;border-radius:var(--radius-sm);border:1px solid #c8e6d0">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+        <span style="font-size:12px;font-weight:600;color:var(--forest)" id="c-progress-label">Memproses...</span>
+        <span style="font-size:11px;color:var(--ink-mute)" id="c-progress-count"></span>
+      </div>
+      <div style="height:5px;background:#d4ead9;border-radius:99px;overflow:hidden">
+        <div id="c-progress-bar" style="height:100%;background:var(--forest);border-radius:99px;width:0%;transition:width .25s ease"></div>
+      </div>
+    </div>
+
     {{-- Form fields --}}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
       <div style="grid-column:span 2">
@@ -94,9 +105,6 @@
         <i class="fa fa-upload" style="font-size:11px"></i> Upload Album
       </button>
       <button onclick="closeCreate()" class="btn-secondary">Batal</button>
-    </div>
-    <div id="c-progress" style="display:none;margin-top:1rem;font-size:13px;color:var(--forest);text-align:center">
-      <i class="fa fa-spinner fa-spin"></i> Mengupload...
     </div>
   </div>
 </div>
@@ -180,8 +188,14 @@
         <i class="fa-regular fa-image" style="font-size:2rem;display:block;margin-bottom:10px;color:var(--ink-mute)"></i>
         Album ini belum memiliki foto.
       </div>
-      <div id="manage-uploading" style="display:none;text-align:center;padding:1rem;color:var(--forest)">
-        <i class="fa fa-spinner fa-spin"></i> Mengupload foto...
+      <div id="manage-uploading" style="display:none;padding:.75rem 0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+          <span style="font-size:12px;font-weight:600;color:var(--forest)" id="m-progress-label">Memproses...</span>
+          <span style="font-size:11px;color:var(--ink-mute)" id="m-progress-count"></span>
+        </div>
+        <div style="height:5px;background:var(--border);border-radius:99px;overflow:hidden">
+          <div id="m-progress-bar" style="height:100%;background:var(--forest);border-radius:99px;width:0%;transition:width .25s ease"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -400,19 +414,29 @@ async function createAlbum() {
   if (!tanggal)        { alert('Tanggal wajib diisi.'); return; }
   if (!_czFiles.length){ alert('Upload minimal 1 foto.'); return; }
 
-  const btn  = document.getElementById('c-save-btn');
-  const prog = document.getElementById('c-progress');
+  const btn       = document.getElementById('c-save-btn');
+  const area      = document.getElementById('c-progress-area');
+  const label     = document.getElementById('c-progress-label');
+  const countEl   = document.getElementById('c-progress-count');
+  const bar       = document.getElementById('c-progress-bar');
+  const n         = _czFiles.length;
+
+  const setP = (lbl, cur, total, pStart, pEnd) => {
+    label.textContent   = lbl;
+    countEl.textContent = total > 0 ? `${cur}/${total} foto` : '';
+    bar.style.width     = (pStart + (cur / (total || 1)) * (pEnd - pStart)) + '%';
+  };
+
   btn.disabled = true;
-  prog.style.display = '';
+  bar.style.width = '0%';
+  area.style.display = '';
 
-  // Step 1: compress all files client-side
-  prog.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengompresi foto 0/${_czFiles.length}...`;
-  const compressed = await compressAll(_czFiles, (i, n) => {
-    prog.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengompresi foto ${i}/${n}...`;
-  });
+  // Phase 1: compress (0 → 50%)
+  setP('Mengompresi foto...', 0, n, 0, 50);
+  const compressed = await compressAll(_czFiles, (i, tot) => setP('Mengompresi foto...', i, tot, 0, 50));
 
-  // Step 2: create album metadata (no photos)
-  prog.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Membuat album...';
+  // Phase 2: create album metadata
+  setP('Membuat album...', 1, 1, 50, 55);
   const metaRes = await fetch('/api/galeri', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': _csrfToken },
@@ -426,15 +450,15 @@ async function createAlbum() {
   });
   const metaJson = await metaRes.json();
   if (!metaJson.success) {
-    btn.disabled = false; prog.style.display = 'none';
+    btn.disabled = false; area.style.display = 'none';
     alert(metaJson.message); return;
   }
   const albumId = metaJson.data.id;
 
-  // Step 3: upload one photo per request
+  // Phase 3: upload one photo per request (55 → 100%)
   let ok = 0;
   for (let i = 0; i < compressed.length; i++) {
-    prog.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengupload foto ${i + 1}/${compressed.length}...`;
+    setP('Mengupload foto...', i, compressed.length, 55, 100);
     const fd = new FormData();
     fd.append('fotos[]', compressed[i]);
     try {
@@ -443,9 +467,10 @@ async function createAlbum() {
       if (j.success) ok++;
     } catch { /* skip */ }
   }
+  setP('Selesai', compressed.length, compressed.length, 55, 100);
 
   btn.disabled = false;
-  prog.style.display = 'none';
+  area.style.display = 'none';
   closeCreate();
   const msg = ok < compressed.length
     ? `Album dibuat, ${ok}/${compressed.length} foto berhasil diupload.`
@@ -533,20 +558,31 @@ function renderManageGrid() {
 async function addFotos(fileList) {
   if (!fileList.length) return;
 
-  const uploading = document.getElementById('manage-uploading');
   document.getElementById('m-files').value = '';
 
-  const files = Array.from(fileList);
-  uploading.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengompresi foto 0/${files.length}...`;
+  const uploading  = document.getElementById('manage-uploading');
+  const mLabel     = document.getElementById('m-progress-label');
+  const mCount     = document.getElementById('m-progress-count');
+  const mBar       = document.getElementById('m-progress-bar');
+  const files      = Array.from(fileList);
+
+  const setP = (lbl, cur, total, pStart, pEnd) => {
+    mLabel.textContent = lbl;
+    mCount.textContent = total > 0 ? `${cur}/${total} foto` : '';
+    mBar.style.width   = (pStart + (cur / (total || 1)) * (pEnd - pStart)) + '%';
+  };
+
+  mBar.style.width = '0%';
   uploading.style.display = '';
 
-  const compressed = await compressAll(files, (i, n) => {
-    uploading.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengompresi foto ${i}/${n}...`;
-  });
+  // Compress phase (0 → 50%)
+  setP('Mengompresi foto...', 0, files.length, 0, 50);
+  const compressed = await compressAll(files, (i, n) => setP('Mengompresi foto...', i, n, 0, 50));
 
+  // Upload phase (50 → 100%), one at a time
   let ok = 0;
   for (let i = 0; i < compressed.length; i++) {
-    uploading.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengupload foto ${i + 1}/${compressed.length}...`;
+    setP('Mengupload foto...', i, compressed.length, 50, 100);
     const fd = new FormData();
     fd.append('fotos[]', compressed[i]);
     try {
