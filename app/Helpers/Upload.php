@@ -31,7 +31,15 @@ class Upload
 
         // UUID filename to avoid collisions and enumeration
         $filename = bin2hex(random_bytes(16)) . '.' . $ext;
-        $dest = public_path("uploads/{$subfolder}");
+
+        // On shared hosting index.php lives at the doc root (= base_path),
+        // so public_path() is a sub-directory that isn't web-accessible at /uploads/.
+        // Use base_path('uploads') in that case; public_path('uploads') otherwise.
+        $uploadsRoot = file_exists(base_path('index.php'))
+            ? base_path('uploads')
+            : public_path('uploads');
+        $dest = $uploadsRoot . DIRECTORY_SEPARATOR . $subfolder;
+
         if (!is_dir($dest)) {
             mkdir($dest, 0755, true);
         }
