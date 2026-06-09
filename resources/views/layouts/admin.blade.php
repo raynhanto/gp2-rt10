@@ -288,15 +288,15 @@ a{text-decoration:none;color:inherit}
       <div class="sb-group">Kependudukan</div>
       <a href="/admin/warga" class="sb-link {{ request()->is('admin/warga') ? 'active' : '' }}">
         <span class="sb-icon"><i class="fa fa-users"></i></span>
-        Akun Pengguna
+        Manajemen User
       </a>
       <a href="/admin/kependudukan" class="sb-link {{ request()->is('admin/kependudukan') && !request()->is('admin/kependudukan/*') ? 'active' : '' }}">
         <span class="sb-icon"><i class="fa fa-house-chimney"></i></span>
-        Dashboard KK
+        Ringkasan KK
       </a>
       <a href="/admin/kependudukan/warga" class="sb-link {{ request()->is('admin/kependudukan/warga*') ? 'active' : '' }}">
         <span class="sb-icon"><i class="fa fa-id-card"></i></span>
-        Kepala Keluarga
+        Daftar KK
       </a>
       <a href="/admin/kependudukan/kendaraan" class="sb-link {{ request()->is('admin/kependudukan/kendaraan*') ? 'active' : '' }}">
         <span class="sb-icon"><i class="fa fa-car"></i></span>
