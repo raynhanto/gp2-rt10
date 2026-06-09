@@ -135,6 +135,38 @@ html[data-theme="dark"] .peng-wrap{background:var(--cream);border-top-color:rgba
 html[data-theme="dark"] .peng-card{background:#1F2B22;border-color:rgba(255,255,255,0.09)}
 html[data-theme="dark"] .peng-card:hover{border-color:rgba(74,140,101,0.35)}
 html[data-theme="dark"] .sk-dark{background:rgba(255,255,255,0.06)}
+
+/* ── Hero: blob breathe (opacity only) ────────────────────────── */
+@keyframes blobBreathe1{0%,100%{opacity:1}50%{opacity:0.4}}
+@keyframes blobBreathe2{0%,100%{opacity:1}50%{opacity:0.35}}
+@keyframes blobBreathe3{0%,100%{opacity:0.7}50%{opacity:0.2}}
+.hero-blob-1{animation:blobBreathe1 12s ease-in-out infinite}
+.hero-blob-2{animation:blobBreathe2 16s ease-in-out infinite;animation-delay:-5s}
+.hero-blob-3{animation:blobBreathe3 9s ease-in-out infinite;animation-delay:-2s}
+
+/* ── Hero: SVG network layer ──────────────────────────────────── */
+.hero-svg-bg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+@keyframes dashFlow{to{stroke-dashoffset:-40}}
+@keyframes ptTwinkle{0%,100%{opacity:0.08}50%{opacity:0.65}}
+@keyframes ringExpand{0%{transform:scale(0.2);opacity:0.75}100%{transform:scale(1);opacity:0}}
+.ring-pulse{transform-box:fill-box;transform-origin:center;animation:ringExpand 3.5s ease-out infinite}
+
+/* ── Hero: floating orbs ──────────────────────────────────────── */
+@keyframes orbDrift1{0%,100%{transform:translate(0,0)}35%{transform:translate(-28px,-38px)}70%{transform:translate(20px,22px)}}
+@keyframes orbDrift2{0%,100%{transform:translate(0,0)}40%{transform:translate(32px,-22px)}75%{transform:translate(-18px,28px)}}
+.hero-orb{position:absolute;border-radius:50%;pointer-events:none}
+.hero-orb-a{width:380px;height:380px;top:-80px;left:2%;background:radial-gradient(circle,rgba(26,61,43,0.6) 0%,transparent 70%);filter:blur(55px);animation:orbDrift1 22s ease-in-out infinite}
+.hero-orb-b{width:280px;height:280px;bottom:-40px;right:5%;background:radial-gradient(circle,rgba(200,160,48,0.11) 0%,transparent 70%);filter:blur(50px);animation:orbDrift2 18s ease-in-out infinite}
+.hero-orb-c{width:200px;height:200px;top:40%;left:42%;background:radial-gradient(circle,rgba(255,255,255,0.035) 0%,transparent 70%);filter:blur(40px);animation:orbDrift1 28s ease-in-out infinite reverse}
+
+/* ── Hero: label dot glow ─────────────────────────────────────── */
+@keyframes dotGlow{0%,100%{box-shadow:0 0 0 2px rgba(200,160,48,0.35)}50%{box-shadow:0 0 0 5px rgba(200,160,48,0.1),0 0 10px rgba(200,160,48,0.25)}}
+.hero-label-dot{animation:dotGlow 2.5s ease-in-out infinite}
+
+/* ── Hero: scroll cue ─────────────────────────────────────────── */
+@keyframes scrollBounce{0%,100%{transform:translateX(-50%) translateY(0);opacity:0.45}50%{transform:translateX(-50%) translateY(7px);opacity:1}}
+.hero-scroll-cue{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;animation:scrollBounce 2.2s ease-in-out infinite;z-index:2}
+.hero-scroll-cue span{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.28)}
 </style>
 @endsection
 
@@ -146,11 +178,89 @@ html[data-theme="dark"] .sk-dark{background:rgba(255,255,255,0.06)}
   <div class="hero-blob hero-blob-1"></div>
   <div class="hero-blob hero-blob-2"></div>
   <div class="hero-blob hero-blob-3"></div>
+  {{-- Drifting light orbs --}}
+  <div class="hero-orb hero-orb-a"></div>
+  <div class="hero-orb hero-orb-b"></div>
+  <div class="hero-orb hero-orb-c"></div>
+  {{-- Animated community-network SVG --}}
+  <svg class="hero-svg-bg" viewBox="0 0 1400 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <filter id="nodeGlow" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="3" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    {{-- Flowing dashed connection lines --}}
+    <g fill="none" stroke="rgba(255,255,255,0.1)" stroke-dasharray="5 9">
+      <line x1="80" y1="120" x2="310" y2="75" style="animation:dashFlow 5s linear infinite"/>
+      <line x1="310" y1="75" x2="540" y2="190" style="animation:dashFlow 4s linear infinite reverse"/>
+      <line x1="540" y1="190" x2="720" y2="90" style="animation:dashFlow 6s linear infinite"/>
+      <line x1="720" y1="90" x2="960" y2="210" style="animation:dashFlow 4.5s linear infinite reverse"/>
+      <line x1="960" y1="210" x2="1180" y2="120" style="animation:dashFlow 5.5s linear infinite"/>
+      <line x1="1180" y1="120" x2="1350" y2="280" style="animation:dashFlow 4s linear infinite reverse"/>
+      <line x1="80" y1="120" x2="190" y2="370" style="animation:dashFlow 7s linear infinite reverse"/>
+      <line x1="310" y1="75" x2="420" y2="360" style="animation:dashFlow 5s linear infinite"/>
+      <line x1="540" y1="190" x2="600" y2="400" style="animation:dashFlow 4s linear infinite reverse"/>
+      <line x1="720" y1="90" x2="730" y2="380" style="animation:dashFlow 6s linear infinite"/>
+      <line x1="960" y1="210" x2="880" y2="420" style="animation:dashFlow 5s linear infinite reverse"/>
+      <line x1="1180" y1="120" x2="1090" y2="390" style="animation:dashFlow 4.5s linear infinite"/>
+      <line x1="190" y1="370" x2="420" y2="360" style="animation:dashFlow 6s linear infinite reverse"/>
+      <line x1="420" y1="360" x2="600" y2="400" style="animation:dashFlow 5s linear infinite"/>
+      <line x1="600" y1="400" x2="730" y2="380" style="animation:dashFlow 4s linear infinite reverse"/>
+      <line x1="730" y1="380" x2="880" y2="420" style="animation:dashFlow 5.5s linear infinite"/>
+      <line x1="880" y1="420" x2="1090" y2="390" style="animation:dashFlow 4s linear infinite reverse"/>
+    </g>
+    {{-- Expanding rings on key nodes (gold hub + white secondaries) --}}
+    <circle class="ring-pulse" cx="720" cy="90" r="50" fill="none" stroke="rgba(200,160,48,0.55)" stroke-width="1.5"/>
+    <circle class="ring-pulse" cx="720" cy="90" r="50" fill="none" stroke="rgba(200,160,48,0.32)" stroke-width="1" style="animation-delay:-1.17s"/>
+    <circle class="ring-pulse" cx="720" cy="90" r="50" fill="none" stroke="rgba(200,160,48,0.15)" stroke-width="0.75" style="animation-delay:-2.33s"/>
+    <circle class="ring-pulse" cx="310" cy="75" r="36" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.25" style="animation-delay:-0.8s"/>
+    <circle class="ring-pulse" cx="310" cy="75" r="36" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="0.75" style="animation-delay:-2.1s"/>
+    <circle class="ring-pulse" cx="1180" cy="120" r="36" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.25" style="animation-delay:-1.4s"/>
+    <circle class="ring-pulse" cx="1180" cy="120" r="36" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.75" style="animation-delay:-2.8s"/>
+    {{-- Primary gold hub nodes --}}
+    <g filter="url(#nodeGlow)">
+      <circle cx="720" cy="90" r="5.5" fill="rgba(200,160,48,0.95)"/>
+      <circle cx="310" cy="75" r="4" fill="rgba(200,160,48,0.75)"/>
+      <circle cx="1180" cy="120" r="4" fill="rgba(200,160,48,0.75)"/>
+    </g>
+    {{-- Secondary white nodes --}}
+    <g fill="rgba(255,255,255,0.45)">
+      <circle cx="80" cy="120" r="3" style="animation:ptTwinkle 3.5s ease-in-out infinite"/>
+      <circle cx="540" cy="190" r="3" style="animation:ptTwinkle 4s ease-in-out infinite;animation-delay:-1.2s"/>
+      <circle cx="960" cy="210" r="3" style="animation:ptTwinkle 3.5s ease-in-out infinite;animation-delay:-0.7s"/>
+      <circle cx="1350" cy="280" r="2.5" style="animation:ptTwinkle 5s ease-in-out infinite;animation-delay:-2s"/>
+      <circle cx="190" cy="370" r="3" style="animation:ptTwinkle 4s ease-in-out infinite;animation-delay:-1.5s"/>
+      <circle cx="420" cy="360" r="2.5" style="animation:ptTwinkle 3.5s ease-in-out infinite;animation-delay:-0.5s"/>
+      <circle cx="600" cy="400" r="3" style="animation:ptTwinkle 4.5s ease-in-out infinite;animation-delay:-1.8s"/>
+      <circle cx="730" cy="380" r="2.5" style="animation:ptTwinkle 3s ease-in-out infinite;animation-delay:-0.3s"/>
+      <circle cx="880" cy="420" r="3" style="animation:ptTwinkle 4s ease-in-out infinite;animation-delay:-2.2s"/>
+      <circle cx="1090" cy="390" r="2.5" style="animation:ptTwinkle 3.5s ease-in-out infinite;animation-delay:-1s"/>
+    </g>
+    {{-- Ambient floating specks --}}
+    <g fill="rgba(255,255,255,0.16)">
+      <circle cx="160" cy="225" r="1.5" style="animation:ptTwinkle 6s ease-in-out infinite;animation-delay:-2s"/>
+      <circle cx="450" cy="48" r="1.5" style="animation:ptTwinkle 4.5s ease-in-out infinite;animation-delay:-1s"/>
+      <circle cx="670" cy="462" r="1.5" style="animation:ptTwinkle 5.5s ease-in-out infinite;animation-delay:-3s"/>
+      <circle cx="1020" cy="44" r="1.5" style="animation:ptTwinkle 4s ease-in-out infinite;animation-delay:-2.5s"/>
+      <circle cx="1270" cy="442" r="1.5" style="animation:ptTwinkle 5s ease-in-out infinite;animation-delay:-0.8s"/>
+      <circle cx="40" cy="342" r="1.5" style="animation:ptTwinkle 3.5s ease-in-out infinite;animation-delay:-1.7s"/>
+      <circle cx="870" cy="28" r="1.5" style="animation:ptTwinkle 6s ease-in-out infinite;animation-delay:-3.5s"/>
+      <circle cx="1130" cy="482" r="1.5" style="animation:ptTwinkle 4.5s ease-in-out infinite;animation-delay:-0.4s"/>
+      <circle cx="380" cy="148" r="1.5" style="animation:ptTwinkle 5s ease-in-out infinite;animation-delay:-1.3s"/>
+      <circle cx="820" cy="155" r="1.5" style="animation:ptTwinkle 4s ease-in-out infinite;animation-delay:-2.8s"/>
+    </g>
+  </svg>
+  {{-- Scroll cue --}}
+  <div class="hero-scroll-cue" aria-hidden="true">
+    <span>Scroll</span>
+    <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 1l6 6 6-6" stroke="rgba(255,255,255,0.38)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
   <div class="container">
     <div class="hero-center">
       <div class="hero-label">
         <div style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);padding:5px 16px;border-radius:100px;font-size:10.5px;font-weight:600;color:rgba(255,255,255,0.85);letter-spacing:0.07em;text-transform:uppercase;backdrop-filter:blur(8px)">
-          <span style="width:7px;height:7px;background:var(--gold);border-radius:50%;flex-shrink:0;display:inline-block"></span>
+          <span class="hero-label-dot" style="width:7px;height:7px;background:var(--gold);border-radius:50%;flex-shrink:0;display:inline-block"></span>
           Perumahan Golden Park 2 · Cisauk
         </div>
       </div>
