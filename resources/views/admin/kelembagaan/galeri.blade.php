@@ -201,12 +201,19 @@
   </div>
 </div>
 
-{{-- Quick lightbox for admin preview --}}
-<div id="qlb" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:400;align-items:center;justify-content:center" onclick="closeQlb(event)">
+{{-- Slideshow lightbox --}}
+<div id="qlb" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:400;align-items:center;justify-content:center" onclick="closeQlb(event)">
   <button onclick="closeQlbBtn()" style="position:fixed;top:1.25rem;right:1.5rem;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12);border:none;cursor:pointer;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:402">
     <i class="fa fa-xmark"></i>
   </button>
-  <img id="qlb-img" src="" alt="" style="max-width:88vw;max-height:84vh;object-fit:contain;border-radius:8px">
+  <button id="qlb-prev" onclick="qlbNav(-1);event.stopPropagation()" style="position:fixed;left:1rem;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);border:none;cursor:pointer;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:402;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.25)'" onmouseout="this.style.background='rgba(255,255,255,.15)'">
+    <i class="fa fa-chevron-left"></i>
+  </button>
+  <button id="qlb-next" onclick="qlbNav(1);event.stopPropagation()" style="position:fixed;right:1rem;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);border:none;cursor:pointer;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:402;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.25)'" onmouseout="this.style.background='rgba(255,255,255,.15)'">
+    <i class="fa fa-chevron-right"></i>
+  </button>
+  <div id="qlb-counter" style="display:none;position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.5);color:#fff;font-size:12px;padding:4px 12px;border-radius:99px;z-index:402;backdrop-filter:blur(4px)"></div>
+  <img id="qlb-img" src="" alt="" style="max-width:min(88vw,900px);max-height:84vh;object-fit:contain;border-radius:8px">
 </div>
 
 <style>
@@ -324,7 +331,7 @@ function renderGrid() {
     const cnt   = a.fotos_count ?? 0;
     return `
     <div class="alb-card-a">
-      <div class="alb-cover-a" onclick="previewCover('${esc(cover)}','${esc(a.judul)}')">
+      <div class="alb-cover-a" onclick="openManage(${a.id},'${esc(a.judul)}')" title="Kelola foto" style="cursor:pointer">
         ${cover
           ? `<img src="${esc(cover)}" alt="${esc(a.judul)}" loading="lazy" onerror="this.parentElement.style.background='#2a2a2a'">`
           : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2)"><i class="fa-regular fa-image" style="font-size:2rem"></i></div>`}
@@ -350,7 +357,7 @@ function renderGrid() {
 function openCreate() {
   _czFiles = [];
   document.getElementById('c-judul').value      = '';
-  document.getElementById('c-tanggal').value    = '';
+  document.getElementById('c-tanggal').value    = new Date().toISOString().slice(0, 10);
   document.getElementById('c-kategori').value   = 'kegiatan';
   document.getElementById('c-deskripsi').value  = '';
   document.getElementById('c-featured').checked = false;
@@ -548,9 +555,10 @@ function renderManageGrid() {
   if (!fotos.length) { grid.innerHTML = ''; empty.style.display = ''; return; }
   empty.style.display = 'none';
 
-  grid.innerHTML = fotos.map(f => `
+  const urls = fotos.map(f => f.foto_url);
+  grid.innerHTML = fotos.map((f, i) => `
     <div class="m-photo" title="${esc(f.keterangan||'')}">
-      <img src="${esc(f.foto_url)}" alt="" loading="lazy" onclick="previewCover('${esc(f.foto_url)}','')">
+      <img src="${esc(f.foto_url)}" alt="" loading="lazy" onclick="qlbOpenDirect(${JSON.stringify(urls)},${i})">
       <button class="m-photo-del" onclick="deleteFoto(${f.id})" title="Hapus foto ini"><i class="fa fa-xmark"></i></button>
     </div>`).join('');
 }
@@ -614,17 +622,44 @@ async function delAlbum(id) {
   else alert(j.message);
 }
 
-// ── Quick lightbox ────────────────────────────────────────────
-function previewCover(url, title) {
-  if (!url) return;
-  document.getElementById('qlb-img').src = url;
+// ── Slideshow lightbox ────────────────────────────────────────
+let _lbUrls = [], _lbIdx = 0;
+
+function qlbOpenDirect(urls, idx) {
+  _lbUrls = urls;
+  _lbIdx  = idx;
+  qlbRender();
   document.getElementById('qlb').style.display = 'flex';
 }
+
+function qlbRender() {
+  document.getElementById('qlb-img').src = _lbUrls[_lbIdx];
+  const multi   = _lbUrls.length > 1;
+  const counter = document.getElementById('qlb-counter');
+  counter.style.display    = multi ? '' : 'none';
+  counter.textContent      = multi ? `${_lbIdx + 1} / ${_lbUrls.length}` : '';
+  document.getElementById('qlb-prev').style.display = multi ? '' : 'none';
+  document.getElementById('qlb-next').style.display = multi ? '' : 'none';
+}
+
+function qlbNav(dir) {
+  if (!_lbUrls.length) return;
+  _lbIdx = (_lbIdx + dir + _lbUrls.length) % _lbUrls.length;
+  qlbRender();
+}
+
 function closeQlbBtn() {
   document.getElementById('qlb').style.display = 'none';
+  _lbUrls = [];
 }
 function closeQlb(e) { if (e.target === document.getElementById('qlb')) closeQlbBtn(); }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeQlbBtn(); } });
+
+document.addEventListener('keydown', e => {
+  const qlbOpen = document.getElementById('qlb').style.display !== 'none';
+  if (e.key === 'Escape')     { if (qlbOpen) closeQlbBtn(); }
+  if (e.key === 'ArrowLeft')  { if (qlbOpen) qlbNav(-1); }
+  if (e.key === 'ArrowRight') { if (qlbOpen) qlbNav(1); }
+});
 
 load();
 </script>
