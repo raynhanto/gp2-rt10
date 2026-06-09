@@ -11,7 +11,7 @@
   <div style="display:flex;gap:8px;margin-bottom:2rem;flex-wrap:wrap" id="filters">
     @foreach(['semua'=>'Semua','aktif'=>'Aktif','urgent'=>'Mendesak','selesai'=>'Selesai'] as $val=>$label)
     <button onclick="filterKampanye('{{ $val }}')" id="filter-{{ $val }}"
-      style="padding:8px 18px;border-radius:100px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;border:1.5px solid {{ $val==='semua' ? 'var(--forest)' : 'var(--border)' }};background:{{ $val==='semua' ? 'var(--forest)' : '#fff' }};color:{{ $val==='semua' ? '#fff' : 'var(--ink-soft)' }}">
+      style="padding:8px 18px;border-radius:100px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;border:1.5px solid {{ $val==='semua' ? 'var(--forest)' : 'var(--border)' }};background:{{ $val==='semua' ? 'var(--forest)' : 'var(--cream)' }};color:{{ $val==='semua' ? '#fff' : 'var(--ink-soft)' }}">
       {{ $label }}
     </button>
     @endforeach
@@ -40,7 +40,7 @@ function filterKampanye(status) {
   activeFilter = status;
   document.querySelectorAll('[id^="filter-"]').forEach(btn => {
     const isActive = btn.id === 'filter-' + status;
-    btn.style.background = isActive ? 'var(--forest)' : '#fff';
+    btn.style.background = isActive ? 'var(--forest)' : 'var(--cream)';
     btn.style.color = isActive ? '#fff' : 'var(--ink-soft)';
     btn.style.borderColor = isActive ? 'var(--forest)' : 'var(--border)';
   });
@@ -67,7 +67,7 @@ function renderKampanye() {
     const imgHtml = k.foto_url
       ? '<img src="' + k.foto_url + '" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.45s ease">'
       : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:' + KPH_GR[i%4] + '"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.35)" style="width:56px;height:56px"><path d="M12 2L2 8v14h7v-7h6v7h7V8L12 2z"/></svg></div>';
-    return `<div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);cursor:pointer;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s"
+    return `<div style="background:var(--parchment);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);cursor:pointer;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s"
       onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,0.1)';const img=this.querySelector('img');if(img)img.style.transform='scale(1.05)'"
       onmouseleave="this.style.transform='';this.style.boxShadow='';const img=this.querySelector('img');if(img)img.style.transform=''"
       onclick="location.href='/kampanye/${k.id}'">

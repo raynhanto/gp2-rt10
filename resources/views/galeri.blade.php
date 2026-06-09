@@ -68,6 +68,16 @@
   .lb-arrow{display:none}
   .lb-thumbs{display:none}
 }
+/* ── Dark mode ───────────────────────────────────────────────── */
+html[data-theme="dark"] .alb-card{background:#1F2B22;border-color:rgba(255,255,255,0.09)}
+html[data-theme="dark"] .alb-card:hover{box-shadow:0 8px 28px rgba(0,0,0,0.4)}
+html[data-theme="dark"] .gal-empty{background:#1F2B22;border-color:rgba(255,255,255,0.09)}
+html[data-theme="dark"] .gtab.on{background:var(--forest);color:#fff;border-color:var(--forest)}
+html[data-theme="dark"] .chip-kegiatan   {background:#0A2016;color:#72C49A}
+html[data-theme="dark"] .chip-sosial     {background:#1A0A08;color:#E88878}
+html[data-theme="dark"] .chip-fasilitas  {background:#08101A;color:#6090D0}
+html[data-theme="dark"] .chip-dokumentasi{background:#1A1400;color:#D4A840}
+html[data-theme="dark"] .chip-lainnya    {background:#1E1E1E;color:#888}
 </style>
 @endsection
 @section('content')

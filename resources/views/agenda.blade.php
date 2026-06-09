@@ -67,6 +67,31 @@
   .ecard-date{width:58px}
   .ecard-day{font-size:1.4rem}
 }
+/* ── Dark mode ───────────────────────────────────────────── */
+html[data-theme="dark"] .cal-shell{background:#1F2B22;border-color:rgba(255,255,255,0.08)}
+html[data-theme="dark"] .cal-topbar{background:#192019;border-bottom-color:rgba(255,255,255,0.08)}
+html[data-theme="dark"] .cal-nav{background:#1F2B22;border-color:rgba(255,255,255,0.14);color:var(--ink-soft)}
+html[data-theme="dark"] .cal-nav:hover{border-color:var(--forest);background:var(--forest);color:#fff}
+html[data-theme="dark"] .cal-hdr{border-bottom-color:rgba(255,255,255,0.07)}
+html[data-theme="dark"] .cal-cell{border-right-color:rgba(255,255,255,0.05);border-bottom-color:rgba(255,255,255,0.05)}
+html[data-theme="dark"] .cal-cell.other{background:rgba(0,0,0,0.15)}
+html[data-theme="dark"] .cal-cell.other .cal-n{color:rgba(255,255,255,0.18)}
+html[data-theme="dark"] .cal-cell.is-sel{background:rgba(74,140,101,0.12)}
+html[data-theme="dark"] .cal-legend{background:#192019;border-top-color:rgba(255,255,255,0.08)}
+html[data-theme="dark"] .ep-rapat    {background:#0A2016;color:#72C49A}
+html[data-theme="dark"] .ep-kegiatan {background:#1A1400;color:#D4A840}
+html[data-theme="dark"] .ep-sosial   {background:#1A0A08;color:#E88878}
+html[data-theme="dark"] .ep-olahraga {background:#080E1A;color:#6090D0}
+html[data-theme="dark"] .ep-lainnya  {background:#222;color:#888}
+html[data-theme="dark"] .ecard{background:#1F2B22;border-color:rgba(255,255,255,0.08)}
+html[data-theme="dark"] .ecard-date{background:#192019;border-right-color:rgba(255,255,255,0.07)}
+html[data-theme="dark"] .kc-rapat    {background:#0A2016;color:#72C49A}
+html[data-theme="dark"] .kc-kegiatan {background:#1A1400;color:#D4A840}
+html[data-theme="dark"] .kc-sosial   {background:#1A0A08;color:#E88878}
+html[data-theme="dark"] .kc-olahraga {background:#080E1A;color:#6090D0}
+html[data-theme="dark"] .kc-lainnya  {background:#222;color:#888}
+html[data-theme="dark"] .ftab{background:#1F2B22;border-color:rgba(255,255,255,0.12);color:var(--ink-soft)}
+html[data-theme="dark"] .ftab.on{background:var(--forest);color:#fff;border-color:var(--forest)}
 </style>
 @endsection
 @section('content')

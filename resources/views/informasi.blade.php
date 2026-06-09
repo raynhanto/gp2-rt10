@@ -62,6 +62,29 @@
   .berita-body{padding:.75rem}
   .inf-tab{padding:12px 16px;font-size:12px}
 }
+/* ── Dark mode ───────────────────────────────────────────────── */
+html[data-theme="dark"] .inf-tabs{background:#192019;border-bottom-color:rgba(255,255,255,0.08)}
+html[data-theme="dark"] .berita-card{background:#1F2B22;border-color:rgba(255,255,255,0.08)}
+html[data-theme="dark"] .tt-group{background:#1F2B22;border-color:rgba(255,255,255,0.08)}
+html[data-theme="dark"] .tt-item{border-bottom-color:rgba(255,255,255,0.07)}
+html[data-theme="dark"] .pk-year-sel{background:#1F2B22;border-color:rgba(255,255,255,0.14);color:var(--ink)}
+html[data-theme="dark"] .pk-item{background:#1F2B22;border-color:rgba(255,255,255,0.08)}
+html[data-theme="dark"] .peng-item{background:#1F2B22;border-color:rgba(255,255,255,0.08)}
+html[data-theme="dark"] .chip-pengumuman{background:#0A2016;color:#72C49A}
+html[data-theme="dark"] .chip-kegiatan  {background:#08101A;color:#6090D0}
+html[data-theme="dark"] .chip-informasi {background:#1A1400;color:#D4A840}
+html[data-theme="dark"] .chip-lainnya   {background:#1E1E1E;color:#888}
+html[data-theme="dark"] .pk-rencana {background:#1E1A10;color:#C0A84A}
+html[data-theme="dark"] .pk-berjalan{background:#0A2016;color:#72C49A}
+html[data-theme="dark"] .pk-selesai {background:#08101A;color:#6090D0}
+html[data-theme="dark"] .pk-batal   {background:#1A0A08;color:#E88878}
+html[data-theme="dark"] #berita-empty,html[data-theme="dark"] #peng-empty,
+html[data-theme="dark"] #tt-empty,html[data-theme="dark"] #pk-empty{background:#1F2B22;border-color:rgba(255,255,255,0.08)}
+html[data-theme="dark"] #sk-kategori,html[data-theme="dark"] #sk-nama,
+html[data-theme="dark"] #sk-judul,html[data-theme="dark"] #sk-isi,html[data-theme="dark"] #sk-wa,
+html[data-theme="dark"] #up-judul,html[data-theme="dark"] #up-lokasi,
+html[data-theme="dark"] #up-prioritas,html[data-theme="dark"] #up-deskripsi{background:#1F2B22;border-color:rgba(255,255,255,0.14)!important;color:var(--ink)}
+html[data-theme="dark"] #sk-anonym-toggle{background:#2A352C!important}
 </style>
 @endsection
 @section('content')
@@ -107,7 +130,7 @@
       <button onclick="backToList()" style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--forest);background:none;border:none;cursor:pointer;padding:0;margin-bottom:1.25rem">
         <i class="fa fa-arrow-left" style="font-size:11px"></i> Kembali ke daftar
       </button>
-      <div style="background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden">
+      <div style="background:var(--cream);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden">
         <img id="bd-cover" src="" alt="" style="display:none;width:100%;max-height:260px;object-fit:cover">
         <div style="padding:1.75rem">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem;flex-wrap:wrap">
@@ -590,7 +613,7 @@ async function loadSkMine() {
     const dt   = new Date((s.created_at||'').replace(' ','T'));
     const tgl  = isNaN(dt) ? '' : dt.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
     const color = SK_STATUS_COLOR[s.status] || 'var(--ink-mute)';
-    return `<div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:.875rem 1rem;margin-bottom:.5rem">
+    return `<div style="background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.875rem 1rem;margin-bottom:.5rem">
       <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem;flex-wrap:wrap">
         <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--forest-pale);color:var(--forest)">${SK_KAT_LBL[s.kategori]||s.kategori}</span>
         <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${color}18;color:${color}">${SK_STATUS_LBL[s.status]||s.status}</span>

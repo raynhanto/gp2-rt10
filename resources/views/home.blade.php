@@ -124,6 +124,17 @@
   .cta-banner{flex-direction:column;text-align:center;padding:2rem}
   .stat-item{padding:1.5rem 1rem}
 }
+/* ── Dark mode ─────────────────────────────────────────────────── */
+html[data-theme="dark"] .layanan-wrap{background:var(--warm)}
+html[data-theme="dark"] .layanan-card{background:#1F2B22;border-color:rgba(255,255,255,0.10);box-shadow:0 2px 12px rgba(0,0,0,0.3)}
+html[data-theme="dark"] .layanan-card:hover{border-color:rgba(74,140,101,0.4);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+html[data-theme="dark"] .kcard{background:#1F2B22;border-color:rgba(255,255,255,0.09)}
+html[data-theme="dark"] .feature-card{background:#1F2B22;border-color:rgba(255,255,255,0.09)}
+html[data-theme="dark"] .how-wrap{background:var(--cream);border-color:rgba(255,255,255,0.06)}
+html[data-theme="dark"] .peng-wrap{background:var(--cream);border-top-color:rgba(255,255,255,0.06)}
+html[data-theme="dark"] .peng-card{background:#1F2B22;border-color:rgba(255,255,255,0.09)}
+html[data-theme="dark"] .peng-card:hover{border-color:rgba(74,140,101,0.35)}
+html[data-theme="dark"] .sk-dark{background:rgba(255,255,255,0.06)}
 </style>
 @endsection
 
@@ -184,7 +195,7 @@
     </div>
     <div class="kgrid" id="kgrid">
       @for($i=0;$i<4;$i++)
-      <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)">
+      <div style="background:var(--cream);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)">
         <div class="sk sk-dark" style="height:180px;border-radius:0;margin:0"></div>
         <div style="padding:1rem">
           <div class="sk sk-dark" style="height:13px;width:70%;margin-bottom:9px"></div>
@@ -355,7 +366,7 @@
     </div>
     <div class="peng-grid" id="pengGrid">
       @for($i=0;$i<3;$i++)
-      <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:1.125rem 1.375rem;display:flex;gap:1rem;align-items:flex-start;box-shadow:var(--shadow-sm)">
+      <div style="background:var(--cream);border:1px solid var(--border);border-radius:14px;padding:1.125rem 1.375rem;display:flex;gap:1rem;align-items:flex-start;box-shadow:var(--shadow-sm)">
         <div class="sk sk-dark" style="width:42px;height:42px;border-radius:11px;flex-shrink:0"></div>
         <div style="flex:1">
           <div class="sk sk-dark" style="height:13px;width:60%;margin-bottom:9px"></div>
@@ -369,7 +380,7 @@
 </section>
 
 {{-- ── KENAPA PERCAYAI KAMI ──────────────────────────────────── --}}
-<section style="padding:3.5rem 0;background:#fff">
+<section style="padding:3.5rem 0;background:var(--warm)">
   <div class="container">
     <div class="fade-in" style="text-align:center;margin-bottom:0.5rem">
       <div class="section-label" style="justify-content:center">Kenapa percayai kami</div>
@@ -415,7 +426,7 @@
 </div>
 
 {{-- ── CTA BANNER ────────────────────────────────────────────── --}}
-<section style="padding:3rem 0;background:#fff">
+<section style="padding:3rem 0;background:var(--warm)">
   <div class="container">
     <div class="cta-banner fade-in">
       <div style="position:relative;z-index:1">

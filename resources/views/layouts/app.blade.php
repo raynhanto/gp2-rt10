@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){var m=document.cookie.match(/(?:^|;\s*)gp2-theme=([^;]*)/);document.documentElement.setAttribute('data-theme',(m?m[1]:null)||'light')})()</script>
 <title>@yield('title', 'RT 10 Golden Park 2') — GP2 RT10</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -170,6 +171,34 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
   .footer-inner{grid-template-columns:1fr;gap:2rem;padding-bottom:2rem}
   .footer-bottom{flex-direction:column;gap:0.75rem;text-align:center}
 }
+/* ── Theme toggle button ── */
+.nav-theme-btn{width:34px;height:34px;border:none;background:none;cursor:pointer;color:var(--ink-soft);border-radius:8px;transition:background 0.15s,color 0.15s;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-theme-btn:hover{background:var(--forest-pale);color:var(--forest)}
+/* ── Dark mode variables ── */
+html[data-theme="dark"]{
+  --warm:#111714;--cream:#192019;--parchment:#1F2B22;
+  --forest:#4A8C65;--forest-mid:#5A9E72;--forest-light:#72B888;
+  --forest-pale:#1E3228;
+  --gold-pale:#201C0E;--gold-wash:#1A160A;
+  --sand:#3A3028;
+  --ink:#E5DDD0;--ink-mid:#BDB49E;--ink-soft:#7E7668;--ink-mute:#5A5248;
+  --border:rgba(255,255,255,0.09);--border-gold:rgba(200,160,48,0.20);
+  --shadow-sm:0 2px 8px rgba(0,0,0,0.32);
+  --shadow-md:0 8px 24px rgba(0,0,0,0.42);
+  --shadow-lg:0 20px 48px rgba(0,0,0,0.52);
+}
+html[data-theme="dark"] #main-nav{background:rgba(13,19,15,0.97);border-color:rgba(255,255,255,0.08)}
+html[data-theme="dark"] #main-nav.scrolled{box-shadow:0 8px 32px rgba(0,0,0,0.32),0 2px 6px rgba(0,0,0,0.18);border-color:rgba(255,255,255,0.12)}
+html[data-theme="dark"] nav.bottom-nav{background:rgba(13,19,15,0.98);border-top-color:rgba(255,255,255,0.08)}
+html[data-theme="dark"] .member-nav{background:rgba(20,18,6,0.97);border-color:rgba(200,160,48,0.25)}
+html[data-theme="dark"] .card{background:#1F2B22;border-color:rgba(255,255,255,0.09)}
+html[data-theme="dark"] .gp2-chip{background:#1F2B22}
+html[data-theme="dark"] .btn-secondary{border-color:rgba(255,255,255,0.16);color:var(--ink)}
+html[data-theme="dark"] .badge-done{background:#252A24;color:var(--ink-mute)}
+html[data-theme="dark"] .badge-urgent{background:#2A1512}
+html[data-theme="dark"] .badge-open{background:#1E3228}
+html[data-theme="dark"] .badge-nearly{background:#201C0E}
+html[data-theme="dark"] .nav-theme-btn:hover{background:rgba(74,140,101,0.2);color:#7FC8A0}
 </style>
 @yield('styles')
 </head>
@@ -213,6 +242,9 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
     @else
     <a href="/login" class="nav-cta" id="nav-cta-desktop">Masuk →</a>
     @endauth
+    <button class="nav-theme-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle tema">
+      <i id="theme-icon" class="fa fa-moon"></i>
+    </button>
     <button class="nav-menu-btn" id="nav-menu-btn" onclick="toggleNavDrawer()" aria-label="Menu">
       <i class="fa fa-bars"></i>
     </button>
@@ -426,6 +458,14 @@ footer::after{content:'';position:absolute;bottom:0;right:-60px;width:280px;heig
 
 <script>
 const _csrfToken = '{{ csrf_token() }}';
+function toggleTheme() {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  const exp = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = 'gp2-theme=' + next + ';path=/;expires=' + exp + ';SameSite=Lax';
+  const icon = document.getElementById('theme-icon');
+  if (icon) icon.className = next === 'dark' ? 'fa fa-sun' : 'fa fa-moon';
+}
 // Ensure all fetch() calls include Accept: application/json so auth errors return JSON, not HTML redirects
 const _nativeFetch = window.fetch;
 window.fetch = (url, opts = {}) => {
@@ -437,6 +477,8 @@ function doLogout() {
     .then(() => location.href = '/');
 }
 document.addEventListener('DOMContentLoaded', () => {
+  const _themeIcon = document.getElementById('theme-icon');
+  if (_themeIcon) _themeIcon.className = document.documentElement.getAttribute('data-theme') === 'dark' ? 'fa fa-sun' : 'fa fa-moon';
   function handleResize() {
     const isMobile = window.innerWidth <= 768;
     const desktopUser = document.getElementById('nav-user-desktop');
