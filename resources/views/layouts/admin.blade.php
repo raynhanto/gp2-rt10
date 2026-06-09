@@ -179,6 +179,27 @@ a{text-decoration:none;color:inherit}
 .toast-inner.show{opacity:1;transform:translateY(0)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
+/* ── Responsive utility classes ── */
+/* Stat/KPI grids */
+.stat-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+.stat-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
+.stat-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:2rem}
+/* Two-column content split */
+.split-3-2{display:grid;grid-template-columns:3fr 2fr;gap:1.5rem}
+.split-2-1{display:grid;grid-template-columns:2fr 1fr;gap:1.5rem}
+.split-1-1{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+/* Table wrapper */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+/* Page header row */
+.page-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:2rem;flex-wrap:wrap}
+/* Modal overlay + box */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:var(--radius);padding:1.75rem;width:100%;max-width:min(480px,calc(100vw - 2rem));max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.modal-box-lg{max-width:min(560px,calc(100vw - 2rem))}
+/* Right-side detail panel (surat, etc.) */
+.detail-panel{width:480px;flex-shrink:0}
+
 /* ── Responsive ── */
 @media(max-width:900px){
   .admin-topbar{display:flex}
@@ -188,9 +209,18 @@ a{text-decoration:none;color:inherit}
   .admin-body{margin-left:0;padding-top:52px}
   .admin-content{padding:1.5rem 1.125rem 3rem}
   .toast{left:1rem}
+  .stat-grid-4{grid-template-columns:repeat(2,1fr)}
+  .stat-grid-3{grid-template-columns:repeat(2,1fr)}
+  .split-3-2,.split-2-1,.split-1-1{grid-template-columns:1fr}
+  .detail-panel{width:100%}
+}
+@media(max-width:640px){
+  .stat-grid-4,.stat-grid-3{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:480px){
   .admin-content{padding:1.25rem 0.875rem 3rem}
+  .stat-grid-4,.stat-grid-3,.stat-grid-2{grid-template-columns:1fr}
+  .split-3-2,.split-2-1,.split-1-1{grid-template-columns:1fr}
 }
 </style>
 @yield('styles')
@@ -286,10 +316,6 @@ a{text-decoration:none;color:inherit}
 
       <div class="sb-divider"></div>
       <div class="sb-group">Kependudukan</div>
-      <a href="/admin/warga" class="sb-link {{ request()->is('admin/warga') ? 'active' : '' }}">
-        <span class="sb-icon"><i class="fa fa-users"></i></span>
-        Manajemen User
-      </a>
       <a href="/admin/kependudukan" class="sb-link {{ request()->is('admin/kependudukan') && !request()->is('admin/kependudukan/*') ? 'active' : '' }}">
         <span class="sb-icon"><i class="fa fa-house-chimney"></i></span>
         Ringkasan KK
@@ -367,6 +393,10 @@ a{text-decoration:none;color:inherit}
 
       <div class="sb-divider"></div>
       <div class="sb-group">Sistem</div>
+      <a href="/admin/warga" class="sb-link {{ request()->is('admin/warga') ? 'active' : '' }}">
+        <span class="sb-icon"><i class="fa fa-users"></i></span>
+        Manajemen User
+      </a>
       <a href="/admin/aktivitas" class="sb-link {{ request()->is('admin/aktivitas') ? 'active' : '' }}">
         <span class="sb-icon"><i class="fa fa-clock-rotate-left"></i></span>
         Log Aktivitas

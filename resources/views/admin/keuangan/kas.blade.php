@@ -2,7 +2,7 @@
 @section('title', 'Buku Kas')
 @section('content')
 <div class="container">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
     <div>
       <a href="/admin/keuangan" style="font-size:13px;color:var(--ink-soft)">← Keuangan</a>
       <div class="section-title" style="font-size:1.8rem;margin-top:6px">Buku Kas</div>
@@ -14,7 +14,7 @@
   </div>
 
   {{-- Summary Cards --}}
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem">
+  <div class="stat-grid-3" style="margin-bottom:1.5rem">
     <div style="background:#E8F4ED;border-radius:var(--radius-sm);padding:1.25rem">
       <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--forest);opacity:0.7;margin-bottom:4px">Total Masuk</div>
       <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--forest)" id="s-masuk">—</div>
@@ -59,7 +59,7 @@
 
 {{-- Form Modal --}}
 <div id="form-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:480px;margin:1rem;max-height:90vh;overflow-y:auto">
+  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:min(480px,calc(100vw - 2rem));margin:1rem;max-height:90vh;overflow-y:auto">
     <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--forest);margin-bottom:1.5rem" id="form-title">Entri Kas</div>
     <input type="hidden" id="edit-id" value="">
 
@@ -115,7 +115,7 @@
 
 {{-- Lampiran Modal --}}
 <div id="lampiran-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:480px;margin:1rem">
+  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:min(480px,calc(100vw - 2rem));margin:1rem">
     <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--forest);margin-bottom:1rem">Lampiran Dokumen</div>
     <input type="hidden" id="lampiran-kas-id">
     <div id="lampiran-list" style="margin-bottom:1rem"></div>

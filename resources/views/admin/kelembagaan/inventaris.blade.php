@@ -9,7 +9,7 @@
 
 #inv-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:400; align-items:center; justify-content:center; padding:1rem; }
 #inv-modal.open { display:flex; }
-.modal-box { background:#fff; border-radius:14px; padding:1.75rem; max-width:520px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.2); }
+.modal-box { background:#fff; border-radius:14px; padding:1.75rem; max-width:min(520px,calc(100vw - 2rem)); width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.2); }
 .f-input { width:100%; padding:.55rem .75rem; border:1.5px solid var(--border); border-radius:8px; font-size:13px; font-family:'DM Sans',sans-serif; color:var(--ink); background:#fff; margin-bottom:.5rem; }
 .f-input:focus { outline:none; border-color:var(--forest); }
 .f-label { font-size:11px; font-weight:600; color:var(--ink-mid); margin-bottom:.25rem; display:block; }
@@ -47,7 +47,7 @@
 </div>
 
 {{-- Summary cards --}}
-<div id="inv-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem;margin-bottom:1.5rem;max-width:480px">
+<div id="inv-summary" class="stat-grid-3" style="gap:.875rem;margin-bottom:1.5rem">
   <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:.875rem 1rem">
     <div style="font-size:11px;color:var(--ink-soft);margin-bottom:4px">Total Aset</div>
     <div id="s-total" style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--forest)">—</div>

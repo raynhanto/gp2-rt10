@@ -2,7 +2,7 @@
 @section('title', 'Verifikasi Donasi')
 @section('content')
 <div class="container">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
     <div>
       <div class="section-title" style="font-size:1.8rem">Verifikasi Donasi</div>
     </div>
@@ -25,7 +25,7 @@
 
 {{-- Verify modal --}}
 <div id="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:480px;margin:1rem">
+  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:min(480px,calc(100vw - 2rem));margin:1rem">
     <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--forest);margin-bottom:1.25rem" id="modal-title">Verifikasi Donasi</div>
     <div id="modal-info" style="background:var(--cream);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1rem;font-size:13px;line-height:2"></div>
     <div id="modal-bukti" style="margin-bottom:1rem"></div>

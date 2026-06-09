@@ -2,7 +2,7 @@
 @section('title', 'Anggaran')
 @section('content')
 <div class="container">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
     <div>
       <a href="/admin/keuangan" style="font-size:13px;color:var(--ink-soft)">← Keuangan</a>
       <div class="section-title" style="font-size:1.8rem;margin-top:6px">Anggaran</div>
@@ -28,7 +28,7 @@
 
 {{-- Form Modal --}}
 <div id="form-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:480px;margin:1rem">
+  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:min(480px,calc(100vw - 2rem));margin:1rem">
     <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--forest);margin-bottom:1.5rem" id="form-title">Tambah Pos Anggaran</div>
     <input type="hidden" id="edit-id">
 

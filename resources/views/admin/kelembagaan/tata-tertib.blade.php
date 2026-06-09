@@ -2,7 +2,7 @@
 @section('title', 'Tata Tertib')
 @section('content')
 <div class="container" style="max-width:900px">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
     <div>
       <div class="section-label">Kelembagaan</div>
       <div class="section-title">Tata Tertib RT 10</div>
@@ -21,7 +21,7 @@
 
 {{-- Modal --}}
 <div id="form-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem">
-  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:520px;max-height:92vh;overflow-y:auto">
+  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:min(520px,calc(100vw - 2rem));max-height:92vh;overflow-y:auto">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
       <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--forest)" id="form-title">Tambah Peraturan</div>
       <button onclick="closeForm()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--ink-mute)"><i class="fa fa-xmark"></i></button>

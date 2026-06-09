@@ -21,9 +21,12 @@
 .sr-status-selesai { background:var(--forest-pale); color:var(--forest); }
 .sr-status-ditolak { background:#fdecea; color:var(--rust); }
 
-/* Detail panel */
+/* Detail panel — right drawer on desktop, bottom sheet on mobile */
 .sr-detail { display:none; position:fixed; top:0; right:0; bottom:0; width:480px; background:#fff; border-left:1px solid var(--border); box-shadow:-8px 0 32px rgba(0,0,0,.12); z-index:300; flex-direction:column; overflow:hidden; }
 .sr-detail.open { display:flex; }
+@media(max-width:900px) {
+  .sr-detail { top:auto; left:0; right:0; bottom:0; width:100%; height:88vh; border-left:none; border-top:1px solid var(--border); border-radius:16px 16px 0 0; box-shadow:0 -8px 32px rgba(0,0,0,.15); }
+}
 .sr-detail-header { padding:1.25rem 1.5rem; border-bottom:1px solid var(--border); flex-shrink:0; display:flex; align-items:flex-start; gap:.75rem; }
 .sr-detail-header-info { flex:1; min-width:0; }
 .sr-detail-body { flex:1; overflow-y:auto; padding:1.25rem 1.5rem; }

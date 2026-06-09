@@ -48,7 +48,7 @@ rt10-laravel/
 ├── .env / .env.example
 ├── app/
 │   ├── Helpers/
-│   │   └── Upload.php              ← UUID rename, MIME validate, stores to storage/uploads/
+│   │   └── Upload.php              ← UUID rename, MIME validate, stores to public/uploads/
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   ├── Auth/
@@ -128,7 +128,7 @@ rt10-laravel/
 ├── routes/
 │   ├── web.php                     ← Page routes + auth routes (/auth/google etc)
 │   └── api.php                     ← All /api/* routes
-└── storage/uploads/                ← Uploaded files (bukti donasi, foto nota, foto kampanye)
+└── public/uploads/                 ← Uploaded files (bukti donasi, foto nota, foto kampanye) — web-accessible
 ```
 
 ---
@@ -375,10 +375,8 @@ API: `GET /api/admin/seeder`, `POST /api/admin/seeder/{key}/run`, `POST /api/adm
 ## Deployment Notes
 - Run `php artisan migrate` (runs all migrations — currently 20+)
 - Seed: run `database/seeders/` after first Google login + setting admin
-- `php artisan storage:link` — symlinks `public/storage` → `storage/app/public` (or configure `public/uploads` directly)
-- **Shared hosting note:** `storage/uploads/` needs to be web-accessible. Options:
-  1. Symlink: `public/uploads → ../storage/uploads`
-  2. Custom disk in `config/filesystems.php` pointing to `public/uploads`
+- `php artisan storage:link` — symlinks `public/storage` → `storage/app/public` (not needed for uploads — see below)
+- **Uploads:** Files go to `public/uploads/{subfolder}/` via `Upload::save()` — directly web-accessible, no symlink needed
 - Update Google Console redirect URI to `https://gp2rt10.vensalor-kingdom.com/auth/callback`
 - Session driver: `file` (no Redis needed on shared hosting)
 - No npm/Vite build step — all CSS/JS is inline in Blade views
@@ -402,7 +400,6 @@ GOOGLE_CLIENT_SECRET=GOCSPX-xxx
 GOOGLE_REDIRECT_URI=https://gp2rt10.vensalor-kingdom.com/auth/callback
 
 UPLOAD_MAX_MB=5
-UPLOAD_PATH=../storage/uploads
 SESSION_DRIVER=file
 SESSION_ENCRYPT=false
 
@@ -438,7 +435,7 @@ All features from the vanilla PHP app have been migrated:
 - [x] Pagination for kas ledger — smart ellipsis, per-page selector (25/50/100)
 - [ ] Pagination for donatur list
 - [x] Error pages (403, 404, 419, 500) — styled Blade views in `resources/views/errors/`
-- [ ] `storage/uploads/` web-accessible path setup for shared hosting
+- [x] `public/uploads/` web-accessible — Upload.php stores directly to `public/uploads/{subfolder}/`, returns `/uploads/...` URLs
 
 ### [DONE] Phase 10 — Keuangan & Kependudukan (DONE)
 **Role system** (5 roles): `warga`, `sekretaris`, `bendahara`, `admin`, `super_admin`

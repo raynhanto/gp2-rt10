@@ -4,7 +4,7 @@
 <div class="container">
 
   {{-- Header --}}
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
     <div>
       <div class="section-title" style="font-size:1.8rem">Data Warga</div>
       <div style="font-size:13px;color:var(--ink-soft);margin-top:4px">Daftar seluruh akun yang terdaftar di sistem RT 10</div>

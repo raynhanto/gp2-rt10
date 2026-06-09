@@ -2,14 +2,14 @@
 @section('title', 'Manajemen Kas')
 @section('content')
 <div class="container">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
     <div>
       <div class="section-title" style="font-size:1.8rem">Manajemen Kas</div>
     </div>
     <button onclick="document.getElementById('form-overlay').style.display='flex'" class="btn-primary">+ Entri Manual</button>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem">
+  <div class="stat-grid-3">
     <div style="background:#E8F4ED;border-radius:var(--radius-sm);padding:1.25rem">
       <div style="font-size:12px;color:var(--ink-soft);margin-bottom:4px">Total Masuk</div>
       <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--forest)" id="s-masuk">—</div>

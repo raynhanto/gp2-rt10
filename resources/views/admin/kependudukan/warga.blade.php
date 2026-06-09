@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
 
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
     <div>
       <a href="/admin/kependudukan" style="font-size:13px;color:var(--ink-soft)">← Kependudukan</a>
       <div class="section-title" style="font-size:1.8rem;margin-top:6px">Data Warga</div>
@@ -44,7 +44,7 @@
 
 {{-- Modal Tambah/Edit KK --}}
 <div id="modal-bg" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:var(--radius);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;margin:1rem;box-shadow:var(--shadow-lg)">
+  <div style="background:#fff;border-radius:var(--radius);width:100%;max-width:min(560px,calc(100vw - 2rem));max-height:90vh;overflow-y:auto;margin:1rem;box-shadow:var(--shadow-lg)">
     <div style="padding:1.5rem 1.5rem 0;display:flex;justify-content:space-between;align-items:center">
       <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--forest)" id="modal-title">Tambah Kepala Keluarga</div>
       <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--ink-soft)"><i class="fa-solid fa-xmark"></i></button>

@@ -2,7 +2,7 @@
 @section('title', 'Transaksi Instan')
 @section('content')
 <div class="container">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
     <div>
       <div class="section-title" style="font-size:1.8rem">Transaksi Instan</div>
       <p style="font-size:13px;color:var(--ink-soft);margin-top:6px">Uang masuk & langsung keluar — net saldo nol. Contoh: titipan bayar domain, iuran RT via perantara.</p>

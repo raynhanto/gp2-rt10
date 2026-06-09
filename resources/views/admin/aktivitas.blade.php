@@ -2,7 +2,7 @@
 @section('title', 'Log Aktivitas Admin')
 @section('content')
 <div class="container">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
     <div>
       <div class="section-title" style="font-size:1.8rem">Log Aktivitas Admin</div>
       <div style="font-size:13px;color:var(--ink-soft);margin-top:4px">Rekam jejak setiap tindakan yang dilakukan pengurus RT</div>

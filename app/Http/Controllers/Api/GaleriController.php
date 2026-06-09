@@ -152,10 +152,12 @@ class GaleriController extends Controller
         $foto = GaleriFoto::find($fotoId);
         if (!$foto) return response()->json(['success' => false, 'message' => 'Foto tidak ditemukan.'], 404);
 
-        $galeri = Galeri::find($foto->galeri_id);
+        $galeri   = Galeri::find($foto->galeri_id);
         $wasCover = $galeri && $galeri->cover_url === $foto->foto_url;
+        $fileUrl  = $foto->foto_url;
 
         $foto->delete();
+        $this->deleteFile($fileUrl);
 
         if ($wasCover && $galeri) $galeri->refreshCover();
 
@@ -167,7 +169,23 @@ class GaleriController extends Controller
         $galeri = Galeri::find($id);
         if (!$galeri) return response()->json(['success' => false, 'message' => 'Album tidak ditemukan.'], 404);
 
+        $fileUrls = $galeri->fotos()->pluck('foto_url')->all();
+
         $galeri->delete(); // cascades to galeri_foto via FK
+
+        foreach ($fileUrls as $url) {
+            $this->deleteFile($url);
+        }
+
         return response()->json(['success' => true, 'message' => 'Album berhasil dihapus.']);
+    }
+
+    private function deleteFile(?string $url): void
+    {
+        if (!$url) return;
+        $path = public_path(ltrim($url, '/'));
+        if (file_exists($path)) {
+            @unlink($path);
+        }
     }
 }

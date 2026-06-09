@@ -2,7 +2,7 @@
 @section('title', 'Admin Dashboard')
 @section('content')
 <div class="container">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2.5rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:2.5rem">
     <div>
       <div class="section-label">Admin Panel</div>
       <div class="section-title" style="font-size:1.8rem">Dashboard Pengurus RT 10</div>
@@ -13,7 +13,7 @@
     </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2.5rem">
+  <div class="stat-grid-4" style="margin-bottom:2.5rem">
     @foreach(['admin-saldo'=>['Saldo Kas','#E8F4ED','var(--forest)'],'admin-masuk'=>['Pemasukan Bulan Ini','var(--gold-pale)','#7A5C00'],'admin-keluar'=>['Pengeluaran Bulan Ini','#FDECEA','var(--rust)'],'admin-pending'=>['Menunggu Verifikasi','#E8F0FD','#2D5AA8']] as $id=>[$lbl,$bg,$col])
     <div style="background:{{ $bg }};border-radius:var(--radius-sm);padding:1.25rem">
       <div style="font-size:12px;color:var(--ink-soft);margin-bottom:6px">{{ $lbl }}</div>
@@ -22,7 +22,7 @@
     @endforeach
   </div>
 
-  <div style="display:grid;grid-template-columns:3fr 2fr;gap:1.5rem">
+  <div class="split-3-2">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
         <div style="font-size:15px;font-weight:500">Donasi menunggu verifikasi</div>

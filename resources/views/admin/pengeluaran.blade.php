@@ -2,7 +2,7 @@
 @section('title', 'Catat Pengeluaran')
 @section('content')
 <div class="container">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
     <div>
       <div class="section-title" style="font-size:1.8rem">Catat Pengeluaran</div>
     </div>
@@ -12,7 +12,7 @@
 </div>
 
 <div id="form-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:480px;margin:1rem;max-height:90vh;overflow-y:auto">
+  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:min(480px,calc(100vw - 2rem));margin:1rem;max-height:90vh;overflow-y:auto">
     <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--forest);margin-bottom:1.5rem">Catat Pengeluaran</div>
     <div style="margin-bottom:1rem">
       <label style="display:block;font-size:12px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">Kampanye</label>

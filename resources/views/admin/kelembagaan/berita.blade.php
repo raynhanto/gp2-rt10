@@ -2,7 +2,7 @@
 @section('title', 'Berita & Informasi')
 @section('content')
 <div class="container" style="max-width:1100px">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
     <div>
       <div class="section-label">Kelembagaan</div>
       <div class="section-title">Berita &amp; Informasi</div>

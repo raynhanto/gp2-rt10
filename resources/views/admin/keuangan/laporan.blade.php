@@ -5,7 +5,7 @@
 @endsection
 @section('content')
 <div class="container">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
     <div>
       <a href="/admin/keuangan" style="font-size:13px;color:var(--ink-soft)">← Keuangan</a>
       <div class="section-title" style="font-size:1.8rem;margin-top:6px">Laporan Keuangan</div>
@@ -31,7 +31,7 @@
       <button onclick="loadArusKas()" class="btn-secondary" style="padding:7px 14px;font-size:13px">Tampilkan</button>
       <a id="export-ak" href="#" onclick="exportKas()" class="btn-secondary" style="padding:7px 14px;font-size:13px">↓ Excel</a>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem" id="ak-summary"></div>
+    <div class="stat-grid-3" style="margin-bottom:1.5rem" id="ak-summary"></div>
     <div class="card" style="margin-bottom:1.5rem">
       <canvas id="chart-arus" height="200"></canvas>
     </div>
@@ -48,7 +48,7 @@
       <button onclick="loadPengeluaranReport()" class="btn-secondary" style="padding:7px 14px;font-size:13px">Tampilkan</button>
       <button onclick="exportPengeluaran()" class="btn-secondary" style="padding:7px 14px;font-size:13px">↓ Excel</button>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+    <div class="split-1-1">
       <div class="card">
         <div style="font-size:14px;font-weight:600;margin-bottom:1rem">Per Kategori</div>
         <canvas id="chart-pengeluaran" height="250"></canvas>
@@ -72,7 +72,7 @@
       <button onclick="loadIuranReport()" class="btn-secondary" style="padding:7px 14px;font-size:13px">Tampilkan</button>
       <button onclick="exportIuran()" class="btn-secondary" style="padding:7px 14px;font-size:13px">↓ Excel</button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem" id="iu-summary"></div>
+    <div class="stat-grid-4" style="margin-bottom:1.5rem" id="iu-summary"></div>
     <div id="iu-table"></div>
   </div>
 
@@ -254,7 +254,7 @@ async function loadNeraca() {
   if (!j.success) return;
   const kas = j.kas;
   document.getElementById('nc-content').innerHTML = `
-    <div style="max-width:600px">
+    <div style="max-width:min(600px,100%)">
       <div style="font-size:15px;font-weight:600;margin-bottom:1rem">Neraca per ${j.per_tanggal}</div>
       <div class="card" style="margin-bottom:1rem">
         <div style="font-size:12px;font-weight:600;text-transform:uppercase;color:var(--ink-soft);letter-spacing:.06em;margin-bottom:1rem">Kas RT</div>

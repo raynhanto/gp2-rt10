@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
 
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
     <div>
       <div class="section-title" style="font-size:1.8rem">Kependudukan</div>
       <div style="font-size:13px;color:var(--ink-soft);margin-top:4px">Data warga RT 10 Golden Park 2</div>
@@ -14,7 +14,7 @@
   </div>
 
   {{-- KPI --}}
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem">
+  <div class="stat-grid-3">
     <div style="background:var(--forest-pale);border-radius:var(--radius-sm);padding:1.25rem 1.5rem">
       <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--forest);opacity:0.7;margin-bottom:4px">Total KK</div>
       <div style="font-family:'DM Serif Display',serif;font-size:2rem;color:var(--forest)" id="kpi-kk">—</div>

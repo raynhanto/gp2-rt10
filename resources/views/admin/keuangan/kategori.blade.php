@@ -2,7 +2,7 @@
 @section('title', 'Kategori Keuangan')
 @section('content')
 <div class="container">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
     <div>
       <a href="/admin/keuangan" style="font-size:13px;color:var(--ink-soft)">← Keuangan</a>
       <div class="section-title" style="font-size:1.8rem;margin-top:6px">Kategori Keuangan</div>

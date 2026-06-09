@@ -2,7 +2,7 @@
 @section('title', 'Matrix Compliance Iuran')
 @section('content')
 <div class="container" style="max-width:1300px">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
     <div>
       <a href="/admin/keuangan/iuran" style="font-size:13px;color:var(--ink-soft)">← Iuran</a>
       <div class="section-title" style="font-size:1.8rem;margin-top:6px">Matrix Compliance Iuran</div>
@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <div id="stats-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem"></div>
+  <div id="stats-row" class="stat-grid-4" style="margin-bottom:1.5rem"></div>
   <div id="matrix-container" style="overflow-x:auto"><div style="text-align:center;padding:3rem;color:var(--ink-soft)">Memuat...</div></div>
 </div>
 <style>

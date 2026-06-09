@@ -29,7 +29,7 @@
 /* Modal */
 .kend-modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:400; align-items:center; justify-content:center; padding:1rem; }
 .kend-modal-bg.open { display:flex; }
-.kend-modal { background:#fff; border-radius:var(--radius); padding:1.75rem; width:100%; max-width:480px; box-shadow:var(--shadow-lg); }
+.kend-modal { background:#fff; border-radius:var(--radius); padding:1.75rem; width:100%; max-width:min(480px,calc(100vw - 2rem)); box-shadow:var(--shadow-lg); }
 .kend-modal-title { font-family:'DM Serif Display',serif; font-size:1.15rem; color:var(--forest); margin-bottom:1.25rem; }
 .kend-field { margin-bottom:.875rem; }
 .kend-field label { font-size:11px; font-weight:600; color:var(--ink-mid); display:block; margin-bottom:.3rem; text-transform:uppercase; letter-spacing:.05em; }

@@ -2,7 +2,7 @@
 @section('title', 'Galeri Foto')
 @section('content')
 <div class="container" style="max-width:1140px">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.25rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:1.25rem">
     <div>
       <div class="section-label">Kelembagaan</div>
       <div class="section-title">Galeri Foto</div>
@@ -45,7 +45,7 @@
       <div id="cz-placeholder">
         <i class="fa fa-cloud-arrow-up" style="font-size:2rem;color:var(--ink-mute);margin-bottom:8px;display:block"></i>
         <div style="font-size:13px;color:var(--ink-soft)">Klik atau drag &amp; drop foto di sini</div>
-        <div style="font-size:11px;color:var(--ink-mute);margin-top:4px">JPG, PNG, WebP &mdash; maks 5MB per file &mdash; bisa pilih banyak</div>
+        <div style="font-size:11px;color:var(--ink-mute);margin-top:4px">JPG, PNG, WebP &mdash; otomatis dikompres &mdash; bisa pilih banyak</div>
       </div>
       <div id="cz-preview" style="display:none">
         <div id="cz-thumbs" style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:8px"></div>
@@ -105,7 +105,7 @@
      MODAL: Edit Info Album
      ============================================================ --}}
 <div id="edit-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem">
-  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto">
+  <div style="background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:min(480px,calc(100vw - 2rem));max-height:90vh;overflow-y:auto">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
       <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--forest)">Edit Info Album</div>
       <button onclick="closeEdit()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--ink-mute);padding:0;line-height:1"><i class="fa fa-xmark"></i></button>
@@ -156,7 +156,7 @@
      PANEL: Kelola Foto (full-width slide-in)
      ============================================================ --}}
 <div id="manage-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center;padding:0">
-  <div id="manage-panel" style="background:#fff;width:100%;max-width:800px;max-height:88vh;border-radius:var(--radius) var(--radius) 0 0;overflow:hidden;display:flex;flex-direction:column;margin:0 auto">
+  <div id="manage-panel" style="background:#fff;width:100%;max-width:min(800px,100vw);max-height:88vh;border-radius:var(--radius) var(--radius) 0 0;overflow:hidden;display:flex;flex-direction:column;margin:0 auto">
     {{-- Header --}}
     <div style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);flex-shrink:0">
       <div>
@@ -237,6 +237,35 @@
 <script>
 const _csrfToken = '{{ csrf_token() }}';
 const KAT_LBL = { kegiatan:'Kegiatan', sosial:'Sosial', fasilitas:'Fasilitas', dokumentasi:'Dokumentasi', lainnya:'Lainnya' };
+
+// Re-encode to JPEG at given quality — keeps original dimensions
+function compressImage(file, quality = 0.82) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width  = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      canvas.getContext('2d').drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      canvas.toBlob(blob => {
+        resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+      }, 'image/jpeg', quality);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); }; // fallback: send original
+    img.src = url;
+  });
+}
+
+async function compressAll(files, onProgress) {
+  const out = [];
+  for (let i = 0; i < files.length; i++) {
+    if (onProgress) onProgress(i + 1, files.length);
+    out.push(await compressImage(files[i]));
+  }
+  return out;
+}
 const BULAN_S = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
 
 let _albums = [], _curKat = '', _manageId = null, _manageAlbum = null;
@@ -371,6 +400,18 @@ async function createAlbum() {
   if (!tanggal)        { alert('Tanggal wajib diisi.'); return; }
   if (!_czFiles.length){ alert('Upload minimal 1 foto.'); return; }
 
+  const btn  = document.getElementById('c-save-btn');
+  const prog = document.getElementById('c-progress');
+  btn.disabled = true;
+  prog.style.display = '';
+
+  prog.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengompresi foto 0/${_czFiles.length}...`;
+  const compressed = await compressAll(_czFiles, (i, n) => {
+    prog.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengompresi foto ${i}/${n}...`;
+  });
+
+  prog.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Mengupload...';
+
   const fd = new FormData();
   fd.append('judul',       judul);
   fd.append('tanggal',     tanggal);
@@ -378,16 +419,13 @@ async function createAlbum() {
   fd.append('deskripsi',   document.getElementById('c-deskripsi').value.trim());
   fd.append('is_featured', document.getElementById('c-featured').checked ? '1' : '0');
   fd.append('is_public',   document.getElementById('c-public').checked   ? '1' : '0');
-  _czFiles.forEach(f => fd.append('fotos[]', f));
-
-  document.getElementById('c-save-btn').disabled = true;
-  document.getElementById('c-progress').style.display = '';
+  compressed.forEach(f => fd.append('fotos[]', f));
 
   const r = await fetch('/api/galeri', { method:'POST', headers:{'X-CSRF-TOKEN':_csrfToken}, body:fd });
   const j = await r.json();
 
-  document.getElementById('c-save-btn').disabled = false;
-  document.getElementById('c-progress').style.display = 'none';
+  btn.disabled = false;
+  prog.style.display = 'none';
 
   if (j.success) { closeCreate(); showToast(j.message); load(); }
   else alert(j.message);
@@ -471,12 +509,22 @@ function renderManageGrid() {
 
 async function addFotos(fileList) {
   if (!fileList.length) return;
-  const fd = new FormData();
-  Array.from(fileList).forEach(f => fd.append('fotos[]', f));
 
   const uploading = document.getElementById('manage-uploading');
-  uploading.style.display = '';
   document.getElementById('m-files').value = '';
+
+  const files = Array.from(fileList);
+  uploading.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengompresi foto 0/${files.length}...`;
+  uploading.style.display = '';
+
+  const compressed = await compressAll(files, (i, n) => {
+    uploading.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengompresi foto ${i}/${n}...`;
+  });
+
+  uploading.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Mengupload foto...';
+
+  const fd = new FormData();
+  compressed.forEach(f => fd.append('fotos[]', f));
 
   const r = await fetch(`/api/galeri/${_manageId}/foto`, { method:'POST', headers:{'X-CSRF-TOKEN':_csrfToken}, body:fd });
   const j = await r.json();

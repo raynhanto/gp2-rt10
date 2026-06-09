@@ -14,7 +14,7 @@
 
 #add-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:400; align-items:center; justify-content:center; padding:1rem; }
 #add-modal.open { display:flex; }
-.modal-box { background:#fff; border-radius:14px; padding:1.75rem; max-width:480px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.2); }
+.modal-box { background:#fff; border-radius:14px; padding:1.75rem; max-width:min(480px,calc(100vw - 2rem)); width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.2); }
 .f-input { width:100%; padding:.55rem .75rem; border:1.5px solid var(--border); border-radius:8px; font-size:13px; font-family:'DM Sans',sans-serif; color:var(--ink); background:#fff; margin-bottom:.625rem; }
 .f-input:focus { outline:none; border-color:var(--forest); }
 .f-label { font-size:11px; font-weight:600; color:var(--ink-mid); margin-bottom:.3rem; display:block; }

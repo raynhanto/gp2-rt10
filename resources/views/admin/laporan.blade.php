@@ -2,14 +2,14 @@
 @section('title', 'Laporan Keuangan')
 @section('content')
 <div class="container">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
     <div>
       <div class="section-title" style="font-size:1.8rem">Laporan Keuangan</div>
     </div>
     <button onclick="window.print()" class="btn-secondary"><i class="fa-solid fa-print" style="margin-right:6px"></i>Print / PDF</button>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem">
+  <div class="stat-grid-4">
     @foreach(['s-masuk'=>['Total Masuk','#E8F4ED','var(--forest)'],'s-keluar'=>['Total Keluar','#FDECEA','var(--rust)'],'s-saldo'=>['Saldo Kas','var(--gold-pale)','#7A5C00'],'s-donatur'=>['Total Donatur','#E8F0FD','#2D5AA8']] as $id=>[$lbl,$bg,$col])
     <div style="background:{{ $bg }};border-radius:var(--radius-sm);padding:1.25rem">
       <div style="font-size:12px;color:var(--ink-soft);margin-bottom:4px">{{ $lbl }}</div>

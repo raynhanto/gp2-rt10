@@ -4,7 +4,7 @@
 <div class="container">
 
   {{-- Header --}}
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
+  <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:flex-end;margin-bottom:2rem">
     <div>
       <a href="/admin" style="font-size:13px;color:var(--ink-soft)">← Admin</a>
       <div class="section-title" style="font-size:1.8rem;margin-top:6px">Keuangan</div>
@@ -24,7 +24,7 @@
   </div>
 
   {{-- KPI Cards --}}
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem" id="kpi-grid">
+  <div class="stat-grid-3" id="kpi-grid">
     @foreach(['kpi-saldo'=>['Saldo Kas','var(--gold-pale)','#7A5C00'],'kpi-masuk'=>['Total Masuk YTD','#E8F4ED','var(--forest)'],'kpi-keluar'=>['Total Keluar YTD','#FDECEA','var(--rust)'],'kpi-masuk-bulan'=>['Masuk Bulan Ini','#EDF3FB','#2D5AA8'],'kpi-keluar-bulan'=>['Keluar Bulan Ini','#FFF3E0','#8B4000'],'kpi-iuran'=>['Iuran Compliance','#F0F7F3','var(--forest)'] ] as $id=>[$lbl,$bg,$col])
     <div style="background:{{ $bg }};border-radius:var(--radius-sm);padding:1.25rem 1.5rem">
       <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:{{ $col }};margin-bottom:4px;opacity:0.7">{{ $lbl }}</div>
@@ -34,7 +34,7 @@
   </div>
 
   {{-- Charts Row 1 --}}
-  <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+  <div class="split-2-1" style="margin-bottom:1.5rem">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
         <div style="font-size:14px;font-weight:600">Arus Kas Bulanan</div>
@@ -52,7 +52,7 @@
   </div>
 
   {{-- Charts Row 2 --}}
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+  <div class="split-1-1">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
         <div style="font-size:14px;font-weight:600">Compliance Iuran</div>

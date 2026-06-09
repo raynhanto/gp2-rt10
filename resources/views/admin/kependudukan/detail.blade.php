@@ -53,7 +53,7 @@
 
 {{-- Modal Anggota --}}
 <div id="anggota-modal-bg" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:var(--radius);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;margin:1rem;box-shadow:var(--shadow-lg)">
+  <div style="background:#fff;border-radius:var(--radius);width:100%;max-width:min(520px,calc(100vw - 2rem));max-height:90vh;overflow-y:auto;margin:1rem;box-shadow:var(--shadow-lg)">
     <div style="padding:1.5rem 1.5rem 0;display:flex;justify-content:space-between;align-items:center">
       <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--forest)" id="anggota-modal-title">Tambah Anggota</div>
       <button onclick="closeAnggotaModal()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--ink-soft)"><i class="fa-solid fa-xmark"></i></button>
@@ -120,7 +120,7 @@
 
 {{-- Modal Kendaraan --}}
 <div id="kend-modal-bg" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:var(--radius);width:100%;max-width:480px;margin:1rem;box-shadow:var(--shadow-lg)">
+  <div style="background:#fff;border-radius:var(--radius);width:100%;max-width:min(480px,calc(100vw - 2rem));margin:1rem;box-shadow:var(--shadow-lg)">
     <div style="padding:1.5rem 1.5rem 0;display:flex;justify-content:space-between;align-items:center">
       <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--forest)" id="kend-modal-title">Tambah Kendaraan</div>
       <button onclick="closeKendaraanModal()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--ink-soft)"><i class="fa-solid fa-xmark"></i></button>
