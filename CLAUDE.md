@@ -433,7 +433,7 @@ All features from the vanilla PHP app have been migrated:
 - [x] Notification when donasi verified/rejected — email (`DonasiStatusMail`) + WA (`WhatsappService`)
 - [x] Export laporan to Excel — `ExcelExportService` (PhpSpreadsheet), endpoints at `/api/laporan/export/{kas,iuran,pengeluaran}`
 - [x] Pagination for kas ledger — smart ellipsis, per-page selector (25/50/100)
-- [ ] Pagination for donatur list
+- [x] Pagination for donatur list — "load more" for recent list; leaderboard expands inline with "Tampilkan semua" button; stats update on each load
 - [x] Error pages (403, 404, 419, 500) — styled Blade views in `resources/views/errors/`
 - [x] `public/uploads/` web-accessible — Upload.php stores directly to `public/uploads/{subfolder}/`, returns `/uploads/...` URLs
 

@@ -127,8 +127,9 @@ function renderLeaderboard(ranked) {
   const medals = medalColors.map(([c,bg]) => `<div style="width:24px;height:24px;border-radius:50%;background:${bg};border:2px solid ${c};display:flex;align-items:center;justify-content:center;margin:0 auto"><svg viewBox="0 0 24 24" fill="${c}" style="width:12px;height:12px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>`);
   const maxTotal = ranked[0].total;
 
-  const visible = ranked.slice(0, 10);
-  const hasMore = ranked.length > 10;
+  const LIMIT   = 10;
+  const visible = (_lbExpanded || ranked.length <= LIMIT) ? ranked : ranked.slice(0, LIMIT);
+  const hasMore = !_lbExpanded && ranked.length > LIMIT;
 
   el.innerHTML = visible.map((r, i) => {
     const av = avatarPalette[i % avatarPalette.length];
@@ -142,7 +143,7 @@ function renderLeaderboard(ranked) {
       ? `<div class="rank-medal">${medals[i]}</div>`
       : `<div class="rank-num">${rank}</div>`;
 
-    const divider = (i > 0 && i === 3) ? '<div class="rank-divider"></div>' : '';
+    const divider = i === 3 ? '<div class="rank-divider"></div>' : '';
 
     return `${divider}
     <div class="rank-row ${rankClass}">
@@ -162,9 +163,9 @@ function renderLeaderboard(ranked) {
   if (hasMore) {
     el.insertAdjacentHTML('beforeend', `
       <div style="text-align:center;padding:0.875rem 1rem;border-top:1px solid var(--border)">
-        <a href="/dashboard" style="font-size:13px;color:var(--forest);font-weight:500;text-decoration:none">
-          Lihat semua ${ranked.length} donatur <i class="fa-solid fa-arrow-right" style="font-size:11px"></i>
-        </a>
+        <button onclick="expandLeaderboard()" style="background:none;border:none;font-size:13px;color:var(--forest);font-weight:500;cursor:pointer;padding:0">
+          Tampilkan semua ${ranked.length} donatur <i class="fa-solid fa-chevron-down" style="font-size:10px;margin-left:3px"></i>
+        </button>
       </div>`);
   }
 }
@@ -210,6 +211,7 @@ let activeKampanyeId = '';
 let _currentPage = 1;
 let _totalPages  = 1;
 let _allLoaded   = [];
+let _lbExpanded  = false;
 
 function selectPill(el) {
   document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
@@ -218,6 +220,7 @@ function selectPill(el) {
   _currentPage = 1;
   _totalPages  = 1;
   _allLoaded   = [];
+  _lbExpanded  = false;
   loadDonatur(true);
 }
 
@@ -238,19 +241,20 @@ async function loadDonatur(reset = false) {
       return;
     }
 
-    _allLoaded = _allLoaded.concat(data.data);
+    _allLoaded  = _allLoaded.concat(data.data);
     _totalPages = data.meta ? data.meta.pages : 1;
 
-    const ranked = buildRanking(_allLoaded);
+    const ranked       = buildRanking(_allLoaded);
     const totalNominal = _allLoaded.reduce((s, d) => s + parseInt(d.nominal), 0);
+    const morePages    = _currentPage < _totalPages;
+
+    document.getElementById('total-donatur').textContent   = ranked.length + (morePages ? '+' : '');
+    document.getElementById('total-terkumpul').textContent = 'Rp ' + totalNominal.toLocaleString('id-ID');
+    renderLeaderboard(ranked);
 
     if (reset) {
-      document.getElementById('total-donatur').textContent    = data.meta ? data.meta.total + (data.meta.total > 50 ? '+' : '') : ranked.length;
-      document.getElementById('total-terkumpul').textContent  = 'Rp ' + totalNominal.toLocaleString('id-ID');
-      renderLeaderboard(ranked);
       renderRecent(_allLoaded);
     } else {
-      // Load more: just append to recent
       appendRecent(data.data);
     }
 
@@ -279,6 +283,11 @@ function loadMore() {
   if (btn) { btn.disabled = true; btn.textContent = 'Memuat...'; }
   _currentPage++;
   loadDonatur(false);
+}
+
+function expandLeaderboard() {
+  _lbExpanded = true;
+  renderLeaderboard(buildRanking(_allLoaded));
 }
 
 async function loadKampanye() {

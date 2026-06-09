@@ -405,30 +405,53 @@ async function createAlbum() {
   btn.disabled = true;
   prog.style.display = '';
 
+  // Step 1: compress all files client-side
   prog.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengompresi foto 0/${_czFiles.length}...`;
   const compressed = await compressAll(_czFiles, (i, n) => {
     prog.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengompresi foto ${i}/${n}...`;
   });
 
-  prog.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Mengupload...';
+  // Step 2: create album metadata (no photos)
+  prog.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Membuat album...';
+  const metaRes = await fetch('/api/galeri', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': _csrfToken },
+    body: JSON.stringify({
+      judul, tanggal,
+      kategori:    document.getElementById('c-kategori').value,
+      deskripsi:   document.getElementById('c-deskripsi').value.trim() || null,
+      is_featured: document.getElementById('c-featured').checked,
+      is_public:   document.getElementById('c-public').checked,
+    }),
+  });
+  const metaJson = await metaRes.json();
+  if (!metaJson.success) {
+    btn.disabled = false; prog.style.display = 'none';
+    alert(metaJson.message); return;
+  }
+  const albumId = metaJson.data.id;
 
-  const fd = new FormData();
-  fd.append('judul',       judul);
-  fd.append('tanggal',     tanggal);
-  fd.append('kategori',    document.getElementById('c-kategori').value);
-  fd.append('deskripsi',   document.getElementById('c-deskripsi').value.trim());
-  fd.append('is_featured', document.getElementById('c-featured').checked ? '1' : '0');
-  fd.append('is_public',   document.getElementById('c-public').checked   ? '1' : '0');
-  compressed.forEach(f => fd.append('fotos[]', f));
-
-  const r = await fetch('/api/galeri', { method:'POST', headers:{'X-CSRF-TOKEN':_csrfToken}, body:fd });
-  const j = await r.json();
+  // Step 3: upload one photo per request
+  let ok = 0;
+  for (let i = 0; i < compressed.length; i++) {
+    prog.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengupload foto ${i + 1}/${compressed.length}...`;
+    const fd = new FormData();
+    fd.append('fotos[]', compressed[i]);
+    try {
+      const r = await fetch(`/api/galeri/${albumId}/foto`, { method:'POST', headers:{'X-CSRF-TOKEN':_csrfToken}, body:fd });
+      const j = await r.json();
+      if (j.success) ok++;
+    } catch { /* skip */ }
+  }
 
   btn.disabled = false;
   prog.style.display = 'none';
-
-  if (j.success) { closeCreate(); showToast(j.message); load(); }
-  else alert(j.message);
+  closeCreate();
+  const msg = ok < compressed.length
+    ? `Album dibuat, ${ok}/${compressed.length} foto berhasil diupload.`
+    : `Album berhasil dibuat dengan ${ok} foto.`;
+  showToast(msg);
+  load();
 }
 
 // ── EDIT INFO ─────────────────────────────────────────────────
@@ -521,17 +544,21 @@ async function addFotos(fileList) {
     uploading.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengompresi foto ${i}/${n}...`;
   });
 
-  uploading.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Mengupload foto...';
+  let ok = 0;
+  for (let i = 0; i < compressed.length; i++) {
+    uploading.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Mengupload foto ${i + 1}/${compressed.length}...`;
+    const fd = new FormData();
+    fd.append('fotos[]', compressed[i]);
+    try {
+      const r = await fetch(`/api/galeri/${_manageId}/foto`, { method:'POST', headers:{'X-CSRF-TOKEN':_csrfToken}, body:fd });
+      const j = await r.json();
+      if (j.success) ok++;
+    } catch { /* skip */ }
+  }
 
-  const fd = new FormData();
-  compressed.forEach(f => fd.append('fotos[]', f));
-
-  const r = await fetch(`/api/galeri/${_manageId}/foto`, { method:'POST', headers:{'X-CSRF-TOKEN':_csrfToken}, body:fd });
-  const j = await r.json();
   uploading.style.display = 'none';
-
-  if (j.success) { showToast(j.message); _manageAlbum = j.data; renderManageGrid(); }
-  else alert(j.message);
+  showToast(`${ok} foto berhasil ditambahkan.`);
+  await loadManageFotos();
 }
 
 async function deleteFoto(fotoId) {

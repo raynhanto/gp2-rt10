@@ -47,10 +47,6 @@ class GaleriController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $fotos = $request->file('fotos', []);
-        if (empty($fotos)) {
-            return response()->json(['success' => false, 'message' => 'Upload minimal 1 foto.'], 422);
-        }
         if (empty($request->input('judul'))) {
             return response()->json(['success' => false, 'message' => 'Judul wajib diisi.'], 422);
         }
@@ -69,28 +65,10 @@ class GaleriController extends Controller
             'created_by'  => Auth::id(),
         ]);
 
-        $coverUrl = null;
-        foreach ($fotos as $i => $foto) {
-            try {
-                $url = Upload::save($foto, 'galeri');
-            } catch (\RuntimeException $e) {
-                continue;
-            }
-            if ($i === 0) $coverUrl = $url;
-            GaleriFoto::create([
-                'galeri_id'  => $galeri->id,
-                'foto_url'   => $url,
-                'keterangan' => null,
-                'urutan'     => $i,
-            ]);
-        }
-
-        $galeri->update(['cover_url' => $coverUrl]);
-
         return response()->json([
             'success' => true,
-            'message' => 'Album berhasil dibuat dengan ' . count($fotos) . ' foto.',
-            'data'    => $galeri->load('fotos'),
+            'message' => 'Album berhasil dibuat.',
+            'data'    => $galeri,
         ], 201);
     }
 
